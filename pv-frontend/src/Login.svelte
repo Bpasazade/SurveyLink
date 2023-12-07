@@ -17,7 +17,7 @@
         const userData = await signIn(email, password);
         const accessToken = userData.accessToken;
         localStorage.setItem("accessToken", accessToken);
-        if (userData.roles.includes("ROLE_ADMIN")) {
+        if (userData.role.includes("ROLE_ADMIN")) {
             navigate('/adminDashboard');
         } else {
             navigate('/userDashboard');

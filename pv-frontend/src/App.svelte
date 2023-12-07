@@ -3,8 +3,11 @@
     import { onMount } from "svelte";
     import Login from './Login.svelte';
     import AdminDashboard from './adminDashboard.svelte';
+    import AdminCompanies from './adminCompanies.svelte';
     import AdminAccounts from './adminAccounts.svelte';
-    import UserDashboard from './userDashboard.svelte'; 
+    import UserDashboard from './userDashboard.svelte';
+    import UserAccounts from './userAccounts.svelte';
+    import UserCampaigns from './userCampaigns.svelte';
 
     import { getUser } from './apis/userApis.js';
 
@@ -29,7 +32,6 @@
         } else {
             if (token) {
                 decoded = jwt_decode(token);
-                console.log(decoded.id);
                 
                 if (decoded.exp < Date.now() / 1000) { 
                     localStorage.removeItem('accessToken');
@@ -53,8 +55,11 @@
 <Router>
     <Route path="/login" component={Login} />
     <Route path="/adminDashboard" component={AdminDashboard} />
+    <Route path="/adminCompanies" component={AdminCompanies} />
     <Route path="/adminAccounts" component={AdminAccounts} />
     <Route path="/userDashboard" component={UserDashboard} />
+    <Route path="/userAccounts" component={UserAccounts} />
+    <Route path="/userCampaigns" component={UserCampaigns} />
 </Router>
 
 <style>

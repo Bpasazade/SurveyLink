@@ -1,5 +1,10 @@
 <!-- src/MediaManagement.svelte -->
 <script>
+    // Navbar
+    import RubuPlusLogoDark from "./assets/rubuplus-logo-dark.svg";
+    import settings from "./assets/settings.svg";
+    import notification from "./assets/notification-bell.svg";
+
     // Sidebar
     import Sidebar from "./lib/Sidebar.svelte";
     
@@ -10,28 +15,15 @@
 
     import Navbar from "./lib/Navbar.svelte";
     import NewUserModal from "./lib/NewUserModal.svelte";
-    import NewCompanyModal from "./lib/NewCompanyModal.svelte";
     import EditUserModal from "./lib/EditUserModal.svelte";
     import DeleteUserModal from "./lib/DeleteUserModal.svelte";
-    import { fetchUsers } from "./apis/adminApis";
+    import { getCompanyUsers } from "./apis/userApis";
     import { signOut } from "./apis/userApis";
     import { navigate } from 'svelte-routing';
     import { getUser } from "./apis/userApis";
 
-    let users = [];
-    let selectedUser = null;
-
-    async function loadUsers() {
-        try {
-            users = await fetchUsers();
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    loadUsers();
-
     import jwt_decode from "jwt-decode";
+    import { getCompanyByName } from "./apis/adminApis";
     var decoded = {
         id: null,
         ait: null,
@@ -45,12 +37,30 @@
         phoneNumber: "",
         mainUserDegree: "",
         companyName: "",
+        userType: "",
     }
+
+    var company = {
+        name: "",
+        address: "",
+    }
+    var companyid = "";
+
     async function getTheUser() {
         user = await getUser(decoded.id);
     }
-    getTheUser();
 
+    async function getCompany() {
+        company = await getCompanyByName(user.companyName);
+        companyid = company._id;
+    }
+
+    getTheUser();
+    getCompany();
+
+    console.log(user);
+
+    // var currentUser = getUser(sessionStorage.getItem('userId') );
     async function signOutUser() {
         try {
             await signOut();
@@ -60,6 +70,19 @@
             console.error('Error signing out:', error);
         }
     }
+
+    let users = [];
+    let selectedUser = null;
+
+    async function loadUsers() {
+        try {
+            users = await getCompanyUsers(companyid);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    loadUsers();
 </script>
 
 <style>
@@ -161,44 +184,50 @@
 <NewUserModal />
 
 <!-- Edit User Modal -->
-<EditUserModal user = {selectedUser} />
+{#if selectedUser !== null}
+    <EditUserModal user = {selectedUser} />
+{/if}
 
 <!-- Edit User Modal -->
-<DeleteUserModal user = {selectedUser} />
+{#if selectedUser !== null}
+    <DeleteUserModal user = {selectedUser} />
+{/if}
 
 <main class="m-0 p-0">
     <Navbar />
     
     <div class="row d-flex m-0 p-0" style="height: 92vh;">
         
-        <Sidebar user={user} signOutUser={signOutUser} page="adminAccounts" />
+        <Sidebar user={user} signOutUser={signOutUser} page="userAccounts" />
 
         <div class="col-md px-0" id="main-content-div">
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
+                {#if user.userType == "master"}
                 <div class="col-md-12 p-4 bg-white rounded mb-4">
                     <div class="d-flex justify-content-end">
                         <div class="col-md-6 d-flex justify-content-end">
                             <button class="btn bg-light me-2 media-content-button border-0 p-3" data-bs-toggle="modal" data-bs-target="#newUserModal">
                                 <img src="{ userAdd }" alt="Directbox Send" class="me-2">
-                                Kişi Oluştur
+                                Kullanıcı Oluştur
                             </button>
                         </div>
                     </div>
                 </div>
+                {/if}
 
                 <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
                 <div class="container mx-0 px-0">
                     <div class="col-md-12 px-4 bg-white rounded mb-4 py-1">
                         <table class="table table-borderless " id="mediaTable">
                             <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">İsim - Soyisim</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Unvan</th>
-                                    <th scope="col">Şirket Adı</th>
-                                    <th scope="col" style="width: 60px !important;"></th>
-                                  </tr>
+                              <tr>
+                                <th scope="col"></th>
+                                <th scope="col">İsim - Soyisim</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Unvan</th>
+                                <th scope="col">Şirket Adı</th>
+                                <th scope="col" style="width: 60px !important;"></th>
+                              </tr>
                             </thead>
                             <tbody id="user-table-tbody">
                                 {#each users as user, index}
@@ -210,6 +239,7 @@
                                     <td class="fileDesc">{user.email}</td>
                                     <td class="fileDesc">{user.mainUserDegree}</td>
                                     <td class="fileDesc">{user.companyName}</td>
+                                    <td class="fileDesc">{user.numberOfScreens}</td>
                                     <td class="fileDesc">
                                         <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
                                             <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>

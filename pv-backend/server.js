@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require("./models");
+const UserType = require("./models/user.type.model");
 const Role = db.role;
 
 db.mongoose
@@ -41,6 +42,7 @@ app.get("/", (req, res) => {
 // routes
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
+require("./routes/admin.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
@@ -69,6 +71,30 @@ function initial() {
         }
 
         console.log("added 'admin' to roles collection");
+      });
+    }
+  });
+
+  UserType.estimatedDocumentCount((err, count) => {
+    if (!err && count === 0) {
+      new UserType({
+        name: "master"
+      }).save(err => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'master' to usertypes collection");
+      });
+
+      new UserType({
+        name: "slave"
+      }).save(err => {
+        if (err) {
+          console.log("error", err);
+        }
+
+        console.log("added 'slave' to usertypes collection");
       });
     }
   });

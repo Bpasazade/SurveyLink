@@ -5,8 +5,6 @@
     import { onMount } from 'svelte';
     import { deleteUser } from '../apis/adminApis';
 
-    let delEmail = '';
-
     let delUser = {
       name: '',
       lastname: '',

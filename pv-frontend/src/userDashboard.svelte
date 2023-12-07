@@ -13,9 +13,17 @@
     }
     decoded = jwt_decode(localStorage.getItem("accessToken"));
     console.log(decoded.id);
+
     var user = {
-        companyName: null,
-        numberOfScreens: null
+        name: "",
+        email: "",
+        phoneNumber: "",
+        password: "",
+        verifyPassword: "",
+        companyName: "",
+        mainUserDegree: "",
+        role: "",
+        userType: "",
     }
     async function getTheUser() {
         user = await getUser(decoded.id);
@@ -42,9 +50,6 @@
     main {
         height: 100vh;
     }
-    #navbar {
-        border-bottom: solid 2px #EAEBED !important;
-    }
     #main-content-div {
         background-color: #f7f7f7;
     }
@@ -61,11 +66,13 @@
                 <div class="col-md-12 pt-4 ps-4 rounded mb-4">
                     <div class="d-flex justify-content-start">
                         <div class="d-flex mb-3">
-                          {#if user.companyName}
-                              <h1 class="text me-4 mb-0" style="font-size: 26px; font-weight: 600;">{user.companyName}</h1>
-                          {/if}
+                            <h1 class="text me-4 mb-0" style="font-size: 26px; font-weight: 600;">{user.companyName}</h1>
                             <div class="col-md-3 d-flex align-items-center">
-                                <h1 class="text py-1 px-3 m-0 rounded-2" style="font-size: 12px; font-weight: 400; background-color: #04A3DA;">User</h1>
+                                {#if (user.userType == "master")}
+                                <h1 class="text py-1 px-3 m-0 rounded-2" style="font-size: 12px; font-weight: 400; background-color: #04A3DA;">Supervisor</h1>
+                                {:else if (user.userType == "slave")}
+                                <h1 class="text py-1 px-3 m-0 rounded-2" style="font-size: 12px; font-weight: 400; background-color: #FFA800;">User</h1>
+                                {/if}
                             </div>
                         </div>
                     </div>
@@ -75,9 +82,7 @@
                 <div class="container mx-0 px-0">
                     <div class="row g-0 d-flex justify-content-between">
                         <div class="col-md bg-white rounded mb-4 p-4" style="height: 430px;">
-                          {#if user.numberOfScreens}
-                            <h1 class="dp-1">{user.numberOfScreens}</h1>
-                          {/if}
+
                         </div>
                         <div class="vr mx-3" style="color: transparent;"></div>
                         <div class="col-md bg-white rounded mb-4 p-4" style="height: 430px;">

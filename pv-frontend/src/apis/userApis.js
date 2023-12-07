@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export async function signIn(email, password) {
   try {
-    const response = await axios.post('http://localhost:3000/api/auth/signin', { email, password });
+    const response = await axios.post('http://localhost:3000/auth/signin', { email, password });
 
     if (response.status !== 200) {
       throw new Error(response.data.message);
@@ -10,7 +10,7 @@ export async function signIn(email, password) {
 
     const { user } = response.data;
     if (user) {
-      await axios.post('http://localhost:3000/api/auth/storeUserIdInSession', { userId: user._id });
+      await axios.post('http://localhost:3000/auth/storeUserIdInSession', { userId: user._id });
     }
 
     return response.data;
@@ -21,7 +21,7 @@ export async function signIn(email, password) {
 
 export async function signOut() {
   try {
-    const response = await axios.get('http://localhost:3000/api/auth/signout');
+    const response = await axios.get('http://localhost:3000/auth/signout');
 
     if (response.status !== 200) {
       throw new Error(response.data.message);
@@ -39,7 +39,7 @@ export async function getDashboard(_id, accessToken) {
       'x-access-token': accessToken,
     };
 
-    const response = await axios.get(`http://localhost:3000/api/users/${_id}`, { headers });
+    const response = await axios.get(`http://localhost:3000/users/${_id}`, { headers });
 
     if (response.status !== 200) {
       throw new Error(response.data.message);
@@ -53,7 +53,19 @@ export async function getDashboard(_id, accessToken) {
 
 export async function getUser(_id) {
   try {
-    const response = await axios.get(`http://localhost:3000/api/users/${_id}`);
+    const response = await axios.get(`http://localhost:3000/users/${_id}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function getCompanyUsers(companyId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/users/${companyId}`);
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

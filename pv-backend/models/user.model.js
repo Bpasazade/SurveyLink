@@ -8,9 +8,8 @@ const User = mongoose.model(
     phoneNumber: String,
     password: String,
     companyName: String,
-    companyAddress: String,
     mainUserDegree: String,
-    numberOfScreens: Number,
+    userType: String,
     role: String,
   })
 );

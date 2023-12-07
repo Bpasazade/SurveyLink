@@ -23,7 +23,6 @@
     
     var user = {
         companyName: "",
-        numberOfScreens: 0
     }
     async function getTheUser() {
         user = await getUser(decoded.id);
@@ -47,9 +46,6 @@
 <style>
     main {
         height: 100vh;
-    }
-    #navbar {
-        border-bottom: solid 2px #EAEBED !important;
     }
     #main-content-div {
         background-color: #f7f7f7;

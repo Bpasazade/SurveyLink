@@ -1,46 +1,50 @@
 <!-- src/lib/NewUserModal.svelte -->
 <script>
     import { registerUser } from "../apis/adminApis.js";
+    import { getAllCompanies } from "../apis/adminApis.js";
     import userLogo from '../assets/user.svg';
     import directBoxDefault from '../assets/directbox-default.svg';
     import call from '../assets/call.svg';
     import lock from '../assets/lock.svg';
-    import briefcase from '../assets/briefcase.svg';
-    import directUp from '../assets/direct-up.svg';
     import television from '../assets/television.svg';
     import subLeft from '../assets/sub_left.svg';
     import done from '../assets/done.svg';
 
-
-    let name = "";
-    let email = "";
-    let phoneNumber = "";
-    let password = "";
-    let verifyPassword = "";
-    let companyName = "";
-    let companyAddress = "";
-    let mainUserDegree = "";
-    let numberOfScreens = "";
-    
-    let roles = ["user"];
+    let user = {
+      name: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      verifyPassword: "",
+      companyName: "",
+      mainUserDegree: "",
+      numberOfScreens: "",
+      role: "user",
+      userType: "master",
+    };
 
     async function handleRegisterUser(event) {
         event.preventDefault();
         try {
-          const userData = await registerUser(name, 
-                                    email, 
-                                    phoneNumber, 
-                                    password,
-                                    companyName, 
-                                    companyAddress, 
-                                    mainUserDegree,
-                                    numberOfScreens, 
-                                    roles);
+
+          const userData = await registerUser(user);
           
         } catch (error) {
             // Handle error
         }
     }
+
+    let companies = [];
+
+    async function getCompanies() {
+      try {
+        companies = await getAllCompanies();
+      } catch (error) {
+        // Handle error
+      }
+    }
+
+    getCompanies();
 </script>
 
 <style>
@@ -101,6 +105,21 @@
     font-size: 16px; 
     width: max-content;
   }
+  .form-select {
+    border: solid 1px #25324B14;
+    border-radius: 10px;
+    box-shadow: none;
+    font-size: 14px;
+    font-weight: 400 !important;
+    color: #25324B;
+  }
+  select option {
+    font-size: 14px;
+    font-weight: 400 !important;
+    color: #25324B;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
 </style>
 
 <div class="modal fade" id="newUserModal" tabindex="-1" aria-labelledby="newUserModalLabel" aria-hidden="true">
@@ -116,7 +135,7 @@
               <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                 <img src="{ userLogo }" alt="User Logo" width="24" />
               </span>
-              <input type="text" id="name" class="form-control ps-0 rounded" placeholder="Adınız/Soyadınız" bind:value={name} >
+              <input type="text" id="name" class="form-control ps-0 rounded" placeholder="Adınız/Soyadınız" bind:value={user.name} >
             </div>
 
             <!-- Email -->
@@ -124,7 +143,7 @@
               <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                 <img src="{ directBoxDefault }" alt="User Logo" width="24" />
               </span>
-              <input type="email" id="email" class="form-control ps-0" placeholder="Mail Adresiniz" bind:value={email}>
+              <input type="email" id="email" class="form-control ps-0" placeholder="Mail Adresiniz" bind:value={user.email}>
             </div>
 
             <!-- Phone Number -->
@@ -132,7 +151,7 @@
               <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                 <img src="{ call }" alt="User Logo" width="24" />
               </span>
-              <input type="text" id="phone" class="form-control ps-0" placeholder="Telefon Numarası" bind:value={phoneNumber}>
+              <input type="text" id="phone" class="form-control ps-0" placeholder="Telefon Numarası" bind:value={user.phoneNumber}>
             </div>
 
             <div class="row">
@@ -142,7 +161,7 @@
                   <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                     <img src="{ lock }" alt="User Logo" width="24" />
                   </span>
-                  <input type="password" id="password" class="form-control ps-0" placeholder="Şifre Belirleyin" bind:value={password}>
+                  <input type="password" id="password" class="form-control ps-0" placeholder="Şifre Belirleyin" bind:value={user.password}>
                 </div>
               </div>
               <div class="col">
@@ -151,7 +170,7 @@
                   <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                     <img src="{ lock }" alt="User Logo" width="24" />
                   </span>
-                  <input type="password" id="verify-password" class="form-control ps-0" placeholder="Şifre Doğrula" bind:value={verifyPassword}>
+                  <input type="password" id="verify-password" class="form-control ps-0" placeholder="Şifre Doğrula" bind:value={user.verifyPassword}>
                 </div>
               </div>
             </div>
@@ -159,40 +178,42 @@
             <hr class="my-3" style="color: #25324B14; border: solid 1px #25324B14">
 
             <!-- Company Name -->
-            <div class="input-group mb-3" id="company-name-group">
+            <!-- <div class="input-group mb-3" id="company-name-group">
               <span class="input-group-addon bg-white align-items-center d-flex" id="companyAddon">
                 <img src="{ briefcase }" alt="User Logo" width="24" />
               </span>
               <input type="text" id="company-name" class="form-control ps-0" placeholder="Firma / Kurum Adı" bind:value={companyName}>
-            </div>
+            </div> -->
 
-            <!-- Company Address -->
-            <div class="input-group mb-3" id="company-address-group">
-              <span class="input-group-addon bg-white align-items-center d-flex" id="companyAddressAddon">
-                <img src="{ directUp }" alt="User Logo" width="24" />
-              </span>
-              <input type="text" id="company-address" class="form-control ps-0" placeholder="Firma / Kurum Adresi" bind:value={companyAddress}>
+            <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group" role="group" aria-label="Basic example">
+              <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.companyName}>
+              {#each companies as company}
+                <option value="{company.id}" class="ps-5">{company.name}</option>
+              {/each}
             </div>
 
             <div class="row">
               <div class="col">
-                <!-- Main User Degree -->
+                <!-- User Degree -->
                 <div class="input-group mb-3" id="degree-group">
                   <span class="input-group-addon bg-white align-items-center d-flex" id="degreeAddon">
                     <img src="{ userLogo }" alt="User Logo" width="24" />
                   </span>
-                  <input type="text" id="degree" class="form-control ps-0" placeholder="Ünvan" bind:value={mainUserDegree}>
+                  <input type="text" id="degree" class="form-control ps-0" placeholder="Ünvan" bind:value={user.mainUserDegree}>
                 </div>
               </div>
+
               <div class="col">
-                <!-- Number of Screens -->
-                <div class="input-group mb-3" id="num-screens-group">
-                  <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
-                    <img src="{ television }" alt="User Logo" width="24" />
-                  </span>
-                  <input type="number" id="num-screens" class="form-control ps-0" placeholder="Toplam Ekran Sayısı" bind:value={numberOfScreens}>
+                <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group" role="group" aria-label="Basic example">
+                  <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.userType}>
+                    <option disabled>Kullanıcı Tipi</option>
+                    <option value="master" class="ps-5">master</option>
+                    <option value="slave" class="ps-5">slave</option>
                 </div>
               </div>
+                
+
+              
             </div>
 
           </div>

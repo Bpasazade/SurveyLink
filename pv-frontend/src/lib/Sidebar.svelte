@@ -11,12 +11,17 @@
     export let user;
     export let signOutUser;
     export let page;
+    console.log(page);
 
     $: dashboardButtonStyle = page === 'adminDashboard' || page === 'userDashboard' ? 'background-color: #04A3DA; color: white;' : '';
-    $: accountsButtonStyle = page === 'adminAccounts' ? 'background-color: #04A3DA; color: white;' : '';
+    $: companiesButtonStyle = page === 'adminCompanies' ? 'background-color: #04A3DA; color: white;' : '';
+    $: accountsButtonStyle = page === 'adminAccounts' || page === 'userAccounts' ? 'background-color: #04A3DA; color: white;' : '';
+    $: campaignsButtonStyle = page === 'userCampaigns' ? 'background-color: #04A3DA; color: white;' : '';
 
     $: dashboardImageStyle = page === 'adminDashboard' || page === 'userDashboard' ? 'filter: invert(100%);' : '';
-    $: accountsImageStyle = page === 'adminAccounts' ? 'filter: invert(100%);' : '';
+    $: companiesImageStyle = page === 'adminCompanies' ? 'filter: invert(100%);' : '';
+    $: accountsImageStyle = page === 'adminAccounts' || page === 'userAccounts' ? 'filter: invert(100%);' : '';
+    $: campaignsImageStyle = page === 'userCampaigns' ? 'filter: invert(100%);' : '';
 </script>
 
 <style>
@@ -88,6 +93,14 @@
             </Link>
         </li>
         <li>
+            <Link to="/adminCompanies" style="text-decoration: none;">
+                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ companiesButtonStyle }">
+                    <img src="{ accounts }" alt="Accounts" class="me-2" style="{ companiesImageStyle }">
+                    Şirketler
+                </button>
+            </Link>
+        </li>
+        <li>
             <Link to="/adminAccounts" style="text-decoration: none;">
                 <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
                     <img src="{ accounts }" alt="Accounts" class="me-2" style="{ accountsImageStyle }">
@@ -102,6 +115,22 @@
                 <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ dashboardButtonStyle }">
                     <img src="{ dashboard }" alt="Dashboard" class="me-2" style="{ dashboardImageStyle }">
                     Dashboard
+                </button>
+            </Link>
+        </li>
+        <li>
+            <Link to="/userCampaigns" style="text-decoration: none;">
+                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ campaignsButtonStyle }">
+                    <img src="{ accounts }" alt="Accounts" class="me-2" style="{ campaignsImageStyle }">
+                    Kampanyalar
+                </button>
+            </Link>
+        </li>
+        <li>
+            <Link to="/userAccounts" style="text-decoration: none;">
+                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
+                    <img src="{ accounts }" alt="Accounts" class="me-2" style="{ accountsImageStyle }">
+                    Hesaplar
                 </button>
             </Link>
         </li>

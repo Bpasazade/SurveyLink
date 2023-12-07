@@ -2,6 +2,7 @@ const config = require("../config/auth.config");
 const db = require("../models");
 const User = db.user;
 const Role = db.role;
+const UserType = db.usertypes;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -13,36 +14,50 @@ exports.signup = (req, res) => {
     mainUserDegree: req.body.mainUserDegree,
     email: req.body.email,
     phoneNumber: req.body.phoneNumber,
-    backupName: req.body.backupName,
-    backupLastname: req.body.backupLastname,
-    backUserDegree: req.body.backUserDegree,
-    backupPhoneNumber: req.body.backupPhoneNumber,
     companyName: req.body.companyName,
-    companyAddress: req.body.companyAddress,
-    numberOfScreens: req.body.numberOfScreens,
     password: bcrypt.hashSync(req.body.password, 8),
+    role: req.body.role,
+    userType: req.body.userType,
   });
 
   console.log(req.body);
 
-  user.save((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }
+    user.save((err, user) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
 
-    if (req.body.role) {
-      Role.find(
-        {
-          name: { $in: req.body.role }
-        },
-        (err, roles) => {
+      if (req.body.role) {
+        Role.find(
+          {
+            name: { $in: req.body.role }
+          },
+          (err, roles) => {
+            if (err) {
+              res.status(500).send({ message: err });
+              return;
+            }
+
+            user.role = req.body.role;
+            user.save(err => {
+              if (err) {
+                res.status(500).send({ message: err });
+                return;
+              }
+
+              res.send({ message: "User was registered successfully!" });
+            });
+          }
+        );
+      } else {
+        Role.findOne({ name: "user" }, (err, role) => {
           if (err) {
             res.status(500).send({ message: err });
             return;
           }
-
-          user.role = req.body.role;
+          // role name
+          user.roles = [role._id];
           user.save(err => {
             if (err) {
               res.status(500).send({ message: err });
@@ -51,27 +66,50 @@ exports.signup = (req, res) => {
 
             res.send({ message: "User was registered successfully!" });
           });
-        }
-      );
-    } else {
-      Role.findOne({ name: "user" }, (err, role) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-        // role name
-        user.roles = [role._id];
-        user.save(err => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-
-          res.send({ message: "User was registered successfully!" });
         });
-      });
+      }
+
+      // if (req.body.userType) {
+      //   UserType.find(
+      //     {
+      //       name: { $in: req.body.userType }
+      //     },
+      //     (err, usertypes) => {
+      //       if (err) {
+      //         res.status(500).send({ message: err });
+      //         return;
+      //       }
+
+      //       user.userType = req.body.userType;
+      //       user.save(err => {
+      //         if (err) {
+      //           res.status(500).send({ message: err });
+      //           return;
+      //         }
+
+      //         res.send({ message: "User was registered successfully!" });
+      //       });
+      //     }
+      //   );  
+      // } else {
+      //   UserType.findOne({ name: "slave" }, (err, usertype) => {
+      //     if (err) {
+      //       res.status(500).send({ message: err });
+      //       return;
+      //     }
+      //     // role name
+      //     user.usertype = [usertype._id];
+      //     user.save(err => {
+      //       if (err) {
+      //         res.status(500).send({ message: err });
+      //         return;
+      //       }
+
+      //       res.send({ message: "User was registered successfully!" });
+      //     });
+      //   });
+      // }
     }
-  }
   );
 };
 
@@ -181,4 +219,8 @@ exports.signout = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error signing out user', error: error.message });
   }
+};
+
+exports.getUsersByCompanyId = async (req, res) => {
+  
 };

@@ -11,25 +11,25 @@
     import Navbar from "./lib/Navbar.svelte";
     import NewUserModal from "./lib/NewUserModal.svelte";
     import NewCompanyModal from "./lib/NewCompanyModal.svelte";
-    import EditUserModal from "./lib/EditUserModal.svelte";
-    import DeleteUserModal from "./lib/DeleteUserModal.svelte";
-    import { fetchUsers } from "./apis/adminApis";
+    import EditCompanyModal from "./lib/EditCompanyModal.svelte";
+    import DeleteCompanyModal from "./lib/DeleteCompanyModal.svelte";
+    import { getAllCompanies } from "./apis/adminApis.js";
     import { signOut } from "./apis/userApis";
     import { navigate } from 'svelte-routing';
     import { getUser } from "./apis/userApis";
 
-    let users = [];
-    let selectedUser = null;
+    let companies = [];
+    let selectedCompany = null;
 
-    async function loadUsers() {
+    async function loadCompanies() {
         try {
-            users = await fetchUsers();
+            companies = await getAllCompanies();
         } catch (error) {
             console.error(error);
         }
     }
 
-    loadUsers();
+    loadCompanies();
 
     import jwt_decode from "jwt-decode";
     var decoded = {
@@ -40,11 +40,8 @@
     decoded = jwt_decode(localStorage.getItem("accessToken"));
     
     var user = {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        mainUserDegree: "",
         companyName: "",
+        numberOfScreens: 0
     }
     async function getTheUser() {
         user = await getUser(decoded.id);
@@ -160,27 +157,30 @@
 <!-- Create User Modal -->
 <NewUserModal />
 
-<!-- Edit User Modal -->
-<EditUserModal user = {selectedUser} />
+<!-- Create Company Modal -->
+<NewCompanyModal />
 
 <!-- Edit User Modal -->
-<DeleteUserModal user = {selectedUser} />
+<EditCompanyModal company = {selectedCompany} />
+
+<!-- Edit User Modal -->
+<DeleteCompanyModal company = {selectedCompany} />
 
 <main class="m-0 p-0">
     <Navbar />
     
     <div class="row d-flex m-0 p-0" style="height: 92vh;">
         
-        <Sidebar user={user} signOutUser={signOutUser} page="adminAccounts" />
+        <Sidebar user={user} signOutUser={signOutUser} page="adminCompanies" />
 
         <div class="col-md px-0" id="main-content-div">
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 <div class="col-md-12 p-4 bg-white rounded mb-4">
                     <div class="d-flex justify-content-end">
                         <div class="col-md-6 d-flex justify-content-end">
-                            <button class="btn bg-light me-2 media-content-button border-0 p-3" data-bs-toggle="modal" data-bs-target="#newUserModal">
+                            <button class="btn bg-light me-2 media-content-button border-0 p-3" data-bs-toggle="modal" data-bs-target="#newCompanyModal">
                                 <img src="{ userAdd }" alt="Directbox Send" class="me-2">
-                                Kişi Oluştur
+                                Şirket Oluştur
                             </button>
                         </div>
                     </div>
@@ -191,34 +191,30 @@
                     <div class="col-md-12 px-4 bg-white rounded mb-4 py-1">
                         <table class="table table-borderless " id="mediaTable">
                             <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">İsim - Soyisim</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Unvan</th>
-                                    <th scope="col">Şirket Adı</th>
-                                    <th scope="col" style="width: 60px !important;"></th>
-                                  </tr>
+                              <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Şirket/Kurum Adı</th>
+                                <th scope="col">Adres</th>
+                                <th scope="col" style="width: 60px !important;"></th>
+                              </tr>
                             </thead>
                             <tbody id="user-table-tbody">
-                                {#each users as user, index}
+                                {#each companies as company, index}
                                 <tr class="text-center">
                                     <td>
                                         <input class="form-check-input" type="checkbox" value="" id="{user._id}">
                                     </td>
-                                    <td class="fileDesc">{user.name}</td>
-                                    <td class="fileDesc">{user.email}</td>
-                                    <td class="fileDesc">{user.mainUserDegree}</td>
-                                    <td class="fileDesc">{user.companyName}</td>
+                                    <td class="fileDesc">{company.name}</td>
+                                    <td class="fileDesc">{company.address}</td>
                                     <td class="fileDesc">
                                         <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
-                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteCompanyModal" data-bs-toggle="modal" on:click={() => (selectedCompany = company)}>
                                                 <span>
                                                     <img src="{ trashCan }" alt="Trash Can" width="25">
                                                 </span>
                                             </button>
                                             <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
-                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editCompanyModal" data-bs-toggle="modal" on:click={() => (selectedCompany = company)}>
                                                 <span>
                                                     <img src="{ edit }" alt="Edit" width="25">
                                                 </span>
