@@ -4,7 +4,8 @@
     import { navigate } from 'svelte-routing';
     import RubuPlusLogo from './assets/rubuplus-logo.svg'
     import plus from './assets/plus.svg'
-    import leftImage from './assets/AdobeStock_220567648.png'
+    import leftImage from './assets/phone_mockup.png'
+    import loginBackground from './assets/left_background.png'
     import userLogo from './assets/user.svg'
     import smartLock from './assets/smart-lock.svg'
 
@@ -34,7 +35,10 @@
       min-height: 100vh;
   }
   .login-left {
-      background-color: #1C2731;
+    /* set background image */
+      background-image: url("./assets/left_background.png");
+      background-repeat: no-repeat;
+      background-size: cover;
       color: white;
       flex: 1;
       display: flex;
@@ -80,12 +84,11 @@
 <div class="login-container">
   <div class="login-left">
     <div class="col left-side d-flex flex-column justify-content-between">
-      <div class="image-container w-100 p-5">
+      <div class="image-container w-100" style="padding: 4.75rem;">
         <img src="{ RubuPlusLogo }" alt="Logo" class="mb-5"><br>
         <div class="mt-4">
-          <span class="text text-uppercase" style="font-size: 38px; font-weight: 300; font-family: 'Sofia-Pro-ExtraLight'; line-height: 52px">Dijital İçerik</span><br>
-          <span class="text text-uppercase" style="font-size: 38px; font-weight: 900; font-family: 'Sofia-Pro-Bold'; line-height: 42px"> Medya Yönetim Platformu</span><br>
-            
+          <span class="text text-uppercase" style="font-size: 39px; font-weight: 300; font-family: 'Sofia-Pro-ExtraLight'; line-height: 52px; margin-bottom: 6rem">Kişiselleştirilmiş</span><br>
+          <span class="text text-uppercase" style="font-size: 47px; font-weight: 900; font-family: 'Sofia-Pro-Bold'; line-height: 42px">Video Mesaj (pvm) Platformu</span><br>
         </div>
       </div>
       <div class="image-container w-100">

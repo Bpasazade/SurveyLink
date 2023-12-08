@@ -2,6 +2,7 @@
 <script>
     import { Link } from "svelte-routing";
     // import search from '../assets/search.svg';
+    import RLogo from '../assets/logo.png'
     import dashboard from '../assets/dashboard.svg';
     import accounts from '../assets/accounts.svg';
     import logout from '../assets/logout.svg';
@@ -25,9 +26,6 @@
 </script>
 
 <style>
-    #sidebar {
-        border-right: solid 2px #EAEBED !important;
-    }
     /* #search-addon {
         border-right: none;
         border-top-left-radius: 0.375rem;
@@ -73,8 +71,10 @@
 
 
 
-<div class="d-flex flex-column flex-shrink-0 justify-content-between" style="width: 320px;" id="sidebar">
+<div class="d-flex flex-column flex-shrink-0 justify-content-between" style="width: 260px; height: 100vh" id="sidebar">
+    
     <ul class="nav nav-pills flex-column p-4">
+        <img src="{ RLogo }" alt="Logo" class="img-responsive pt-2" style="width:fit-content; margin-bottom: 3rem">
         <!-- <li class="nav-item">
             <div class="input-group w-100">
                 <span class="input-group-addon align-items-center d-flex" id="search-addon">
@@ -136,27 +136,4 @@
         </li>
         {/if}
     </ul>
-    <ul class="mb-4 p-4">
-        <li>
-            <button aria-disabled="true" class="btn disabled sidebar-button border-0 mt-3 w-100 text-start d-flex align-items-middle" type="button">
-                <img src="{ lifebuoy }" alt="Dashboard" class="me-3">
-                <p class="text m-0">Destek</p>
-            </button>
-            
-            <hr class="mb-3" style="color: #E6E8EC; height: 1px; border: solid 1px #D9D9D9;">
-            
-            <div style="text-decoration: none;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <img src="{ profile }" alt="User" class="me-3">
-                    <div class="d-flex flex-column justify-content-between align-items-start">
-                        <p class="text-black m-0">{ user.name }</p>
-                        <p class="text-secondary m-0" style="font-size: 13px; font-weight:300;">{ user.email }</p>
-                    </div>
-                    
-                    <button class="btn btn-logout text-start d-flex align-items-middle" type="button"  on:click="{ signOutUser }">
-                        <img src="{ logout }" alt="Screens" class="me-2">
-                    </button>
-                </div>
-            </div>
-        </li>
 </div>
