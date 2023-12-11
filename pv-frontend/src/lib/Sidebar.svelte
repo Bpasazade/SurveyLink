@@ -2,54 +2,66 @@
 <script>
     import { Link } from "svelte-routing";
     // import search from '../assets/search.svg';
-    import RLogo from '../assets/logo.png'
+    import RLogo from '../assets/logo.svg'
+    import logoSmall from '../assets/logo-dark.svg';
     import dashboard from '../assets/dashboard.svg';
     import accounts from '../assets/accounts.svg';
-    import logout from '../assets/logout.svg';
-    import profile from '../assets/profile.svg';
-    import lifebuoy from '../assets/lifebuoy.svg';
+    import partners from '../assets/partners.svg';
+    import layer from '../assets/layer.svg';
+    import merchants from '../assets/merchant.svg';
+    import arrow from '../assets/sidebar-arrow.svg';
 
-    export let user;
-    export let signOutUser;
     export let page;
-    console.log(page);
+    export let rotated;
 
-    $: dashboardButtonStyle = page === 'adminDashboard' || page === 'userDashboard' ? 'background-color: #04A3DA; color: white;' : '';
-    $: companiesButtonStyle = page === 'adminCompanies' ? 'background-color: #04A3DA; color: white;' : '';
-    $: accountsButtonStyle = page === 'adminAccounts' || page === 'userAccounts' ? 'background-color: #04A3DA; color: white;' : '';
-    $: campaignsButtonStyle = page === 'userCampaigns' ? 'background-color: #04A3DA; color: white;' : '';
+    let sidebarWidth = 260;
+    $: sidebarTextStyle = rotated ? 'display: none;' : 'display: block';
+    $: sidebarWidth = rotated ? 94 : 260;
 
-    $: dashboardImageStyle = page === 'adminDashboard' || page === 'userDashboard' ? 'filter: invert(100%);' : '';
-    $: companiesImageStyle = page === 'adminCompanies' ? 'filter: invert(100%);' : '';
-    $: accountsImageStyle = page === 'adminAccounts' || page === 'userAccounts' ? 'filter: invert(100%);' : '';
-    $: campaignsImageStyle = page === 'userCampaigns' ? 'filter: invert(100%);' : '';
+    $: dashboardButtonStyle = `
+        ${page === 'adminDashboard' || page === 'userDashboard' ? 'background-color: #04A3DA; color: white;' : ''}
+        ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
+
+    $: dashboardImageStyle = `
+        ${page === 'adminDashboard' || page === 'userDashboard' ? 'filter: invert(100%);' : ''}
+        ${rotated ? 'margin-right: 0rem' : 'margin-right: 0.5rem'}`;
+
+    $: companiesButtonStyle = `
+        ${page === 'adminCompanies' ? 'background-color: #04A3DA; color: white;' : ''}
+        ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
+
+    $: companiesImageStyle = `
+        ${page === 'adminCompanies' ? 'filter: invert(100%);' : ''}
+        ${rotated ? 'margin-right: 0rem' : 'margin-right: 0.5rem'}`;
+
+    $: campaignsButtonStyle = `
+        ${page === 'adminCampaigns' || page === 'userCampaigns' ? 'background-color: #04A3DA; color: white;' : ''}
+        ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
+
+    $: campaignsImageStyle = `
+        ${page === 'userCampaigns' ? 'filter: invert(100%);' : ''}
+        ${rotated ? 'margin-right: 0rem' : 'margin-right: 0.5rem'}`;
+
+    $: accountsButtonStyle = `
+        ${page === 'adminAccounts' || page === 'userAccounts' ? 'background-color: #04A3DA; color: white;' : ''}
+        ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
+
+    $: accountsImageStyle = `
+        ${page === 'adminAccounts' || page === 'userAccounts' ? 'filter: invert(100%);' : ''}
+        ${rotated ? 'margin-right: 0rem' : 'margin-right: 0.5rem'}
+    `;
+
+    function rotate() {
+        rotated = !rotated;
+        if (rotated) {
+            document.getElementById("sidebar").style.width = "94px";
+        } else {
+            document.getElementById("sidebar").style.width = "250px";
+        }
+    }
 </script>
 
 <style>
-    /* #search-addon {
-        border-right: none;
-        border-top-left-radius: 0.375rem;
-        border-bottom-left-radius: 0.375rem;
-        padding-left: 0.75rem;
-        background-color: #F4F5F6;
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-
-    }
-    #search-form {
-        border-left: none;
-        border-top-right-radius: 0.375rem;
-        border-bottom-right-radius: 0.375rem;
-        background-color: #F4F5F6;
-        padding-left: 0;
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-    }
-    #search-form:focus {
-        box-shadow: none;
-        font-weight: 400;
-        color: #25324B !important;
-    } */
     .sidebar-button {
         padding: 0.75rem !important;
         color: #909090;
@@ -64,17 +76,27 @@
     ul {
         list-style-type: none;
     }
-    .btn-logout {
-        border: none;
+    #sidebar {
+        transition: width 0.5s;
+    }
+    .text-sidebar {
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .rotated {
+        transform: rotate(180deg);
     }
 </style>
 
-
-
-<div class="d-flex flex-column flex-shrink-0 justify-content-between" style="width: 260px; height: 100vh" id="sidebar">
+<div class="d-flex flex-column flex-shrink-0 justify-content-between" style="width: { sidebarWidth }px;" id="sidebar">
     
     <ul class="nav nav-pills flex-column p-4">
-        <img src="{ RLogo }" alt="Logo" class="img-responsive pt-2" style="width:fit-content; margin-bottom: 3rem">
+        {#if !rotated}
+            <img src="{ RLogo }" alt="Logo" class="img-responsive pt-2" style="width:fit-content; margin-bottom: 3rem">
+        {:else}
+            <img src="{ logoSmall }" alt="Logo" class="img-responsive pt-2 ms-2" width="26" style="margin-bottom: 3rem">
+        {/if}
+            
         <!-- <li class="nav-item">
             <div class="input-group w-100">
                 <span class="input-group-addon align-items-center d-flex" id="search-addon">
@@ -86,25 +108,41 @@
         {#if page.includes('admin')}
         <li>
             <Link to="/adminDashboard" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ dashboardButtonStyle }">
-                    <img src="{ dashboard }" alt="Dashboard" class="me-2" style="{ dashboardImageStyle }">
-                    Dashboard
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ dashboardButtonStyle }">
+                    <img src="{ dashboard }" alt="Dashboard" style="{ dashboardImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Dashboard</h1>
                 </button>
             </Link>
         </li>
         <li>
             <Link to="/adminCompanies" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ companiesButtonStyle }">
-                    <img src="{ accounts }" alt="Accounts" class="me-2" style="{ companiesImageStyle }">
-                    Şirketler
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ companiesButtonStyle }">
+                    <img src="{ partners }" alt="Accounts" style="{ companiesImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Firmalar</h1>
                 </button>
             </Link>
         </li>
         <li>
             <Link to="/adminAccounts" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
-                    <img src="{ accounts }" alt="Accounts" class="me-2" style="{ accountsImageStyle }">
-                    Hesaplar
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
+                    <img src="{ layer }" alt="Accounts" style="{ accountsImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Kampanyalar</h1>
+                </button>
+            </Link>
+        </li>
+        <li>
+            <Link to="/adminAccounts" style="text-decoration: none;">
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
+                    <img src="{ merchants }" alt="Accounts" style="{ accountsImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Şablonlar</h1>
+                </button>
+            </Link>
+        </li>
+        <li>
+            <Link to="/adminAccounts" style="text-decoration: none;">
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
+                    <img src="{ accounts }" alt="Accounts" style="{ accountsImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Hesaplar</h1>
                 </button>
             </Link>
         </li>
@@ -113,27 +151,33 @@
         <li>
             <Link to="/userDashboard" style="text-decoration: none;">
                 <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ dashboardButtonStyle }">
-                    <img src="{ dashboard }" alt="Dashboard" class="me-2" style="{ dashboardImageStyle }">
-                    Dashboard
+                    <img src="{ dashboard }" alt="Dashboard" style="{ dashboardImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Dashboard</h1>
                 </button>
             </Link>
         </li>
         <li>
             <Link to="/userCampaigns" style="text-decoration: none;">
                 <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ campaignsButtonStyle }">
-                    <img src="{ accounts }" alt="Accounts" class="me-2" style="{ campaignsImageStyle }">
-                    Kampanyalar
+                    <img src="{ accounts }" alt="Accounts" style="{ campaignsImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Kampanyalar</h1>
                 </button>
             </Link>
         </li>
         <li>
             <Link to="/userAccounts" style="text-decoration: none;">
                 <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
-                    <img src="{ accounts }" alt="Accounts" class="me-2" style="{ accountsImageStyle }">
-                    Hesaplar
+                    <img src="{ accounts }" alt="Accounts" style="{ accountsImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Hesaplar</h1>
                 </button>
             </Link>
         </li>
         {/if}
     </ul>
+</div>
+
+<div class="d-flex align-items-start bg-light pt-4">
+    <button class="btn p-0 border-0 shadow-0 d-flex justify-content-center align-items-center {rotated ? 'rotated' : ''}" style="margin-left: -19px; transition: transform 0.5s;" on:click={rotate}>
+        <img src="{ arrow }" alt="Logo" width="38" style="z-index: 1;">
+    </button>
 </div>

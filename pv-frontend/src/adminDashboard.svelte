@@ -1,19 +1,17 @@
 <!-- src/adminHome.svelte -->
 <script>
-    // Navbar
-    import RubuPlusLogoDark from "./assets/rubuplus-logo-dark.svg";
-    import settings from "./assets/settings.svg";
-    import notification from "./assets/notification-bell.svg";
+    // Sidebar
+    import Sidebar from "./lib/Sidebar.svelte";
+    import arrow from './assets/sidebar-arrow.svg'
 
     // Lib
     import { Link } from "svelte-routing";
-    import Sidebar from "./lib/Sidebar.svelte";
     import { signOut } from "./apis/userApis";
     import { navigate } from 'svelte-routing';
     import { getUser } from "./apis/userApis";
+    import SearchProfileBar from "./lib/SearchProfileBar.svelte";
 
     import jwt_decode from "jwt-decode";
-    import Navbar from "./lib/Navbar.svelte";
     var decoded = {
         id: null,
         ait: null,
@@ -22,6 +20,10 @@
     decoded = jwt_decode(localStorage.getItem("accessToken"));
     
     var user = {
+        name: "",
+        email: "",
+        phoneNumber: "",
+        mainUserDegree: "",
         companyName: "",
     }
     async function getTheUser() {
@@ -40,7 +42,7 @@
             console.error('Error signing out:', error);
         }
     }
-
+    let rotated = false;
 </script>
 
 <style>
@@ -53,13 +55,11 @@
 </style>
 
 <main class="m-0 p-0">
-    <Navbar />
-    
-    <div class="row d-flex m-0 p-0" style="height: 92vh;">
-        
-        <Sidebar user={user} signOutUser={signOutUser} page="adminDashboard" />
+    <div class="d-flex m-0 p-0" style="height: 92vh;">
+        <Sidebar page="adminDashboard" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
+            <SearchProfileBar user={user} signOutUser={signOutUser} />
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 <div class="col-md-12 pt-4 ps-4 rounded mb-4">
                     <div class="d-flex justify-content-start">

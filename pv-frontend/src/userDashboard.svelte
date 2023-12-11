@@ -45,6 +45,8 @@
             console.error('Error signing out:', error);
         }
     }
+
+    let rotated = false;
 </script>
   
 <style>
@@ -58,16 +60,10 @@
   
 <main class="m-0 p-0">      
     <div class="d-flex m-0 p-0" style="height: 100vh;">
-        <Sidebar user={user} signOutUser={signOutUser} page="userDashboard" />
-
-        <div class="d-flex align-items-start bg-light pt-4">
-
-              <img src="{ arrow }" alt="Logo" width="38" style="margin-left: -19px; z-index: 1;">
-
-        </div>
+        <Sidebar page="userDashboard" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
-            <SearchProfileBar />
+            <SearchProfileBar user={user} signOutUser={signOutUser} />
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 <div class="col-md-12 pt-4 ps-4 rounded mb-4">
                     <div class="d-flex justify-content-start">

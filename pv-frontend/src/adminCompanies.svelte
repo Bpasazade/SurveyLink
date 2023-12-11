@@ -2,11 +2,15 @@
 <script>
     // Sidebar
     import Sidebar from "./lib/Sidebar.svelte";
+    import arrow from './assets/sidebar-arrow.svg'
     
     // Main Content
     import userAdd from "./assets/user-add.svg";
     import trashCan from "./assets/trash-can.svg";
     import edit from "./assets/message-edit.svg";
+
+    // Lib
+    import SearchProfileBar from "./lib/SearchProfileBar.svelte";
 
     import Navbar from "./lib/Navbar.svelte";
     import NewUserModal from "./lib/NewUserModal.svelte";
@@ -40,8 +44,11 @@
     decoded = jwt_decode(localStorage.getItem("accessToken"));
     
     var user = {
+        name: "",
+        email: "",
+        phoneNumber: "",
+        mainUserDegree: "",
         companyName: "",
-        numberOfScreens: 0
     }
     async function getTheUser() {
         user = await getUser(decoded.id);
@@ -57,6 +64,8 @@
             console.error('Error signing out:', error);
         }
     }
+
+    let rotated = false;
 </script>
 
 <style>
@@ -167,13 +176,11 @@
 <DeleteCompanyModal company = {selectedCompany} />
 
 <main class="m-0 p-0">
-    <Navbar />
-    
-    <div class="row d-flex m-0 p-0" style="height: 92vh;">
-        
-        <Sidebar user={user} signOutUser={signOutUser} page="adminCompanies" />
+    <div class="d-flex m-0 p-0" style="height: 92vh;">
+        <Sidebar page="adminCompanies" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
+            <SearchProfileBar user={user} signOutUser={signOutUser} />
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 <div class="col-md-12 p-4 bg-white rounded mb-4">
                     <div class="d-flex justify-content-end">

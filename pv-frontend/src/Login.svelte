@@ -8,9 +8,10 @@
     import loginBackground from './assets/left_background.png'
     import userLogo from './assets/user.svg'
     import smartLock from './assets/smart-lock.svg'
+    import eye from './assets/eye.svg'
 
-    let email = "";
-    let password = "";
+    var email = "";
+    var password = "";
   
     async function handleLogin(event) {
       event.preventDefault();
@@ -26,6 +27,14 @@
       } catch (error) {
         // Handle error, show error message to user
       }
+    }
+
+    let show_password = true
+    $: type = show_password ? 'password' : 'text'
+    let value = password
+
+    function onInput (event) {
+      password = event.target.value
     }
 </script>
 
@@ -79,6 +88,29 @@
     padding-left: 0.9rem;
     padding-right: 0.9rem;
   }
+  #passwordSecondAddon {
+    border-left: none;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
+  #rememberMe {
+    margin-right: 0.25rem;
+    border-radius: 2px !important;
+    border: 1px solid rgba(37, 50, 75, 0.05) !important;
+    background: #F6F6F6;
+  }
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+  }
+  #rememberMe {
+    accent-color: #25324b;
+    border-radius: 2px;
+    border: 1px solid rgba(37, 50, 75, 0.05);
+    background: #F6F6F6;
+
+  }
 </style>
 
 <div class="login-container">
@@ -113,13 +145,31 @@
                 <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                   <img src="{ userLogo }" alt="User Logo" width="24" />
                 </span>
-                <input type="email" class="form-control" style="font-size: 14px;" id="inputEmail" aria-describedby="emailHelp" placeholder="E-Posta Adresi Giriniz" bind:value={email} />
+                <input type="email" class="form-control" style="font-size: 14px;" id="inputEmail" aria-describedby="emailHelp" placeholder="E-Posta Adresi Giriniz" bind:value={email} required/>
               </div>
               <div class="input-group mb-3" id="passwordInputGroup">
                 <span class="input-group-addon bg-white align-items-center d-flex" id="passwordAddon">
                   <img src="{ smartLock }" alt="User Logo" width="24" />
                 </span>
-                <input type="password" class="form-control" id="inputPassword" bind:value={password} placeholder="Şifre Giriniz"/>
+                <input { type } { value } on:input={ onInput } class="form-control" id="inputPassword" placeholder="Şifre Giriniz" required/>
+                <div class="input-group-addon bg-white align-items-center d-flex" id="passwordSecondAddon">
+                  <button type="button" on:click="{ () => show_password = !show_password }" style="border: 0; background:none;">
+                    {#if show_password}
+                      <img src="{ eye }" alt="User Logo" width="16" />
+                    {:else}
+                      <img src="{ eye }" alt="User Logo" width="16" />
+                    {/if}
+                  </button>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between align-items-middle mb-3">
+                <span class="d-flex align-items-center">
+                  <input type="checkbox" id="rememberMe" name="rememberMe" value="rememberMe"/>
+                  <label for="rememberMe" style="font-size: 14px; color: #25324B; font-weight: 500;">Bilgilerimi Hatırla</label>
+                </span>
+                <span>
+                  <a href="#" style="font-size: 14px; color: #04A3DA; font-weight: 400; text-decoration: none;">Şifremi Unuttum</a>
+                </span>
               </div>
               <button type="submit" class="btn btn-primary w-100 border-0" style="height: 60px; background-color: #04A3DA; font-weight: 600;" on:click={handleLogin}>Giriş Yap</button>
           </form>

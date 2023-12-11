@@ -1,17 +1,16 @@
 <!-- src/MediaManagement.svelte -->
 <script>
-    // Navbar
-    import RubuPlusLogoDark from "./assets/rubuplus-logo-dark.svg";
-    import settings from "./assets/settings.svg";
-    import notification from "./assets/notification-bell.svg";
-
     // Sidebar
     import Sidebar from "./lib/Sidebar.svelte";
+    import arrow from './assets/sidebar-arrow.svg'
     
     // Main Content
     import userAdd from "./assets/user-add.svg";
     import trashCan from "./assets/trash-can.svg";
     import edit from "./assets/message-edit.svg";
+
+    // Lib
+    import SearchProfileBar from "./lib/SearchProfileBar.svelte";
 
     import Navbar from "./lib/Navbar.svelte";
     import NewUserModal from "./lib/NewUserModal.svelte";
@@ -83,6 +82,8 @@
     }
 
     loadUsers();
+
+    let rotated = false;
 </script>
 
 <style>
@@ -194,13 +195,11 @@
 {/if}
 
 <main class="m-0 p-0">
-    <Navbar />
-    
-    <div class="row d-flex m-0 p-0" style="height: 92vh;">
-        
-        <Sidebar user={user} signOutUser={signOutUser} page="userAccounts" />
+    <div class="d-flex m-0 p-0" style="height: 92vh;">        
+        <Sidebar page="userAccounts" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
+            <SearchProfileBar user={user} signOutUser={signOutUser} />
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 {#if user.userType == "master"}
                 <div class="col-md-12 p-4 bg-white rounded mb-4">
