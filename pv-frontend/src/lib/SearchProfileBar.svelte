@@ -13,8 +13,11 @@
     export let signOutUser;
 
     user = {
-        name: "John Doe",
-        email: "johndoe@gmail.com"
+        name: "",
+        email: "",
+        phoneNumber: "",
+        mainUserDegree: "",
+        companyName: "",
     }
 
 </script>
