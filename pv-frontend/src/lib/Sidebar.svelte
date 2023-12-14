@@ -11,6 +11,11 @@
     import merchants from '../assets/merchant.svg';
     import arrow from '../assets/sidebar-arrow.svg';
 
+    import building from '../assets/building.svg';
+    import bxsCollection from '../assets/bxs-collection.svg';
+    import bxsUserAccount from '../assets/bxs-user-account.svg';
+    import layout from '../assets/layout.svg';
+
     export let page;
     export let rotated;
 
@@ -92,7 +97,7 @@
     
     <ul class="nav nav-pills flex-column p-4">
         {#if !rotated}
-            <img src="{ RLogo }" alt="Logo" class="img-responsive pt-2" style="width:fit-content; margin-bottom: 3rem">
+            <img src="{ RLogo }" alt="Logo" class="img-responsive pt-2 ms-2" style="width:fit-content; margin-bottom: 3rem">
         {:else}
             <img src="{ logoSmall }" alt="Logo" class="img-responsive pt-2 ms-2" width="26" style="margin-bottom: 3rem">
         {/if}
@@ -108,7 +113,7 @@
         {#if page.includes('admin')}
         <li>
             <Link to="/adminDashboard" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ dashboardButtonStyle }">
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-center" type="button" style="{ dashboardButtonStyle }">
                     <img src="{ dashboard }" alt="Dashboard" style="{ dashboardImageStyle }">
                     <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Dashboard</h1>
                 </button>
@@ -116,33 +121,33 @@
         </li>
         <li>
             <Link to="/adminCompanies" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ companiesButtonStyle }">
-                    <img src="{ partners }" alt="Accounts" style="{ companiesImageStyle }">
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-center" type="button" style="{ companiesButtonStyle }">
+                    <img src="{ building }" alt="Accounts" style="{ companiesImageStyle }">
                     <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Firmalar</h1>
                 </button>
             </Link>
         </li>
         <li>
             <Link to="/adminAccounts" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
-                    <img src="{ layer }" alt="Accounts" style="{ accountsImageStyle }">
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-center" type="button" style="{ accountsButtonStyle }">
+                    <img src="{ bxsCollection }" alt="Accounts" style="{ accountsImageStyle }">
                     <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Kampanyalar</h1>
                 </button>
             </Link>
         </li>
         <li>
             <Link to="/adminAccounts" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
-                    <img src="{ merchants }" alt="Accounts" style="{ accountsImageStyle }">
-                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Şablonlar</h1>
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-center" type="button" style="{ accountsButtonStyle }">
+                    <img src="{ bxsUserAccount }" alt="Accounts" style="{ accountsImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Hesaplar</h1>
                 </button>
             </Link>
         </li>
         <li>
             <Link to="/adminAccounts" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
-                    <img src="{ accounts }" alt="Accounts" style="{ accountsImageStyle }">
-                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Hesaplar</h1>
+                <button class="btn sidebar-button mt-3 text-start d-flex align-items-center" type="button" style="{ accountsButtonStyle }">
+                    <img src="{ layout }" alt="Accounts" style="{ accountsImageStyle }">
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Şablonlar</h1>
                 </button>
             </Link>
         </li>
@@ -150,7 +155,7 @@
         {#if page.includes('user')}
         <li>
             <Link to="/userDashboard" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ dashboardButtonStyle }">
+                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ dashboardButtonStyle }">
                     <img src="{ dashboard }" alt="Dashboard" style="{ dashboardImageStyle }">
                     <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Dashboard</h1>
                 </button>
@@ -158,7 +163,7 @@
         </li>
         <li>
             <Link to="/userCampaigns" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ campaignsButtonStyle }">
+                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaignsButtonStyle }">
                     <img src="{ accounts }" alt="Accounts" style="{ campaignsImageStyle }">
                     <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Kampanyalar</h1>
                 </button>
@@ -166,7 +171,7 @@
         </li>
         <li>
             <Link to="/userAccounts" style="text-decoration: none;">
-                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-middle" type="button" style="{ accountsButtonStyle }">
+                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ accountsButtonStyle }">
                     <img src="{ accounts }" alt="Accounts" style="{ accountsImageStyle }">
                     <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Hesaplar</h1>
                 </button>
@@ -176,7 +181,7 @@
     </ul>
 </div>
 
-<div class="d-flex align-items-start bg-light pt-4">
+<div class="d-flex align-items-start pt-4" style="background-color: #F5F5F9;">
     <button class="btn p-0 border-0 shadow-0 d-flex justify-content-center align-items-center {rotated ? 'rotated' : ''}" style="margin-left: -19px; transition: transform 0.5s;" on:click={rotate}>
         <img src="{ arrow }" alt="Logo" width="38" style="z-index: 1;">
     </button>

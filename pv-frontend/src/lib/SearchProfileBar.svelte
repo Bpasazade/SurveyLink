@@ -62,7 +62,7 @@
     }
 </style>
 
-<div class="search-profile-bar d-flex justify-content-between align-items-center bg-white m-3">
+<div class="search-profile-bar d-flex justify-content-between align-items-center bg-white m-3 me-4">
     <div class="d-flex align-items-center w-100 ms-3">
         <img src="{ search }" alt="Search" class="me-3">
         <input type="text" class="form-control" placeholder="Arama" style="border: none;">

@@ -132,6 +132,16 @@ buffer-equal-constant-time@1.0.1:
   resolved "https://registry.npmjs.org/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz"
   integrity sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==
 
+chart.js@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.npmjs.org/chart.js/-/chart.js-3.1.1.tgz"
+  integrity sha512-ghNJersc9VD9MECwa5bL8gqvCkndW6RSCicdEHL9lIriNtXwKawlSmwo+u6KNXLYT2+f24GdFPBoynKW3ke4MQ==
+
+chartjs@^0.3.24:
+  version "0.3.24"
+  resolved "https://registry.npmjs.org/chartjs/-/chartjs-0.3.24.tgz"
+  integrity sha512-h6G9qcDqmFYnSWqjWCzQMeOLiypS+pM6Fq2Rj7LPty8Kjx5yHonwwJ7oEHImZpQ2u9Pu36XGYfardvvBiQVrhg==
+
 code-red@^1.0.3:
   version "1.0.4"
   resolved "https://registry.npmjs.org/code-red/-/code-red-1.0.4.tgz"

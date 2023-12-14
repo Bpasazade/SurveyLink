@@ -119,8 +119,8 @@
       <div class="image-container w-100" style="padding: 4.75rem;">
         <img src="{ RubuPlusLogo }" alt="Logo" class="mb-5"><br>
         <div class="mt-4">
-          <span class="text text-uppercase" style="font-size: 39px; font-weight: 300; font-family: 'Sofia-Pro-ExtraLight'; line-height: 52px; margin-bottom: 6rem">Kişiselleştirilmiş</span><br>
-          <span class="text text-uppercase" style="font-size: 47px; font-weight: 900; font-family: 'Sofia-Pro-Bold'; line-height: 42px">Video Mesaj (pvm) Platformu</span><br>
+          <span class="text text-uppercase" style="font-size: 39px; font-weight: 300; font-family: 'Gilroy-UltraLight'; line-height: 52px; margin-bottom: 6rem">Kişiselleştirilmiş</span><br>
+          <span class="text text-uppercase" style="font-size: 47px; font-weight: 900; font-family: 'Gilroy-Bold'; line-height: 42px">Video Mesaj (pvm) Platformu</span><br>
         </div>
       </div>
       <div class="image-container w-100">
@@ -130,16 +130,16 @@
   </div>
   <div class="login-middle d-flex justify-content-center align-items-middle bg-light" style="height: 100vh;">
     <div class="w-100 d-flex justify-content-end">
-      <img src="{ plus }" alt="Logo" width="84" style="margin-left: -42px; z-index: 1;">
+      <img src="{ plus }" alt="Logo" width="64" style="margin-left: -32px; z-index: 1;">
     </div>
   </div>
   <div class="login-right bg-light">
       <div style="width: 420px;">
           <div class="mb-2">
-            <span style="font-weight: 800; font-size: 32px; color: #25324B">Üye Girişi </span>
+            <span style="font-weight: 800; font-size: 32px; color: #25324B; font-family: 'Gilroy-Bold', sans-serif;">Üye Girişi </span>
             <span style="font-weight: 400; font-size: 32px; color: #25324B">Yapın</span>
           </div>
-          <p style="font-weight: 400; color: #a3a3a3; font-size: 14px; font-family: 'Sofia-Pro-Light', sans-serif !important">Sisteme giriş için kullanıcı adınızı veya e-posta adresinizi giriniz.</p>
+          <p style="font-weight: 400; color: #a3a3a3; font-size: 14px; font-family: 'Gilroy-Light', sans-serif !important">Sisteme giriş için kullanıcı adınızı veya e-posta adresinizi giriniz.</p>
           <form>
               <div class="input-group mb-3" id="emailInputGroup">
                 <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">

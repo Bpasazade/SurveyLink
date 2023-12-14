@@ -8,6 +8,7 @@
     import UserDashboard from './userDashboard.svelte';
     import UserAccounts from './userAccounts.svelte';
     import UserCampaigns from './userCampaigns.svelte';
+    import ExcelToJson from "./lib/excelToJson.svelte";
 
     import { getUser } from './apis/userApis.js';
 
@@ -15,6 +16,9 @@
     import './lib/Navbar.svelte';
     import './lib/EditUserModal.svelte';
     import './lib/NewUserModal.svelte';
+    import './lib/NewCompanyModal.svelte';
+    import './lib/EditCompanyModal.svelte';
+    import './lib/BarChart.svelte';
     import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js";
 
     import jwt_decode from "jwt-decode";
@@ -60,83 +64,89 @@
     <Route path="/userDashboard" component={UserDashboard} />
     <Route path="/userAccounts" component={UserAccounts} />
     <Route path="/userCampaigns" component={UserCampaigns} />
+    <Route path="/excelToJson" component={ExcelToJson} />
 </Router>
 
 <style>
     @font-face {
-        font-family: 'Sofia-Pro-Black';
-        src: url('./assets/Fonts/Sofia Pro Black Az.otf') format('opentype');
+        font-family: 'Gilroy-BlackItalic';
+        src: url('./assets/Fonts/Gilroy-BlackItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Black-Italic';
-        src: url('./assets/Fonts/Sofia Pro Black Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-Bold';
+        src: url('./assets/Fonts/Gilroy-Bold.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Bold';
-        src: url('./assets/Fonts/Sofia Pro Bold Az.otf') format('opentype');
+        font-family: 'Gilroy-BoldItalic';
+        src: url('./assets/Fonts/Gilroy-BoldItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Bold-Italic';
-        src: url('./assets/Fonts/Sofia Pro Bold Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-ExtraBold';
+        src: url('./assets/Fonts/Gilroy-ExtraBold.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-ExtraLight';
-        src: url('./assets/Fonts/Sofia Pro ExtraLight Az.otf') format('opentype');
+        font-family: 'Gilroy-ExtraBoldItalic';
+        src: url('./assets/Fonts/Gilroy-ExtraBoldItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-ExtraLight-Italic';
-        src: url('./assets/Fonts/Sofia Pro ExtraLight Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-Heavy';
+        src: url('./assets/Fonts/Gilroy-Heavy.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Light';
-        src: url('./assets/Fonts/Sofia Pro Light Az.otf') format('opentype');
+        font-family: 'Gilroy-HeavyItalic';
+        src: url('./assets/Fonts/Gilroy-HeavyItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Light-Italic';
-        src: url('./assets/Fonts/Sofia Pro Light Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-Light';
+        src: url('./assets/Fonts/Gilroy-Light.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Medium';
-        src: url('./assets/Fonts/Sofia Pro Medium Az.otf') format('opentype');
+        font-family: 'Gilroy-LightItalic';
+        src: url('./assets/Fonts/Gilroy-LightItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Medium-Italic';
-        src: url('./assets/Fonts/Sofia Pro Medium Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-Medium';
+        src: url('./assets/Fonts/Gilroy-Medium.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Regular';
-        src: url('./assets/Fonts/Sofia Pro Regular Az.otf') format('opentype');
+        font-family: 'Gilroy-MediumItalic';
+        src: url('./assets/Fonts/Gilroy-MediumItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Regular-Italic';
-        src: url('./assets/Fonts/Sofia Pro Regular Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-Regular';
+        src: url('./assets/Fonts/Gilroy-Regular.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-SemiBold';
-        src: url('./assets/Fonts/Sofia Pro SemiBold Az.otf') format('opentype');
+        font-family: 'Gilroy-RegularItalic';
+        src: url('./assets/Fonts/Gilroy-RegularItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-SemiBold-Italic';
-        src: url('./assets/Fonts/Sofia Pro SemiBold Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-SemiBold';
+        src: url('./assets/Fonts/Gilroy-SemiBold.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Thin';
-        src: url('./assets/Fonts/Sofia Pro Thin Az.otf') format('opentype');
+        font-family: 'Gilroy-SemiBoldItalic';
+        src: url('./assets/Fonts/Gilroy-SemiBoldItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-Thin-Italic';
-        src: url('./assets/Fonts/Sofia Pro Thin Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-Thin';
+        src: url('./assets/Fonts/Gilroy-Thin.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-UltraLight';
-        src: url('./assets/Fonts/Sofia Pro UltraLight Az.otf') format('opentype');
+        font-family: 'Gilroy-ThinItalic';
+        src: url('./assets/Fonts/Gilroy-ThinItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Sofia-Pro-UltraLight-Italic';
-        src: url('./assets/Fonts/Sofia Pro UltraLight Italic Az.otf') format('opentype');
+        font-family: 'Gilroy-UltraLight';
+        src: url('./assets/Fonts/Gilroy-UltraLight.ttf') format('opentype');
     }
+    @font-face {
+        font-family: 'Gilroy-UltraLightItalic';
+        src: url('./assets/Fonts/Gilroy-UltraLightItalic.ttf') format('opentype');
+    }
+        
     :global(body) {
-    	  padding: 0;
-        font-family: 'Sofia-Pro-Regular', sans-serif !important;
+    	padding: 0;
+        font-family: 'Gilroy-Medium', sans-serif !important;
     }
 </style>

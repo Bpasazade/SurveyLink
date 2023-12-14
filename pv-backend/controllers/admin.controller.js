@@ -1,5 +1,12 @@
 const db = require('../models');
 const Company = db.company;
+const csvtojson = require("csvtojson");
+const { v4: uuidv4 } = require("uuid");
+const TargetUser = require("../models/target.user.model");
+var path = require('path');
+const __basedir = path.resolve();
+const fs = require('fs');
+
 
 exports.registerCompany = async (req, res) => {
 
@@ -69,6 +76,41 @@ exports.deleteCompany = async (req, res) => {
         return res.status(200).json(company);
     } catch (error) {
         console.error('Error deleting company:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+,exports.uploadExcelFile = async (req, res) => {
+    try {
+        if (req.file == undefined) {
+            return res.status(400).send("Please upload an excel file!");
+        }
+
+        let pathToUpload = path.join(__basedir, '/public/', req.file.filename);
+        const csvData = await csvtojson({ noheader: true, headers: ["name", "phoneNumber", "location"] }).fromFile(pathToUpload);
+
+        let targetUsers = csvData.map((csvRow) => ({
+            // 10 character max uuid
+            id: uuidv4().substring(0, 10),
+            name: csvRow.name,
+            phoneNumber: csvRow.phoneNumber,
+            location: csvRow.location,
+            company: req.body.companyId
+        }));
+
+        TargetUser.insertMany(targetUsers, (err, docs) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+
+            return res.status(200).send({
+                message: "Uploaded the file successfully: " + req.file.originalname,
+            });
+        });
+
+        fs.unlinkSync(pathToUpload);
+    } catch (error) {
+        console.error('Error uploading excel file:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
