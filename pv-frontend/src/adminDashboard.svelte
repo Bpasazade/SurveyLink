@@ -258,7 +258,6 @@
         letter-spacing: -0.3px;
         margin-bottom: 0px !important;
     }
-
     .table>:not(caption)>*>* {
         padding: 25px 30px !important;
     }

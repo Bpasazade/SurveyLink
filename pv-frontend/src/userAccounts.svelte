@@ -179,6 +179,10 @@
         background-color: #E6E8EC;
         z-index: 1;
     }
+    .grid-box {
+        border-radius: 6px !important;
+        box-shadow: 0px 2px 6px 0px rgba(67, 89, 113, 0.12);
+    }
 </style>
 
 <!-- Create User Modal -->
@@ -202,22 +206,17 @@
             <SearchProfileBar user={user} signOutUser={signOutUser} />
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 {#if user.userType == "master"}
-                <div class="col-md-12 p-4 bg-white rounded mb-4">
-                    <div class="d-flex justify-content-end">
-                        <div class="col-md-6 d-flex justify-content-end">
-                            <button class="btn bg-light me-2 media-content-button border-0 p-3" data-bs-toggle="modal" data-bs-target="#newUserModal">
-                                <img src="{ userAdd }" alt="Directbox Send" class="me-2">
-                                Kullanıcı Oluştur
-                            </button>
-                        </div>
-                    </div>
+                <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-end align-items-center grid-box">
+                    <button class="btn" type="button" data-bs-toggle="modal" data-bs-target="#newUserModal" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;">
+                        <img src={userAdd} alt="arrow" width="20" class="me-2">
+                        Hesap Oluştur
+                    </button>
                 </div>
                 {/if}
 
-                <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
                 <div class="container mx-0 px-0">
-                    <div class="col-md-12 px-4 bg-white rounded mb-4 py-1">
-                        <table class="table table-borderless " id="mediaTable">
+                    <div class="col-md-12 px-4 bg-white rounded mb-4 py-1 grid-box">
+                        <table class="table table-borderless" id="mediaTable">
                             <thead>
                               <tr>
                                 <th scope="col"></th>
@@ -230,31 +229,31 @@
                             </thead>
                             <tbody id="user-table-tbody">
                                 {#each users as user, index}
-                                <tr class="text-center">
-                                    <td>
-                                        <input class="form-check-input" type="checkbox" value="" id="{user._id}">
-                                    </td>
-                                    <td class="fileDesc">{user.name}</td>
-                                    <td class="fileDesc">{user.email}</td>
-                                    <td class="fileDesc">{user.mainUserDegree}</td>
-                                    <td class="fileDesc">{user.companyName}</td>
-                                    <td class="fileDesc">{user.numberOfScreens}</td>
-                                    <td class="fileDesc">
-                                        <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
-                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                                <span>
-                                                    <img src="{ trashCan }" alt="Trash Can" width="25">
-                                                </span>
-                                            </button>
-                                            <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
-                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                                <span>
-                                                    <img src="{ edit }" alt="Edit" width="25">
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                    <tr class="text-center">
+                                        <td>
+                                            <input class="form-check-input" type="checkbox" value="" id="{user._id}">
+                                        </td>
+                                        <td class="fileDesc">{user.name}</td>
+                                        <td class="fileDesc">{user.email}</td>
+                                        <td class="fileDesc">{user.mainUserDegree}</td>
+                                        <td class="fileDesc">{user.companyName}</td>
+                                        <td class="fileDesc">{user.numberOfScreens}</td>
+                                        <td class="fileDesc">
+                                            <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
+                                                <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                    <span>
+                                                        <img src="{ trashCan }" alt="Trash Can" width="25">
+                                                    </span>
+                                                </button>
+                                                <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
+                                                <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                    <span>
+                                                        <img src="{ edit }" alt="Edit" width="25">
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 {/each}
                             </tbody>
                         </table>

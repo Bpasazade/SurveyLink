@@ -4,57 +4,86 @@
    <meta charset="utf-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1" />
    <title>chart.js</title>
+   <script src="./node_modules/chart.js/dist/Chart.js"></script>
+   <style>
+        #chartWrapper {
+            width: 400px;
+            height: 400px;
+        }
+   </style>
 </head>
 <body>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/chart.min.js"></script>
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.1.1/helpers.esm.min.js">
-   </script>
-   <canvas id="barChart" width="600" height="400"></canvas>
-   <script>
-        var ctx = document.getElementById('barChart').getContext('2d');
-        var background_1 = ctx.createLinearGradient(0, 0, 0, 600);
-        background_1.addColorStop(0, '#327FC7');
-        background_1.addColorStop(1, '#5CB3FE');
-        var barChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "24:00"],
-                datasets: [{
-                    label: 'Sample Data',
-                    data: [0, 5000, 50000, 150000, 200000],
-                    backgroundColor: background_1,
-                    borderColor: ['red', 'blue', 'fuchsia', 'green', 'navy'],
-                    borderRadius: 10,
-                    barThickness: 20,
-                }]
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    // remove y-axis grid lines
-                    y: {              
-                        ticks: {
-                            callback: function(value, index, values) {
-                                return value === 0 ? '0k' : value / 1000 + 'k';
-                            }
-                        },
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false, // Hide the legend
-                    },
-                    tooltip: {
-                        enabled: false, // Hide tooltips on bars
-                    }
-                }
+    <div id="chartWrapper">
+        <canvas id="myChart" width="400" height="400"></canvas>
+      </div>
+    <script>
+        const canvasElement = document.getElementById('myChart');
+        const ctx = canvasElement.getContext('2d');
+
+        const myChart = new Chart(ctx, {
+        type: 'doughnut',
+        plugins: [
+            {
+            beforeDraw: function (chart) {
+                const datasetMeta = chart.getDatasetMeta(0);
+                const innerRadius = datasetMeta.controller.innerRadius;
+                const outerRadius = datasetMeta.controller.outerRadius;
+                const heightOfItem = outerRadius - innerRadius;
+
+                const countOfData = chart.getDatasetMeta(0).data.length;
+                const additionalRadius = Math.floor(heightOfItem / countOfData);
+
+                const weightsMap = datasetMeta.data
+                .map(v => v.circumference)
+                .sort((a, b) => a - b)
+                .reduce((a, c, ci) => {
+                    a.set(c, ci + 1);
+                    return a;
+                }, new Map());
+
+                datasetMeta.data.forEach(dataItem => {
+                const weight = weightsMap.get(dataItem.circumference);
+                dataItem.outerRadius = innerRadius + additionalRadius * weight;
+                });
             }
+            }
+        ],
+
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56'
+            ],
+            data: [12, 19, 3, 5, 2, 3],
+            borderWidth: 0,
+            }],
+        },
+
+        options: {
+            layout: {
+            padding: 10,
+            },
+
+            plugins: {
+            legend: false,
+            datalabels: {
+                display: false
+            },
+            },
+
+            maintainAspectRatio: false,
+            responsive: true,
+        }
         });
    </script>
+
+    
+
 </body>
 </html>
