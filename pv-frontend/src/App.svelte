@@ -8,6 +8,7 @@
     import UserDashboard from './userDashboard.svelte';
     import UserAccounts from './userAccounts.svelte';
     import UserCampaigns from './userCampaigns.svelte';
+    import UserCampaigns2 from "./userCampaigns2.svelte";
     import ExcelToJson from "./lib/excelToJson.svelte";
 
     import { getUser } from './apis/userApis.js';
@@ -55,6 +56,7 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
 <Router>
     <Route path="/login" component={Login} />
@@ -64,6 +66,7 @@
     <Route path="/userDashboard" component={UserDashboard} />
     <Route path="/userAccounts" component={UserAccounts} />
     <Route path="/userCampaigns" component={UserCampaigns} />
+    <Route path="/userCampaigns2" component={UserCampaigns2} />
     <Route path="/excelToJson" component={ExcelToJson} />
 </Router>
 
