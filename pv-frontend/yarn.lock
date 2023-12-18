@@ -232,6 +232,11 @@ estree-walker@^3.0.0, estree-walker@^3.0.3:
   dependencies:
     "@types/estree" "^1.0.0"
 
+flatpickr@^4.5.2:
+  version "4.6.13"
+  resolved "https://registry.npmjs.org/flatpickr/-/flatpickr-4.6.13.tgz"
+  integrity sha512-97PMG/aywoYpB4IvbvUJi0RQi8vearvU0oov1WW3k0WZPBMrTQVqekSX5CjSG/M4Q3i6A/0FKXC7RyAoAUUSPw==
+
 follow-redirects@^1.15.0:
   version "1.15.2"
   resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.2.tgz"
@@ -429,6 +434,13 @@ source-map-js@^1.0.1, source-map-js@^1.0.2:
   resolved "https://registry.npmjs.org/source-map-js/-/source-map-js-1.0.2.tgz"
   integrity sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==
 
+svelte-flatpickr@^3.3.4:
+  version "3.3.4"
+  resolved "https://registry.npmjs.org/svelte-flatpickr/-/svelte-flatpickr-3.3.4.tgz"
+  integrity sha512-i+QqJRs8zPRKsxv8r2GIk1fsb8cI3ozn3/aHXtViAoNKLy0j4PV7OSWavgEZC1wlAa34qi2hMkUh+vg6qt2DRA==
+  dependencies:
+    flatpickr "^4.5.2"
+
 svelte-hmr@^0.15.3:
   version "0.15.3"
   resolved "https://registry.npmjs.org/svelte-hmr/-/svelte-hmr-0.15.3.tgz"
@@ -439,7 +451,7 @@ svelte-routing@^2.0.0:
   resolved "https://registry.npmjs.org/svelte-routing/-/svelte-routing-2.0.0.tgz"
   integrity sha512-wkAzhBbXZko0vt1P/NOqJ00EP1Gz0Od6Ep1BXRwNhJl+xR+VWWlm0u/AyWt/tSwE1dwINkMeh/MhFY+b9N1obQ==
 
-"svelte@^3.19.0 || ^4.0.0", "svelte@^3.54.0 || ^4.0.0", svelte@^4.0.5:
+"svelte@^3.19.0 || ^4.0.0", "svelte@^3.54.0 || ^4.0.0", svelte@^4.0.5, "svelte@>= 3.31.0 < 5.0":
   version "4.2.0"
   resolved "https://registry.npmjs.org/svelte/-/svelte-4.2.0.tgz"
   integrity sha512-kVsdPjDbLrv74SmLSUzAsBGquMs4MPgWGkGLpH+PjOYnFOziAvENVzgJmyOCV2gntxE32aNm8/sqNKD6LbIpeQ==

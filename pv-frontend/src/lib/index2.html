@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .switch-button {
+            width: auto;
+            height: 40px;
+            text-align: center;
+            will-change: transform;
+            z-index: 197 !important;
+            cursor: pointer;
+            transition: 0.3s ease all;
+            border-radius: 45px;
+            background: #FFF;
+        }
+
+        .switch-button-case {
+            display: inline-block;
+            background: none;
+            width: max-content;
+            height: 100%;
+            color: black;
+            position: relative;
+            border: none;
+            transition: 0.3s ease all;
+            border-radius: 45px;
+        }
+
+        .switch-button .active {
+            color: white;
+            background-color: #04A3DA;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            z-index: -1;
+            transition: 0.3s ease-out all;
+            border-radius: 45px;
+        }
+
+        .switch-button .active-case {
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="p-1" style="width: fit-content; border: 1px solid rgba(44, 62, 79, 0.10); border-radius: 45px;">
+        <div class="switch-button">
+            <span class="active"></span>
+            <button class="btn switch-button-case left active-case px-3 me-3">Hazır Liste Ekle</button>
+            <button class="btn switch-button-case right ps-0 pe-3">Tek Kişi Ekle</button>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+        var switchButton 			= document.querySelector('.switch-button');
+        var switchBtnRight 			= document.querySelector('.switch-button-case.right');
+        var switchBtnLeft 			= document.querySelector('.switch-button-case.left');
+        var activeSwitch 			= document.querySelector('.active');
+
+        function switchLeft(){
+            switchBtnRight.classList.remove('active-case');
+            switchBtnLeft.classList.add('active-case');
+            activeSwitch.style.left = '0%';
+        }
+
+        function switchRight(){
+            switchBtnRight.classList.add('active-case');
+            switchBtnLeft.classList.remove('active-case');
+            activeSwitch.style.left = '50%';
+        }
+
+        switchBtnLeft.addEventListener('click', function(){
+            switchLeft();
+        }, false);
+
+        switchBtnRight.addEventListener('click', function(){
+            switchRight();
+        }, false);
+    </script>
+</body>
+</html>
