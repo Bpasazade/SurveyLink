@@ -1,4 +1,5 @@
 <script>
+    localStorage.setItem('storedRoute', '/userCampaigns');
     // Sidebar
     import Sidebar from "./lib/Sidebar.svelte";
     import arrow from './assets/sidebar-arrow.svg'
@@ -20,6 +21,7 @@
     import dislike from './assets/dislike.svg'
     import chart from './assets/chart.svg'
     import user2 from './assets/user_2.svg'
+    import graph from './assets/campaigns1/graph.svg'
     
     import Chart from 'chart.js/auto';
     import { onMount } from 'svelte';
@@ -35,10 +37,10 @@
         var barChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "24:00"],
+                labels: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00","06:00", "07:00", "08:00", "09:00", "10:00", "11:00","12:00", "13:00", "14:00", "15:00", "16:00", "17:00","18:00", "19:00", "20:00", "21:00", "22:00", "23:00"],
                 datasets: [{
                     label: 'Sample Data',
-                    data: [0, 5000, 50000, 150000, 200001],
+                    data: [0, 5000, 50000, 150000, 200001, 5000, 36000, 5000, 50000, 150000, 200001, 5000, 36000, 5000, 50000, 150000, 200001, 5000, 36000, 5000, 50000, 150000, 200001, 5000],
                     backgroundColor: background_1,
                     borderColor: ['red', 'blue', 'fuchsia', 'green', 'navy'],
                     borderRadius: 10,
@@ -81,7 +83,7 @@
         });
     });
 
-    let selection;
+    let selection = "chart";
     function select(button) {
         selection = button;
     }
@@ -133,7 +135,7 @@
     }
     #barChart {
         width: 100% !important;
-        height: 30vh !important;
+        height: 32vh !important;
     }
     #userDbGrid1 {
         background-color: #0480DA;
@@ -155,26 +157,32 @@
             <div class="row d-flex flex-column px-3 pt-1 mx-0 pe-4">
                 <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="dropdown">
-                            <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        <!-- <div class="dropdown">
+                            <button class="btn dropdown-toggle d-flex align-items-center py-2 px-3 shadow-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false"
                                 style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;">
-                                <img src={layers} alt="arrow" width="30" class="me-2">
-                                Kampanya Seçiniz
+                                <i class='bx bxs-collection me-2' style="font-size: 20px; color: #697A8D;"></i>
+                                <h1 class="text mb-0 me-5" style="font-size: 14px; font-weight: 500;">Kampanya Seçiniz</h1>
                             </button>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu w-100 border-0" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;">
                                 <li><a class="dropdown-item" href="#">Kampanya 1</a></li>
                                 <li><a class="dropdown-item" href="#">Kampanya 2</a></li>
                                 <li><a class="dropdown-item" href="#">Kampyanya 3</a></li>
                             </ul>
-                          </div>
+                          </div> -->
+                          <select class="form-select shadow-none border-0 py-2" aria-label="Default select example" style="border-radius: 8px; color: #697A8D !important; font-size: 14px; font-weight: 500; background-color: #F8F8F8;">
+                            <option selected>Kampanya Seçin</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                          </select>
                     </div>
                     <div>
-                        <button class="btn" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" on:click={() => select("chart")}>
-                            <img src={chart} alt="arrow" width="30" class="me-2">
+                        <button class="btn px-3 py-2" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" on:click={() => select("chart")}>
+                            <img src={graph} alt="arrow" width="20" class="me-2">
                             İstatistik
                         </button>
-                        <button class="btn" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" on:click={() => select("users")}>
-                            <img src={user2} alt="arrow" width="30" class="me-2">
+                        <button class="btn px-3 py-2" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" on:click={() => select("users")}>
+                            <img src={user2} alt="arrow" width="20" class="me-2">
                             Kişiler 
                         </button>
                     </div>
@@ -189,7 +197,7 @@
                                 <h1 class="text m-0" style="color: #414141; font-size: 16px; font-weight: 700;">Saatlik Veri Analizi</h1>
                                 <button class="btn btn-sm shadow-0 px-2 py-1" style="background-color: #F5F5F9; color: #414141; font-size: 11px; font-weight: 500; border-radius: 7px; color: #809FB8;">Tümü</button>
                             </div>
-                                <canvas id="barChart" bind:this={canvas}></canvas>
+                                <canvas id="barChart" aria-label="chart" bind:this={canvas}></canvas>
                         </div>
                         <div class="container px-0 mx-0" style="width: 33%; height: 42vh;">
                             <div class="row h-100 g-4">
@@ -289,7 +297,7 @@
                 </div>
 
                 {:else if selection == "users"}
-                <div class="bg-white rounded mb-4 grid-box" style="height: 43vh;">
+                <div class="bg-white rounded mb-4 grid-box px-0" style="height: 43vh;">
                     <table class="table table-hover">
                         <thead>
                           <tr>

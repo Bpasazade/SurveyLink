@@ -45,7 +45,7 @@ export async function getDashboard(_id, accessToken) {
       throw new Error(response.data.message);
     }
 
-    return response.data;
+    return response
   } catch (error) {
     throw error;
   }
@@ -57,7 +57,7 @@ export async function getUser(_id) {
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
-    return response.data;
+    return response.data
   } catch (error) {
     throw error;
   }

@@ -1,5 +1,6 @@
 <!-- src/MediaManagement.svelte -->
 <script>
+    localStorage.setItem('storedRoute', '/adminAccounts');
     // Sidebar
     import Sidebar from "./lib/Sidebar.svelte";
     import arrow from './assets/sidebar-arrow.svg'

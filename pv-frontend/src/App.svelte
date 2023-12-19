@@ -27,30 +27,60 @@
 
     var decoded = {
         id: null,
-        ait: null,
+        iat: null,
         exp: null
     }
-    
-    onMount(() => {
+
+    var user;
+
+    onMount(async () => {
         if (token == null) {
             navigate('/login');
+            return; // Stop further execution
+        }
+
+        decoded = jwt_decode(token);
+
+        if (decoded.exp < Date.now() / 1000) { 
+            localStorage.removeItem('accessToken');
+            navigate('/login');
+            return;
+        }
+
+        user = await getUser(decoded.id);
+
+        if (user == null) {
+            navigate('/login');
+            return;
+        }
+
+        // Check if there's a stored route in localStorage
+        const storedRoute = localStorage.getItem('storedRoute');
+        
+        if (storedRoute) {
+            // Clear the stored route as it's no longer needed
+            localStorage.removeItem('storedRoute');
+            
+            // Navigate to the stored route
+            navigate(storedRoute);
         } else {
-            if (token) {
-                decoded = jwt_decode(token);
-                
-                if (decoded.exp < Date.now() / 1000) { 
-                    localStorage.removeItem('accessToken');
-                    navigate('/login');
-                } else {
-                    if (decoded.ait == 'admin') {
-                        navigate('/adminDashboard');
-                    } else if (decoded.ait == 'user') {
-                        navigate('/userDashboard');
-                    }
-                }
+            // No stored route, navigate based on user role
+            if (user['role'] == 'admin') {
+                localStorage.setItem('storedRoute', '/adminDashboard');
+                navigate('/adminDashboard');
+            } else if (user['role'] == 'user') {
+                localStorage.setItem('storedRoute', '/userDashboard');
+                navigate('/userDashboard');
             }
         }
     });
+
+    function signOutUser() {
+        localStorage.removeItem('accessToken');
+        navigate('/login');
+    }
+
+
 
 </script>
 

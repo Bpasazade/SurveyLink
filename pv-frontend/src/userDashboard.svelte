@@ -11,12 +11,12 @@
     import messages from './assets/dashboard-messages.svg'
     import videos from './assets/dashboard-videos.svg'
     import stats from './assets/dashboard-stats.svg'
-    import userDbGrid1Bg from './assets/user-dashboard-grid-bg-1.png'
-    import userDbGrid2Bg from './assets/user-dashboard-grid-bg-2.png'
     import play from './assets/play.svg'
     import like from './assets/like.svg'
     import dislike from './assets/dislike.svg'
     import pieChart from './assets/pie-chart.svg'
+
+    localStorage.setItem('storedRoute', '/userDashboard');
 
     var decoded = {
         id: null,
@@ -24,7 +24,6 @@
         exp: null
     }
     decoded = jwt_decode(localStorage.getItem("accessToken"));
-    console.log(decoded.id);
 
     var user = {
         name: "",
@@ -101,14 +100,6 @@
             },
             options: {
                 aspectRatio: 1,
-                layout: {
-                    padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                    }
-                },
                 responsive: true,
                 cutout: 50,
                 borderRadius: 30,
@@ -156,14 +147,6 @@
             },
             options: {
                 aspectRatio: 1,
-                layout: {
-                    padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                    }
-                },
                 responsive: true,
                 cutout: 50,
                 borderRadius: 30,
@@ -211,14 +194,6 @@
             },
             options: {
                 aspectRatio: 1,
-                layout: {
-                    padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                    }
-                },
                 responsive: true,
                 cutout: 50,
                 borderRadius: 30,
@@ -266,14 +241,6 @@
             },
             options: {
                 aspectRatio: 1,
-                layout: {
-                    padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                    }
-                },
                 responsive: true,
                 cutout: 50,
                 borderRadius: 30,
@@ -497,6 +464,14 @@
         background-color: #07C509;
         background-size: cover;
     }
+    #chart1, #chart2, #chart3, #chart4 {
+        max-width: 93%;
+        max-height: 113%;
+    }
+    #chart5, #chart6, #chart7 {
+        max-width: 100%;
+        max-height: 100%;
+    }
 </style>
   
 <main class="m-0 p-0">      
@@ -653,7 +628,7 @@
                                 <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Genel Analiz Grafiği</h6>
                             </div>
                             <div class="w-100 d-flex justify-content-center align-items-center p-2 ps-3" style="margin-bottom: 13px;">
-                                <canvas id="chart5" aria-label="chart" bind:this={canvas6} style="width: 27vh; height: 27vh;"></canvas>
+                                <canvas id="chart6" aria-label="chart" bind:this={canvas6} style="width: 27vh; height: 27vh;"></canvas>
                             </div>
                             <div class="d-flex justify-content-center align-items-center px-3">
                                 <div class="d-flex justify-content-start align-items-center rounded me-3" style="padding:14px; background-color: #F7F8FA;">
@@ -678,7 +653,7 @@
                                 <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Genel Analiz Grafiği</h6>
                             </div>
                             <div class="w-100 d-flex justify-content-center align-items-center p-2 ps-3" style="margin-bottom: 13px;">
-                                <canvas id="chart5" aria-label="chart" bind:this={canvas7} style="width: 27vh; height: 27vh;"></canvas>
+                                <canvas id="chart7" aria-label="chart" bind:this={canvas7} style="width: 27vh; height: 27vh;"></canvas>
                             </div>
                             <div class="d-flex justify-content-center align-items-center px-3">
                                 <div class="d-flex justify-content-start align-items-center rounded me-3" style="padding:14px; background-color: #F7F8FA;">
