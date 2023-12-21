@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { get } from 'svelte/store';
 
 export async function signIn(email, password) {
   try {
@@ -70,6 +71,47 @@ export async function getCompanyUsers(companyId) {
       throw new Error(response.data.message);
     }
     console.log(response.data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Group Apis
+// Create group
+export async function createGroup(name, companyId) {
+  try {
+    const response = await axios.post('http://localhost:3000/groups', { name, companyId });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Get groups by company id
+export async function getGroups(companyId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/groups/${companyId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Campaign Apis
+// Create campaign
+export async function createCampaign(name, description, companyId) {
+  try {
+    const response = await axios.post('http://localhost:3000/campaigns', { name, description, companyId });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
     return response.data;
   } catch (error) {
     throw error;

@@ -19,6 +19,7 @@
     import play from './assets/play.svg'
     import like from './assets/like.svg'
     import dislike from './assets/dislike.svg'
+    import chart from './assets/chart.svg'
     import user2 from './assets/user_2.svg'
     import graph from './assets/campaigns1/graph.svg'
     

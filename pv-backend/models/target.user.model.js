@@ -6,6 +6,10 @@ const TargetUser = mongoose.model(
         name: String,
         phoneNumber: String,
         location: String,
+        group: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Group'
+        },
     })
 );
 

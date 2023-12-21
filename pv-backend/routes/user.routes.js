@@ -15,4 +15,10 @@ module.exports = function(app) {
   app.get("/test/user", [authJwt.verifyToken], controller.userBoard);
 
   app.get("/test/admin", [authJwt.verifyToken, authJwt.isAdmin], controller.adminBoard);
+
+  app.post("/groups", controller.createGroup);
+
+  app.get("/groups/:companyId", controller.getGroups);
+
+  app.post("/campaigns", controller.createCampaign);
 };

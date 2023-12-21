@@ -122,6 +122,9 @@
     .rotated {
         transform: rotate(180deg);
     }
+    .ms {
+        margin-left: 30px;
+    }
 </style>
 
 <div class="d-flex flex-column flex-shrink-0 justify-content-between" style="width: { sidebarWidth }px;" id="sidebar">
@@ -199,14 +202,14 @@
                     <li>
                         <Link to="/userCampaigns" style="text-decoration: none;">
                             <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaignsButtonStyle }">
-                                <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Kampanyalar 1</h1>
+                                <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Kampanyalar 1</h1>
                             </button>
                         </Link>
                     </li>
                     <li>
                         <Link to="/userCampaigns2" style="text-decoration: none;">
                             <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaigns2ButtonStyle }">
-                                <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Kampanyalar 2</h1>
+                                <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Kampanyalar 2</h1>
                             </button>
                         </Link>
                     </li>
