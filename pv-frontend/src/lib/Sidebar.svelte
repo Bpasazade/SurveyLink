@@ -68,6 +68,14 @@
         ${page === 'userCampaigns2' ? 'background-color: #04A3DA; color: white;' : ''}
         ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
 
+    $: smsServiceButtonStyle = `
+        ${page === 'userSmsService' ? 'background-color: #04A3DA; color: white;' : ''}
+        ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
+
+    $: smsServiceImageStyle = `
+        ${page === 'userSmsService' ? 'color: white; font-size: 22px !important;' : ''}
+        ${rotated ? 'margin-right: 0rem' : 'margin-right: 0.5rem'}`;
+
     $: accountsButtonStyle = `
         ${page === 'adminAccounts' || page === 'userAccounts' ? 'background-color: #04A3DA; color: white;' : ''}
         ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
@@ -210,6 +218,13 @@
                         <Link to="/userCampaigns2" style="text-decoration: none;">
                             <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaigns2ButtonStyle }">
                                 <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Kampanyalar 2</h1>
+                            </button>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/userSmsService" style="text-decoration: none;">
+                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ smsServiceButtonStyle }">
+                                <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">SMS Servisi</h1>
                             </button>
                         </Link>
                     </li>

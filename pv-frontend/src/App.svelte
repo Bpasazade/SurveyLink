@@ -9,6 +9,7 @@
     import UserAccounts from './userAccounts.svelte';
     import UserCampaigns from './userCampaigns.svelte';
     import UserCampaigns2 from "./userCampaigns2.svelte";
+    import UserSmsService from "./userSmsService.svelte";
     import ExcelToJson from "./lib/excelToJson.svelte";
 
     import { getUser } from './apis/userApis.js';
@@ -97,6 +98,7 @@
     <Route path="/userAccounts" component={UserAccounts} />
     <Route path="/userCampaigns" component={UserCampaigns} />
     <Route path="/userCampaigns2" component={UserCampaigns2} />
+    <Route path="/userSmsService" component={UserSmsService} />
     <Route path="/excelToJson" component={ExcelToJson} />
 </Router>
 
