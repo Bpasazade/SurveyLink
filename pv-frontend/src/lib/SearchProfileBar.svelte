@@ -9,15 +9,45 @@
     import cog from '../assets/cog.svg'
     import userDm from '../assets/user-dm.svg'
     
-    export let user;
-    export let signOutUser;
+    import { user } from '../user.js';
+    import { beforeUpdate } from 'svelte'
+    let loggedInUser;
 
-    user = {
+    user.subscribe(value => {
+        loggedInUser = value;
+    });
+
+    import { getUser } from "../apis/userApis.js";
+
+    var user_ = {
         name: "",
         email: "",
         phoneNumber: "",
-        mainUserDegree: "",
+        password: "",
+        verifyPassword: "",
         companyName: "",
+        mainUserDegree: "",
+        role: "",
+        userType: "",
+    }
+    async function getTheUser() {
+        user_ = await getUser(loggedInUser.id);
+    }
+
+    getTheUser();
+
+    import { signOut } from "../apis/userApis";
+    import { navigate } from 'svelte-routing';
+    import SearchProfileBar from "../lib/SearchProfileBar.svelte";
+
+    async function signOutUser() {
+        try {
+            await signOut();
+            localStorage.removeItem('accessToken');
+            navigate('/login');
+        } catch (error) {
+            console.error('Error signing out:', error);
+        }
     }
 
 </script>
@@ -74,8 +104,8 @@
             <div class="d-flex justify-content-between align-items-center">
                 <img src="{ profile }" alt="User" class="me-3" width="38">
                 <div class="d-flex flex-column justify-content-between align-items-start me-2">
-                    <p class="text-black m-0" style="font-size: 15px; font-weight:700;">{ user.name }</p>
-                    <p class="text-secondary m-0" style="font-size: 13px; font-weight:300;">{ user.email }</p>
+                    <p class="text-black m-0" style="font-size: 15px; font-weight:700;">{ user_.name }</p>
+                    <p class="text-secondary m-0" style="font-size: 13px; font-weight:300;">{ user_.email }</p>
                 </div>
                 
                 <!-- <button class="btn p-1" type="button">

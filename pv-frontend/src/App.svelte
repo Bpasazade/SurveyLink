@@ -1,28 +1,26 @@
 <script>
     import { Route, Router, navigate } from "svelte-routing";
-    import { onMount } from "svelte";
+    import { onMount, beforeUpdate } from "svelte";
     import Login from './Login.svelte';
     import AdminDashboard from './adminDashboard.svelte';
     import AdminCompanies from './adminCompanies.svelte';
     import AdminAccounts from './adminAccounts.svelte';
     import UserDashboard from './userDashboard.svelte';
     import UserAccounts from './userAccounts.svelte';
-    import UserCampaigns from './userCampaigns.svelte';
-    import UserCampaigns2 from "./userCampaigns2.svelte";
+    import UserCampaigns from './userCampaignsAnalyze.svelte';
+    import UserCampaigns2 from "./userCampaignsAll.svelte";
     import UserSmsService from "./userSmsService.svelte";
     import ExcelToJson from "./lib/excelToJson.svelte";
-
     import { getUser } from './apis/userApis.js';
 
     // Lib
-    import './lib/Navbar.svelte';
     import './lib/EditUserModal.svelte';
     import './lib/NewUserModal.svelte';
     import './lib/NewCompanyModal.svelte';
     import './lib/EditCompanyModal.svelte';
-    import './lib/BarChart.svelte';
     import "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js";
 
+    import { user } from './user.js';
     import jwt_decode from "jwt-decode";
     var token = localStorage.getItem('accessToken');
 
@@ -32,12 +30,12 @@
         exp: null
     }
 
-    var user;
+    var user_;
 
     onMount(async () => {
         if (token == null) {
             navigate('/login');
-            return; // Stop further execution
+            return;
         }
 
         decoded = jwt_decode(token);
@@ -48,9 +46,15 @@
             return;
         }
 
-        user = await getUser(decoded.id);
+        user_ = await getUser(decoded.id);
 
-        if (user == null) {
+        const storedUser = localStorage.getItem('user');
+
+        if (storedUser) {
+            user.set(JSON.parse(storedUser));
+        }
+
+        if (user_ == null) {
             navigate('/login');
             return;
         }
@@ -66,23 +70,15 @@
             navigate(storedRoute);
         } else {
             // No stored route, navigate based on user role
-            if (user['role'] == 'admin') {
+            if (user_['role'] == 'admin') {
                 localStorage.setItem('storedRoute', '/adminDashboard');
                 navigate('/adminDashboard');
-            } else if (user['role'] == 'user') {
+            } else if (user_['role'] == 'user') {
                 localStorage.setItem('storedRoute', '/userDashboard');
                 navigate('/userDashboard');
             }
         }
     });
-
-    function signOutUser() {
-        localStorage.removeItem('accessToken');
-        navigate('/login');
-    }
-
-
-
 </script>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">

@@ -16,7 +16,7 @@
       phoneNumber: "",
       password: "",
       verifyPassword: "",
-      companyName: "",
+      companyId: "",
       mainUserDegree: "",
       numberOfScreens: "",
       role: "user",
@@ -24,14 +24,8 @@
     };
 
     async function handleRegisterUser(event) {
-        event.preventDefault();
-        try {
-
-          const userData = await registerUser(user);
-          
-        } catch (error) {
-            // Handle error
-        }
+      console.log(user);
+      await registerUser(user);
     }
 
     let companies = [];
@@ -135,7 +129,7 @@
               <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                 <img src="{ userLogo }" alt="User Logo" width="24" />
               </span>
-              <input type="text" id="name" class="form-control ps-0 rounded" placeholder="Adınız/Soyadınız" bind:value={user.name} >
+              <input type="text" id="name" class="form-control ps-0 rounded" placeholder="Adınız/Soyadınız" bind:value={user.name} required>
             </div>
 
             <!-- Email -->
@@ -143,7 +137,7 @@
               <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                 <img src="{ directBoxDefault }" alt="User Logo" width="24" />
               </span>
-              <input type="email" id="email" class="form-control ps-0" placeholder="Mail Adresiniz" bind:value={user.email}>
+              <input type="email" id="email" class="form-control ps-0" placeholder="Mail Adresiniz" bind:value={user.email} required>
             </div>
 
             <!-- Phone Number -->
@@ -151,7 +145,7 @@
               <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                 <img src="{ call }" alt="User Logo" width="24" />
               </span>
-              <input type="text" id="phone" class="form-control ps-0" placeholder="Telefon Numarası" bind:value={user.phoneNumber}>
+              <input type="text" id="phone" class="form-control ps-0" placeholder="Telefon Numarası" bind:value={user.phoneNumber} required>
             </div>
 
             <div class="row">
@@ -161,7 +155,7 @@
                   <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                     <img src="{ lock }" alt="User Logo" width="24" />
                   </span>
-                  <input type="password" id="password" class="form-control ps-0" placeholder="Şifre Belirleyin" bind:value={user.password}>
+                  <input type="password" id="password" class="form-control ps-0" placeholder="Şifre Belirleyin" bind:value={user.password} required>
                 </div>
               </div>
               <div class="col">
@@ -170,7 +164,7 @@
                   <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                     <img src="{ lock }" alt="User Logo" width="24" />
                   </span>
-                  <input type="password" id="verify-password" class="form-control ps-0" placeholder="Şifre Doğrula" bind:value={user.verifyPassword}>
+                  <input type="password" id="verify-password" class="form-control ps-0" placeholder="Şifre Doğrula" bind:value={user.verifyPassword} required>
                 </div>
               </div>
             </div>
@@ -178,18 +172,18 @@
             <hr class="my-3" style="color: #25324B14; border: solid 1px #25324B14">
 
             <!-- Company Name -->
-            <!-- <div class="input-group mb-3" id="company-name-group">
-              <span class="input-group-addon bg-white align-items-center d-flex" id="companyAddon">
-                <img src="{ briefcase }" alt="User Logo" width="24" />
-              </span>
-              <input type="text" id="company-name" class="form-control ps-0" placeholder="Firma / Kurum Adı" bind:value={companyName}>
-            </div> -->
-
-            <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group" role="group" aria-label="Basic example">
-              <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.companyName}>
-              {#each companies as company}
-                <option value="{company.id}" class="ps-5">{company.name}</option>
-              {/each}
+            <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group">
+              <!-- <select class="form-select py-3 border-0" aria-label="Default select example" bind:value={user.companyId}>
+                <option selected disabled>Şirket Adı</option>
+                {#each companies as company}
+                <option value="{company._id}" class="ps-5">{company.name}</option>
+                {/each}
+              </select> -->
+              <select class="form-select" aria-label="Default select example" bind:value={user.companyId}>
+                {#each companies as company}
+                  <option value="{company._id}" class="ps-5">{company.name}</option>
+                {/each}
+              </select>
             </div>
 
             <div class="row">
@@ -199,21 +193,18 @@
                   <span class="input-group-addon bg-white align-items-center d-flex" id="degreeAddon">
                     <img src="{ userLogo }" alt="User Logo" width="24" />
                   </span>
-                  <input type="text" id="degree" class="form-control ps-0" placeholder="Ünvan" bind:value={user.mainUserDegree}>
+                  <input type="text" id="degree" class="form-control ps-0" placeholder="Ünvan" bind:value={user.mainUserDegree} required>
                 </div>
               </div>
 
               <div class="col">
                 <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group" role="group" aria-label="Basic example">
-                  <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.userType}>
+                  <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.userType} required>
                     <option disabled>Kullanıcı Tipi</option>
                     <option value="master" class="ps-5">master</option>
                     <option value="slave" class="ps-5">slave</option>
                 </div>
               </div>
-                
-
-              
             </div>
 
           </div>

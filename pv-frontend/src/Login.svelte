@@ -2,10 +2,10 @@
 <script>
     import { signIn } from "./apis/userApis.js";
     import { navigate } from 'svelte-routing';
+    import { user } from './user.js';
     import RubuPlusLogo from './assets/rubuplus-logo.svg'
     import plus from './assets/plus.svg'
     import leftImage from './assets/phone_mockup.png'
-    import loginBackground from './assets/left_background.png'
     import userLogo from './assets/user.svg'
     import smartLock from './assets/smart-lock.svg'
     import eye from './assets/eye.svg'
@@ -17,6 +17,8 @@
       event.preventDefault();
       try {
         const userData = await signIn(email, password);
+        console.log(userData);
+        user.set(userData);
         const accessToken = userData.accessToken;
         localStorage.setItem("accessToken", accessToken);
         if (userData.role.includes("ROLE_ADMIN")) {

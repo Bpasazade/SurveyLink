@@ -21,4 +21,8 @@ module.exports = function(app) {
   app.get("/groups/:companyId", controller.getGroups);
 
   app.post("/campaigns", controller.createCampaign);
+
+  // app.get("/campaigns/:companyId", controller.getCampaigns);
+
+  app.get("/campaigns/:companyId", controller.getCampaigns);
 };

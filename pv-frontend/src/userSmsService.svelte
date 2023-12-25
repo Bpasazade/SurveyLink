@@ -44,7 +44,7 @@
     // SMS Form
     let text = '';
     let previousText = '';
-    let maxCharacters = 300;
+    let maxCharacters = 160;
 
     function handleText(event) {
         text = event.target.value.slice(0, maxCharacters);
@@ -57,14 +57,29 @@
         previousText = text;
     }
 
-    
-
     function autoGrow() {
         textareaRef.style.height = "10px";
         textareaRef.style.height = (textareaRef.scrollHeight) + "px";
         if (text.length === 0) {
             textareaRef.style.height = "10px";
         }
+    }
+
+    // Company Smss
+    import { getCompanySms } from './apis/userApis.js';
+    import { get } from "svelte/store";
+    let smsList = [];
+
+    async function getCompanySmsHandler() {
+        const response = await getCompanySms(companyId);
+        smsList = response;
+    }
+    getCompanySmsHandler();
+
+    let smsSelection = '';
+    let selectedSms = '';
+    $: if (smsSelection !== '') {
+        selectedSms = smsList.find(sms => sms._id === smsSelection);
     }
 </script>
 
@@ -156,6 +171,9 @@
     .active-button > svg > path {
         fill: white !important;
     }
+    .active-button > i {
+        color: white !important;
+    }
     .counter {
         position: absolute;
         bottom: 8px;
@@ -184,7 +202,7 @@
         <Sidebar page="userSmsService" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
-            <SearchProfileBar user={user} signOutUser={signOutUser} />
+            <SearchProfileBar/>
             <div class="row d-flex flex-column px-3 pt-1 mx-0 pe-4">
                 <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-start align-items-center">
                     <div>
@@ -254,14 +272,20 @@
                                     <img src="{phone}" class="mb-3" alt="phone" width="100%"/>
                                     
                                 </div>
-                                <div class="d-flex justify-content-center">
-                                    <button class="btn d-flex align-items-center" type="button" style="font-size: 13px; background-color: #F7F8FA; color: #5E6E7B;">
-                                        <i class='bx bxs-message-square-detail me-2' style="color: #5E6E7B;" ></i>
-                                        <span class="me-2">SMS Önizleme</span>
-                                    </button>
-                                </div>
                             </div>
                         </div>
+                    </div>
+                {:else if selection === "edit-sms"}
+                    <div class="row d-flex justify-content-between align-items-center g-0" style="position:relative;">
+                        <div class="form-group">
+                            <label for="campaignSelection" class="col-md-3 col-form-label" style="background-color: transparent !important;">Kampanya Seçiniz</label>
+                            <select class="form-select shadow-none col-md-3 mb-4" aria-label="Default select example" bind:value={smsSelection}>
+                                {#each smsList as sms}
+                                    <option value={smsList}>{smsList}</option>
+                                {/each}
+                            </select>
+                        </div>
+
                     </div>
                 {/if}
             </div>

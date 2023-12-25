@@ -13,7 +13,6 @@
     // Lib
     import SearchProfileBar from "./lib/SearchProfileBar.svelte";
 
-    import Navbar from "./lib/Navbar.svelte";
     import NewUserModal from "./lib/NewUserModal.svelte";
     import NewCompanyModal from "./lib/NewCompanyModal.svelte";
     import EditCompanyModal from "./lib/EditCompanyModal.svelte";
@@ -181,7 +180,7 @@
         <Sidebar page="adminCompanies" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
-            <SearchProfileBar user={user} signOutUser={signOutUser} />
+            <SearchProfileBar/>
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 <div class="col-md-12 p-4 bg-white rounded mb-4">
                     <div class="d-flex justify-content-end">

@@ -1,7 +1,11 @@
 <!-- src/userDashboard.svelte -->
 <script>
+    // Sidebar
     import Sidebar from "./lib/Sidebar.svelte";
     import arrow from './assets/sidebar-arrow.svg'
+
+    // Search Profile Bar
+    import SearchProfileBar from "./lib/SearchProfileBar.svelte";
     
     // Main Content
     import { Link } from "svelte-routing";
@@ -17,50 +21,10 @@
     import pieChart from './assets/pie-chart.svg'
 
     localStorage.setItem('storedRoute', '/userDashboard');
-
-    var decoded = {
-        id: null,
-        ait: null,
-        exp: null
-    }
-    decoded = jwt_decode(localStorage.getItem("accessToken"));
-
-    var user = {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
-        verifyPassword: "",
-        companyName: "",
-        mainUserDegree: "",
-        role: "",
-        userType: "",
-    }
-    async function getTheUser() {
-        user = await getUser(decoded.id);
-    }
-    getTheUser();
-
-    // Lib
-    import { signOut } from "./apis/userApis";
-    import { navigate } from 'svelte-routing';
-    import SearchProfileBar from "./lib/SearchProfileBar.svelte";
-
-    async function signOutUser() {
-        try {
-            await signOut();
-            localStorage.removeItem('accessToken');
-            navigate('/login');
-        } catch (error) {
-            console.error('Error signing out:', error);
-        }
-    }
-
     let rotated = false;
 
     import Chart from 'chart.js/auto';
     let canvas1, canvas2, canvas3, canvas4, canvas5, canvas6, canvas7;
-
 
     import { onMount } from 'svelte';
     onMount(() => {
@@ -479,7 +443,7 @@
         <Sidebar page="userDashboard" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
-            <SearchProfileBar user={user} signOutUser={signOutUser} />
+            <SearchProfileBar/>
             <div class="row d-flex flex-column justify-content-between px-4 pt-2 mx-0 me-2">
                 <div class="container-fluid mx-0 px-0 mb-4" style="height: 19vh;">
                     <div class="row d-flex justify-content-between" style="height: 19vh;">

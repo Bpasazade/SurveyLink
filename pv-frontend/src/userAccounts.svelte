@@ -13,34 +13,14 @@
     // Lib
     import SearchProfileBar from "./lib/SearchProfileBar.svelte";
 
-    import Navbar from "./lib/Navbar.svelte";
     import NewUserModal from "./lib/NewUserModal.svelte";
     import EditUserModal from "./lib/EditUserModal.svelte";
     import DeleteUserModal from "./lib/DeleteUserModal.svelte";
     import { getCompanyUsers } from "./apis/userApis";
     import { signOut } from "./apis/userApis";
     import { navigate } from 'svelte-routing';
-    import { getUser } from "./apis/userApis";
 
     localStorage.setItem('storedRoute', '/userAccounts');
-
-    import jwt_decode from "jwt-decode";
-    import { getCompanyByName } from "./apis/adminApis";
-    var decoded = {
-        id: null,
-        ait: null,
-        exp: null
-    }
-    decoded = jwt_decode(localStorage.getItem("accessToken"));
-    
-    var user = {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        mainUserDegree: "",
-        companyName: "",
-        userType: "",
-    }
 
     var company = {
         name: "",
@@ -48,19 +28,19 @@
     }
     var companyid = "";
 
-    async function getTheUser() {
-        user = await getUser(decoded.id);
-    }
+    // async function getCompany() {
+    //     company = await getCompanyByName(user_.companyName);
+    //     companyid = company._id;
+    // }
 
-    async function getCompany() {
-        company = await getCompanyByName(user.companyName);
-        companyid = company._id;
-    }
+    //getCompany();
 
-    getTheUser();
-    getCompany();
+    import { user } from './user.js';
+    let loggedInUser;
 
-    console.log(user);
+    user.subscribe(value => {
+        loggedInUser = value;
+    });
 
     // var currentUser = getUser(sessionStorage.getItem('userId') );
     async function signOutUser() {
@@ -139,9 +119,9 @@
         <Sidebar page="userAccounts" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
-            <SearchProfileBar user={user} signOutUser={signOutUser} />
+            <SearchProfileBar/>
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
-                {#if user.userType == "master"}
+                {#if loggedInUser.userType == "master"}
                 <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-end align-items-center grid-box">
                     <button class="btn px-3 py-2" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;">
                         <img src={user2} alt="arrow" width="20" class="me-2">

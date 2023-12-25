@@ -288,7 +288,7 @@
         <Sidebar page="adminDashboard" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
-            <SearchProfileBar user={user} signOutUser={signOutUser} />
+            <SearchProfileBar/>
             <div class="row d-flex flex-column px-3 pt-1 mx-0 pe-4">
                 <div class="container mx-0 px-0">
                     <div class="row g-0 d-flex justify-content-between">

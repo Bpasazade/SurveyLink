@@ -13,15 +13,11 @@
     // Lib
     import SearchProfileBar from "./lib/SearchProfileBar.svelte";
 
-    import Navbar from "./lib/Navbar.svelte";
     import NewUserModal from "./lib/NewUserModal.svelte";
     import NewCompanyModal from "./lib/NewCompanyModal.svelte";
     import EditUserModal from "./lib/EditUserModal.svelte";
     import DeleteUserModal from "./lib/DeleteUserModal.svelte";
     import { fetchUsers } from "./apis/adminApis";
-    import { signOut } from "./apis/userApis";
-    import { navigate } from 'svelte-routing';
-    import { getUser } from "./apis/userApis";
 
     let users = [];
     let selectedUser = null;
@@ -35,36 +31,6 @@
     }
 
     loadUsers();
-
-    import jwt_decode from "jwt-decode";
-    var decoded = {
-        id: null,
-        ait: null,
-        exp: null
-    }
-    decoded = jwt_decode(localStorage.getItem("accessToken"));
-    
-    var user = {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        mainUserDegree: "",
-        companyName: "",
-    }
-    async function getTheUser() {
-        user = await getUser(decoded.id);
-    }
-    getTheUser();
-
-    async function signOutUser() {
-        try {
-            await signOut();
-            localStorage.removeItem('accessToken');
-            navigate('/login');
-        } catch (error) {
-            console.error('Error signing out:', error);
-        }
-    }
     let rotated = false;
 
     function rotate() {
@@ -188,7 +154,7 @@
         <Sidebar page="adminAccounts" rotated={rotated} />
 
         <div class="col-md px-0" id="main-content-div">
-            <SearchProfileBar user={user} signOutUser={signOutUser} />
+            <SearchProfileBar/>
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 <div class="col-md-12 p-4 bg-white rounded mb-4">
                     <div class="d-flex justify-content-end">

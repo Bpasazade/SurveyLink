@@ -77,6 +77,18 @@ export async function getCompanyUsers(companyId) {
   }
 }
 
+export async function getCompanyCampaigns(companyId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/campaigns/${companyId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 // Group Apis
 // Create group
 export async function createGroup(name, companyId) {
@@ -109,6 +121,46 @@ export async function getGroups(companyId) {
 export async function createCampaign(name, description, companyId) {
   try {
     const response = await axios.post('http://localhost:3000/campaigns', { name, description, companyId });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Get campaigns by company id
+export async function getCampaigns(companyId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/campaigns/${companyId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Sms Apis
+// Create sms
+export async function createSms(name, description, companyId) {
+  try {
+    const response = await axios.post('http://localhost:3000/sms', { name, description, companyId });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Get sms by company id
+export async function getSms(companyId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/sms/${companyId}`);
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

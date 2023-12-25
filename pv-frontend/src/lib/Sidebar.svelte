@@ -208,16 +208,16 @@
             <div class="collapse" id="campaigns-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal">
                     <li>
-                        <Link to="/userCampaigns" style="text-decoration: none;">
-                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaignsButtonStyle }">
-                                <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Kampanyalar 1</h1>
+                        <Link to="/userCampaigns2" style="text-decoration: none;">
+                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaigns2ButtonStyle }">
+                                <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Tüm Kampanyalar</h1>
                             </button>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/userCampaigns2" style="text-decoration: none;">
-                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaigns2ButtonStyle }">
-                                <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Kampanyalar 2</h1>
+                        <Link to="/userCampaigns" style="text-decoration: none;">
+                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaignsButtonStyle }">
+                                <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Kampanya Analizi</h1>
                             </button>
                         </Link>
                     </li>

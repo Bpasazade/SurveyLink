@@ -76,12 +76,26 @@ exports.createCampaign = async (req, res) => {
     const newCampaign = new Campaign({
       name,
       description,
-      company: company,
+      company: companyId,
     });
     const savedCampaign = await newCampaign.save();
     return res.status(200).json(savedCampaign);
   } catch (error) {
     console.error('Error creating campaign:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Get campaigns by company id
+exports.getCampaigns = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    console.log(companyId);
+    const campaigns = await Campaign.find({ company: companyId });
+    console.log(campaigns);
+    return res.status(200).json(campaigns);
+  } catch (error) {
+    console.error('Error getting campaigns:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 }
