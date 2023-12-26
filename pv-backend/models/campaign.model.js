@@ -13,6 +13,7 @@ const Campaign = mongoose.model(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Group"
         },
+        status: String,
     })
 );
 

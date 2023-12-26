@@ -20,9 +20,17 @@ module.exports = function(app) {
 
   app.get("/groups/:companyId", controller.getGroups);
 
+  app.get("/groups/list/:companyId", controller.getGroupList);
+
   app.post("/campaigns", controller.createCampaign);
 
-  // app.get("/campaigns/:companyId", controller.getCampaigns);
-
   app.get("/campaigns/:companyId", controller.getCampaigns);
+
+  app.put("/campaigns/:campaignId", controller.updateCampaign);
+
+  app.post("/sms", controller.createSms);
+
+  app.get("/sms/:companyId", controller.getSms);
+
+  app.put("/sms/:smsId", controller.updateSms);
 };

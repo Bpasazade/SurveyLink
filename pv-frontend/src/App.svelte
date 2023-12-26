@@ -1,16 +1,17 @@
 <script>
     import { Route, Router, navigate } from "svelte-routing";
-    import { onMount, beforeUpdate } from "svelte";
-    import Login from './Login.svelte';
-    import AdminDashboard from './adminDashboard.svelte';
-    import AdminCompanies from './adminCompanies.svelte';
-    import AdminAccounts from './adminAccounts.svelte';
-    import UserDashboard from './userDashboard.svelte';
-    import UserAccounts from './userAccounts.svelte';
-    import UserCampaigns from './userCampaignsAnalyze.svelte';
-    import UserCampaigns2 from "./userCampaignsAll.svelte";
-    import UserSmsService from "./userSmsService.svelte";
+    import { onMount } from "svelte";
+    import Login from './pages/Login.svelte';
+    import AdminDashboard from './pages/adminDashboard.svelte';
+    import AdminCompanies from './pages/adminCompanies.svelte';
+    import AdminAccounts from './pages/adminAccounts.svelte';
+    import UserDashboard from './pages/userDashboard.svelte';
+    import UserAccounts from './pages/userAccounts.svelte';
+    import UserCampaigns from './pages/userCampaignsAnalyze.svelte';
+    import UserCampaigns2 from "./pages/userCampaignsAll.svelte";
+    import UserSmsService from "./pages/userSmsService.svelte";
     import ExcelToJson from "./lib/excelToJson.svelte";
+    import UserGroups from "./pages/userGroups.svelte";
     import { getUser } from './apis/userApis.js';
 
     // Lib
@@ -95,6 +96,7 @@
     <Route path="/userCampaigns" component={UserCampaigns} />
     <Route path="/userCampaigns2" component={UserCampaigns2} />
     <Route path="/userSmsService" component={UserSmsService} />
+    <Route path="/userGroups" component={UserGroups} />
     <Route path="/excelToJson" component={ExcelToJson} />
 </Router>
 

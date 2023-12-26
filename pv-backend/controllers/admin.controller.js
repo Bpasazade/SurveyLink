@@ -1,12 +1,8 @@
 const db = require('../models');
 const Company = db.company;
-const csvtojson = require("csvtojson");
+const xlsx = require('xlsx');
 const { v4: uuidv4 } = require("uuid");
 const TargetUser = require("../models/target.user.model");
-var path = require('path');
-const __basedir = path.resolve();
-const fs = require('fs');
-
 
 exports.registerCompany = async (req, res) => {
 
@@ -80,35 +76,32 @@ exports.deleteCompany = async (req, res) => {
     }
 }
 
-,exports.uploadExcelFile = async (req, res) => {
+exports.uploadExcelFile = async (req, res, file) => {
     try {
-        if (req.file == undefined) {
+        const { companyId, groupId } = req.body;
+        if (file == undefined) {
             return res.status(400).send("Please upload an excel file!");
         }
+        const workbook = xlsx.readFile(req.file.path);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
 
-        let pathToUpload = path.join(__basedir, '/public/', req.file.filename);
-        const csvData = await csvtojson({ noheader: true, headers: ["name", "phoneNumber", "location"] }).fromFile(pathToUpload);
+        // Get column headers dynamically
+        const columnHeaders = ['name', 'phoneNumber', 'location'];
 
-        let targetUsers = csvData.map((csvRow) => ({
-            // 10 character max uuid
-            id: uuidv4().substring(0, 10),
-            name: csvRow.name,
-            phoneNumber: csvRow.phoneNumber,
-            location: csvRow.location,
-            company: req.body.companyId
+        // Process each row
+        const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: columnHeaders });
+
+        const enrichedData = jsonData.map((user) => ({
+            id: uuidv4(),
+            company: companyId,
+            group: groupId,
+            ...user,
         }));
 
-        TargetUser.insertMany(targetUsers, (err, docs) => {
-            if (err) {
-                return res.status(500).send(err);
-            }
-
-            return res.status(200).send({
-                message: "Uploaded the file successfully: " + req.file.originalname,
-            });
-        });
-
-        fs.unlinkSync(pathToUpload);
+        // Save the data in the database
+        await TargetUser.insertMany(enrichedData);
+        return res.status(200).json({ message: 'File uploaded successfully!' });
     } catch (error) {
         console.error('Error uploading excel file:', error);
         return res.status(500).json({ message: 'Internal Server Error' });

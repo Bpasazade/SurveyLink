@@ -76,6 +76,14 @@
         ${page === 'userSmsService' ? 'color: white; font-size: 22px !important;' : ''}
         ${rotated ? 'margin-right: 0rem' : 'margin-right: 0.5rem'}`;
 
+    $: groupsButtonStyle = `
+        ${page === 'userGroups' ? 'background-color: #04A3DA; color: white;' : ''}
+        ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
+
+    $: groupsImageStyle = `
+        ${page === 'userGroups' ? 'color: white; font-size: 22px !important;' : ''}
+        ${rotated ? 'margin-right: 0rem' : 'margin-right: 0.5rem'}`;
+
     $: accountsButtonStyle = `
         ${page === 'adminAccounts' || page === 'userAccounts' ? 'background-color: #04A3DA; color: white;' : ''}
         ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
@@ -132,6 +140,9 @@
     }
     .ms {
         margin-left: 30px;
+    }
+    .sub-button {
+        color: #1783A8;
     }
 </style>
 
@@ -209,27 +220,35 @@
                 <ul class="btn-toggle-nav list-unstyled fw-normal">
                     <li>
                         <Link to="/userCampaigns2" style="text-decoration: none;">
-                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaigns2ButtonStyle }">
+                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center sub-button" type="button" style="{ campaigns2ButtonStyle }">
                                 <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Tüm Kampanyalar</h1>
                             </button>
                         </Link>
                     </li>
                     <li>
                         <Link to="/userCampaigns" style="text-decoration: none;">
-                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ campaignsButtonStyle }">
+                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center sub-button" type="button" style="{ campaignsButtonStyle }">
                                 <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">Kampanya Analizi</h1>
                             </button>
                         </Link>
                     </li>
                     <li>
                         <Link to="/userSmsService" style="text-decoration: none;">
-                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ smsServiceButtonStyle }">
+                            <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center sub-button" type="button" style="{ smsServiceButtonStyle }">
                                 <h1 class="text text-sidebar mb-0 ms" style="{ sidebarTextStyle }">SMS Servisi</h1>
                             </button>
                         </Link>
                     </li>
                 </ul>
             </div>
+        </li>
+        <li>
+            <Link to="/userGroups" style="text-decoration: none;">
+                <button class="btn sidebar-button mt-3 w-100 text-start d-flex align-items-center" type="button" style="{ groupsButtonStyle }">
+                    <i class='bx bxs-group' style="{ groupsImageStyle }"></i>
+                    <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Gruplar</h1>
+                </button>
+            </Link>
         </li>
         <li>
             <Link to="/userAccounts" style="text-decoration: none;">

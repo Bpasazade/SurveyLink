@@ -11,6 +11,7 @@ db.usertypes = require("./user.type.model");
 db.company = require("./company.model");
 db.group = require("./group.model");
 db.campaign = require("./campaign.model");
+db.sms = require("./sms.model");
 
 db.ROLES = ["user", "admin"];
 db.USERTYPES = ["master", "slave"];

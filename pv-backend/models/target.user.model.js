@@ -10,6 +10,10 @@ const TargetUser = mongoose.model(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Group'
         },
+        company: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Company'
+        }
     })
 );
 

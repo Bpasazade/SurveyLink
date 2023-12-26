@@ -1,9 +1,11 @@
 const config = require("../config/auth.config");
 const db = require("../models");
+const TargetUser = require("../models/target.user.model");
 const User = db.user;
 const Company = db.company;
 const Group = db.group;
 const Campaign = db.campaign;
+const Sms = db.sms;
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -65,6 +67,20 @@ exports.getGroups = async (req, res) => {
   }
 }
 
+// Get group list
+exports.getGroupList = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    console.log(companyId);
+    const groupList = await TargetUser.find({ company: companyId });
+    console.log(groupList);
+    return res.status(200).json(groupList);
+  } catch (error) {
+    console.error('Error getting group list:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 // Create campaign
 exports.createCampaign = async (req, res) => {
   try {
@@ -77,6 +93,8 @@ exports.createCampaign = async (req, res) => {
       name,
       description,
       company: companyId,
+      group: groupId,
+      status: 'pending',
     });
     const savedCampaign = await newCampaign.save();
     return res.status(200).json(savedCampaign);
@@ -90,12 +108,87 @@ exports.createCampaign = async (req, res) => {
 exports.getCampaigns = async (req, res) => {
   try {
     const { companyId } = req.params;
-    console.log(companyId);
     const campaigns = await Campaign.find({ company: companyId });
-    console.log(campaigns);
     return res.status(200).json(campaigns);
   } catch (error) {
     console.error('Error getting campaigns:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Update campaign
+exports.updateCampaign = async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+    const { name, description, companyId } = req.body;
+    console.log(campaignId, name, description, companyId);
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' });
+    }
+    campaign.name = name;
+    campaign.description = description;
+    campaign.company = companyId;
+    const savedCampaign = await campaign.save();
+    return res.status(200).json(savedCampaign);
+  } catch (error) {
+    console.error('Error updating campaign:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+const moment = require('moment');
+// Create sms
+exports.createSms = async (req, res) => {
+  try {
+    const { message, groupId, date, companyId,  } = req.body;
+    console.log(message, date, companyId, groupId);
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+    const formattedDate = moment(date).format('YYYY-MM-DDTHH:mm');
+    const newSms = new Sms({
+      message,
+      date: formattedDate,
+      groupId: groupId,
+      companyId: companyId,
+    });
+    const savedSms = await newSms.save();
+    return res.status(200).json(savedSms);
+  } catch (error) {
+    console.error('Error creating sms:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Get sms by company id
+exports.getSms = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    const sms = await Sms.find({ company: companyId });
+    return res.status(200).json(sms);
+  } catch (error) {
+    console.error('Error getting sms:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Update sms
+exports.updateSms = async (req, res) => {
+  try {
+    const { smsId } = req.params;
+    const { message, date, companyId } = req.body;
+    const sms = await Sms.findById(smsId);
+    if (!sms) {
+      return res.status(404).json({ message: 'Sms not found' });
+    }
+    sms.message = message;
+    sms.date = date;
+    sms.company = companyId;
+    const savedSms = await sms.save();
+    return res.status(200).json(savedSms);
+  } catch (error) {
+    console.error('Error updating sms:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 }

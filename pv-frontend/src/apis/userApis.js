@@ -116,6 +116,19 @@ export async function getGroups(companyId) {
   }
 }
 
+// Get Group List
+export async function getCompanyTargetList(companyId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/groups/list/${companyId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Campaign Apis
 // Create campaign
 export async function createCampaign(name, description, companyId) {
@@ -143,11 +156,24 @@ export async function getCampaigns(companyId) {
   }
 }
 
+// Update campaign
+export async function updateCampaign(campaignId, name, description, companyId) {
+  try {
+    const response = await axios.put(`http://localhost:3000/campaigns/${campaignId}`, { name, description, companyId });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 // Sms Apis
 // Create sms
-export async function createSms(name, description, companyId) {
+export async function createSms(message, groupId, date, companyId) {
   try {
-    const response = await axios.post('http://localhost:3000/sms', { name, description, companyId });
+    const response = await axios.post('http://localhost:3000/sms', { message, groupId, date, companyId });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
@@ -161,6 +187,19 @@ export async function createSms(name, description, companyId) {
 export async function getSms(companyId) {
   try {
     const response = await axios.get(`http://localhost:3000/sms/${companyId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Update sms
+export async function updateSms(smsId, message, group, date, companyId) {
+  try {
+    const response = await axios.put(`http://localhost:3000/sms/${smsId}`, { message, group, date, companyId });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
