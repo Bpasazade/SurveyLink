@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { get } from 'svelte/store';
 
 export async function signIn(email, password) {
   try {
@@ -64,13 +63,12 @@ export async function getUser(_id) {
   }
 }
 
-export async function getCompanyUsers(companyId) {
+export async function getUsersByCompanyId(companyId) {
   try {
     const response = await axios.get(`http://localhost:3000/users/${companyId}`);
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -200,6 +198,23 @@ export async function getSms(companyId) {
 export async function updateSms(smsId, message, group, date, companyId) {
   try {
     const response = await axios.put(`http://localhost:3000/sms/${smsId}`, { message, group, date, companyId });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Excel File Upload Api
+export async function uploadExcelFile(file, companyId, groupId) {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('companyId', companyId);
+    formData.append('groupId', groupId);
+    const response = await axios.post('http://localhost:3000/uploadExcelFile', formData);
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

@@ -1,16 +1,4 @@
 const controller = require("../controllers/admin.controller");
-const multer = require('multer');
-
-const excelStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, './public');
-    },
-    filename: (req, file, cb) => {
-      cb(null, file.originalname);
-    }
-});
-
-const excelUploads = multer({ storage: excelStorage });
 
 module.exports = function(app) {
     app.use(function(req, res, next) {
@@ -30,6 +18,4 @@ module.exports = function(app) {
     app.put('/companies/:id', controller.updateCompany);
 
     app.delete('/companies/:id', controller.deleteCompany);
-
-    app.post('/uploadExcelFile', excelUploads.single('file'), controller.uploadExcelFile);
 }

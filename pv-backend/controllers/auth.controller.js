@@ -6,15 +6,17 @@ const UserType = db.usertypes;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
+const { mongo } = require("mongoose");
 
 exports.signup = (req, res) => {
+  console.log("req.bpdy ", req.body);
   const user = new User({
     name: req.body.name,
     lastname: req.body.lastname,
     mainUserDegree: req.body.mainUserDegree,
     email: req.body.email,
     phoneNumber: req.body.phoneNumber,
-    companyId: req.body.companyId,
+    company: req.body.company,
     password: bcrypt.hashSync(req.body.password, 8),
     role: req.body.role,
     userType: req.body.userType,
@@ -155,6 +157,7 @@ exports.signin = (req, res) => {
       res.status(200).send({
         id: user._id,
         email: user.email,
+        company: user.company,
         role: authorities,
         accessToken: token
       });
@@ -163,8 +166,9 @@ exports.signin = (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const roleName = "user";
-    const users = await User.find({ role: roleName });
+    // const roleName = "user";
+    // const users = await User.find({ role: roleName });
+    const users = await User.find({ company: "657045d7b1f7fa8f0a0e4c7c" });
     console.log(users);
     res.status(200).json(users);
   } catch (error) {
@@ -221,6 +225,15 @@ exports.signout = async (req, res) => {
   }
 };
 
+// Accounts
 exports.getUsersByCompanyId = async (req, res) => {
-  
+  try {
+    const { companyId } = req.params;
+    console.log("companyId", companyId);
+    const users = await User.find({ role: "user" });
+    console.log(users);
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
 };

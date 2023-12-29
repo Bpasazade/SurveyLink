@@ -1,4 +1,5 @@
 <script>
+    // Page Route
     localStorage.setItem('storedRoute', 'userCampaigns2');
 
     // User
@@ -57,12 +58,10 @@
     import { getGroups } from '../apis/userApis.js';
     import { onMount } from "svelte";
 
-    let companyId = "6589acb4542c4fc443e159a7"
-
     var groupName = '';
     let createdGroupList = [];
     async function createGroupHandler() {
-        await createGroup(groupName, companyId);
+        await createGroup(groupName, loggedInUser.company);
         getGroupsHandler();
         createdGroupList = [...createdGroupList, groupName];
         console.log('createdGroupList', createdGroupList);
@@ -70,7 +69,7 @@
     }
 
     async function getGroupsHandler() {
-        const response = await getGroups(companyId);
+        const response = await getGroups(loggedInUser.company);
         groupList = response;
     }
 
@@ -80,7 +79,6 @@
     let selection = 'campaigns-table';
     let newCampaignButton = false;
     let editCampaignButton = false;
-
 
     function toggle(button) {
         if (button === 'new-campaign-button') {
@@ -117,8 +115,9 @@
     let campaignName = '';
     let campaignDescription = '';
 
-    async function createCampaignHandler() {
-        const response = await createCampaign(campaignName, campaignDescription, companyId);
+    async function createCampaignHandler(event) {
+        const response = await createCampaign(campaignName, campaignDescription, loggedInUser.company);
+        uploadFile();
         if (response) {
             // refresh page
             window.location.reload();
@@ -129,7 +128,7 @@
     let editedCampaignName = '';
     let editedCampaignDescription = '';
     async function updateCampaignHandler() {
-        const response = await updateCampaign(campaignId, editedCampaignName, editedCampaignDescription, companyId);
+        const response = await updateCampaign(campaignId, editedCampaignName, editedCampaignDescription, loggedInUser.company);
         if (response) {
             // refresh page
             window.location.reload();
@@ -141,7 +140,7 @@
     let campaignList = [];
 
     async function getCompanyCampaignsHandler() {
-        const response = await getCompanyCampaigns(companyId);
+        const response = await getCompanyCampaigns(loggedInUser.company);
         campaignList = response;
     }
     getCompanyCampaignsHandler();
@@ -158,9 +157,24 @@
     // Campaigns Table Edit
     function editCampaignTable(event) {
         campaignSelection = event.target.closest('tr').firstElementChild.innerText;
+        campaignSelection = (campaignList.filter(campaign => campaign._id !== campaignSelection))[0]._id;
+        console.log('campaignSelection', campaignSelection);
         toggle('edit-campaign-button');
     }
 
+    // Excel File Upload
+    import { uploadExcelFile } from "../apis/userApis";
+
+    let excelFile = null;
+    let selectedGroup;
+    
+    function handleFileUpload(event) {
+        excelFile = event.target.files[0];
+    }
+
+    function uploadFile() {
+        uploadExcelFile(excelFile, loggedInUser.company, selectedGroup);
+    }
 </script>
 
 <style>
@@ -217,12 +231,12 @@
     }
     /* initially set all accordion buttons to collapsed */
     .accordion-button::after {
-        background-image: url("./assets/plus-accordion.svg") !important;
+        background-image: url("../assets/plus-accordion.svg") !important;
         transform: none;
     }
     /* set the accordion button to expanded when the accordion is open */
     .accordion-button:not(.collapsed)::after {
-        background-image: url("./assets/minus-accordion.svg") !important;
+        background-image: url("../assets/minus-accordion.svg") !important;
         transform: rotate(90deg);
     }
     input {
@@ -314,9 +328,18 @@
     input[type=file] {
         color: black;
         font-size: 15px !important;
-        padding: 13.5px 15px 13.5px 15px !important;
         margin-bottom: 0px !important;
         align-items: center !important;
+        vertical-align: middle !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+    input[type=file]::-webkit-file-upload-button {
+        height: 50px !important;
+        background-color: white !important;
+
     }
     .form-group {
         position: relative;
@@ -354,6 +377,9 @@
     }
     .active-button > svg > path {
         fill: white !important;
+    }
+    th {
+        vertical-align: middle !important;
     }
     td {
         vertical-align: middle !important;
@@ -421,7 +447,7 @@
                     <table class="table table-hover px-0 grid-box">
                         <thead>
                             <tr>
-                                <th scope="col">ID</th>
+                                <th scope="col">#</th>
                                 <th scope="col">Kampanya Adı</th>
                                 <th scope="col">Tarih</th>
                                 <th scope="col">Gönderilen Kişi Sayısı</th>
@@ -430,9 +456,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each campaignList as campaign (campaign)}
+                            {#each campaignList as campaign, index}
                                 <tr>
-                                    <td>{campaign._id}</td>
+                                    <th scope="row">{index + 1}</th>
                                     <td>{campaign.name}</td>
                                     <td>{campaign.date}</td>
                                     <td>{campaign.sentPersonCount}</td>
@@ -491,6 +517,14 @@
                                     <div class="accordion-body pt-2">
                                         <hr class="m-0 p-0 pt-3" style="color: #b8b5bf; height: 2px;"/>
                                         <div class="my-3">
+                                            <div class="form-group mb-4">
+                                                <label for="campaingTemplate">Kampanya Şablonu Seçiniz</label>
+                                                <select class="form-select shadow-none" aria-label="Default select example">
+                                                    <option selected value="1">Kampanya Şablonu Seçiniz</option>
+                                                    <option value="2">Şablon 1</option>
+                                                    <option value="3">Şablon 2</option>
+                                                </select>
+                                            </div>
                                             <div class="form-group mb-4">
                                                 <label for="campaingName">Kampanya Adı</label>
                                                 <input type="text" class="form-control shadow-none" id="campaingName" placeholder="Lütfen Kampanya Adını Giriniz" bind:value={campaignName}>
@@ -599,7 +633,7 @@
                                     <div id="person-information-panel" class="accordion-collapse bg-white collapse" data-bs-parent="#campaign-information-panel-top">
                                         <div class="accordion-body pt-2">
                                             <hr class="m-0 p-0 pt-3" style="color: #b8b5bf; height: 2px;"/>
-                                            <div class="my-3 d-flex justify-content-between">
+                                            <div class="my-4 d-flex justify-content-between">
                                                 <div class="p-1" style="width: fit-content; border: 1px solid rgba(44, 62, 79, 0.10); border-radius: 45px;">
                                                     <div class="switch-button d-flex justify-content-between">
                                                         <span class="active" style="left: {activeSwitchStyle.left};"></span>
@@ -610,27 +644,24 @@
                                             </div>
                                             <span id="left-switch-span">
                                                 <div class="d-flex">
-                                                    <div class="form-group mb-3 col me-2">
-                                                        <input type="file" class="form-control shadow-none p-0" id="inputGroupFile01">
+                                                    <div class="col form-group mb-3 col me-2">
+                                                        <input type="file" class="form-control shadow-none p-0" id="inputGroupFile01" on:change={handleFileUpload}/>
                                                     </div>
-                                                    <div class="form-group mb-3 col ms-2">
-                                                        <label for="listName">Liste Adı Girin</label>
-                                                        <input type="text" class="form-control shadow-none" id="listName" placeholder="Lütfen Liste Adı Girin">
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-between mb-3">
-                                                    <div class="form-group w-100 me-3">
+                                                    <div class="col form-group  me-3">
                                                         <label for="listName">Grup Seçiniz</label>
-                                                        <select class="form-select shadow-none" aria-label="Default select example">
+                                                        <select class="form-select shadow-none" aria-label="Default select example" bind:value={selectedGroup}>
                                                             <option selected value="1">Grup Seçiniz</option>
                                                             {#each groupList as group}
                                                                 <option value={group._id}>{group.name}</option>
                                                             {/each}
                                                         </select>
                                                     </div>
+                                                </div>
+                                                <div class="d-flex justify-content-between mb-3">
+                                                    
                                                     <span class="col-md-3">
                                                         <button class="btn btn-accordion d-flex justify-content-center align-items-center w-100 h-100 py-0" type="button" style="background-color: #04A3DA; color: white;" on:click={createCampaignHandler}>
-                                                            Kampanyayı Kaydet
+                                                            Kaydet
                                                             <i class='bx bx-check-double mb-0' style="font-size: 24px;"></i>
                                                         </button>
                                                     </span>
@@ -639,39 +670,42 @@
 
                                             <span id="right-switch-span" style="display: none;">
                                                 <div class="d-flex">
-                                                    <div class="form-floating mb-3 col me-2">
-                                                        <input type="text" class="form-control shadow-none" id="personName" placeholder="">
-                                                        <label for="personName" style="color: #697A8D;">Kişi Adı</label>
+                                                    <div class="form-group mb-4 col me-2">
+                                                        <label for="personName" style="color: #697A8D;">Adı</label>
+                                                        <input type="text" class="form-control shadow-none" id="personName" placeholder="Lütfen Kişi Adı Giriniz">
                                                     </div>
-                                                    <div class="form-floating mb-3 col ms-2">
-                                                        <input type="text" class="form-control shadow-none" id="personSurname" placeholder="">
-                                                        <label for="personSurname" style="color: #697A8D;">Kişi Soyadı</label>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex">
-                                                    <div class="form-floating mb-3 col">
-                                                        <input type="text" class="form-control shadow-none" id="personPhone" placeholder="">
-                                                        <label for="personPhone" style="color: #697A8D;">Kişi Telefonu</label>
+                                                    <div class="form-group mb-4 col ms-2">
+                                                        <label for="personSurname" style="color: #697A8D;">Soyadı</label>
+                                                        <input type="text" class="form-control shadow-none" id="personSurname" placeholder="Lütfen Kişi Soyadı Giriniz">
                                                     </div>
                                                 </div>
                                                 <div class="d-flex">
-                                                    <div class="form-floating mb-3 col">
+                                                    <div class="form-group mb-4 col">
+                                                        <label for="personPhone" style="color: #697A8D;">Telefonu</label>
+                                                        <input type="text" class="form-control shadow-none" id="personPhone" placeholder="Lütfen Kişi Telefonu Giriniz">
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex">
+                                                    <div class="form-group mb-4 col">
+                                                        <label for="personEmail" style="color: #697A8D;">Şehir</label>
                                                         <select class="form-select shadow-none" aria-label="Default select example">
-                                                            <option selected value="1">Şehir</option>
+                                                            <option selected value="1">Lütfen Şehir Seçiniz</option>
                                                             <option value="2">Ankara</option>
                                                             <option value="3">İstanbul</option>
                                                         </select>
                                                     </div>
-                                                    <div class="form-floating mb-3 col ms-2">
+                                                    <div class="form-group mb-4 col ms-2">
+                                                        <label for="personEmail" style="color: #697A8D;">İlçe</label>
                                                         <select class="form-select shadow-none" aria-label="Default select example">
-                                                            <option selected value="1">İlçe</option>
+                                                            <option selected value="1">Lütfe İlçe Seçiniz</option>
                                                             <option value="2">Çankaya</option>
                                                             <option value="3">Keçiören</option>
                                                         </select>
                                                     </div>
-                                                    <div class="form-floating mb-3 col ms-2">
+                                                    <div class="form-group mb-4 col ms-2">
+                                                        <label for="personEmail" style="color: #697A8D;">Mahalle</label>
                                                         <select class="form-select shadow-none" aria-label="Default select example">
-                                                            <option selected value="1">Mahalle</option>
+                                                            <option selected value="1">Lütfen Mahalle Seçiniz</option>
                                                             <option value="2">Ayrancı</option>
                                                             <option value="3">Bahçelievler</option>
                                                         </select>
@@ -679,17 +713,17 @@
                                                 </div>
 
                                                 <div class="d-flex justify-content-between mb-3">
-                                                    <div class="form-floating w-100 me-3">
+                                                    <div class="form-group w-100 me-3">
+                                                        <label for="listName" style="color: #697A8D;">Grup Seçiniz</label>
                                                         <select class="form-select shadow-none" aria-label="Default select example">
                                                             {#each groupList as group}
                                                                 <option value={group._id}>{group.name}</option>
                                                             {/each}
                                                         </select>
-                                                        <label for="listName" style="color: #697A8D;">Grup Seçiniz</label>
                                                     </div>
                                                     <span class="col-md-3">
                                                         <button class="btn btn-accordion d-flex justify-content-center align-items-center w-100 h-100 py-0" type="button" style="background-color: #04A3DA; color: white;" on:click={createCampaignHandler}>
-                                                            Kampanyayı Kaydet
+                                                            Kaydet
                                                             <i class='bx bx-check-double mb-0' style="font-size: 24px;"></i>
                                                         </button>
                                                     </span>

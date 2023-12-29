@@ -2,14 +2,9 @@
 <script>
     import { onMount } from 'svelte';
     import { Link } from "svelte-routing";
-    // import search from '../assets/search.svg';
     import RLogo from '../assets/logo.svg'
     import logoSmall from '../assets/logo-dark.svg';
     import dashboard from '../assets/sidebar/dashboard-icon.svg';
-    import accounts from '../assets/accounts.svg';
-    import partners from '../assets/partners.svg';
-    import layer from '../assets/layer.svg';
-    import merchants from '../assets/merchant.svg';
     import arrow from '../assets/sidebar-arrow.svg';
 
     import building from '../assets/building.svg';

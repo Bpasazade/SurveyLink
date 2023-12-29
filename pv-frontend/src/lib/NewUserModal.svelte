@@ -16,12 +16,13 @@
       phoneNumber: "",
       password: "",
       verifyPassword: "",
-      companyId: "",
+      company: "",
       mainUserDegree: "",
       numberOfScreens: "",
       role: "user",
       userType: "master",
     };
+    
 
     async function handleRegisterUser(event) {
       console.log(user);
@@ -179,7 +180,7 @@
                 <option value="{company._id}" class="ps-5">{company.name}</option>
                 {/each}
               </select> -->
-              <select class="form-select" aria-label="Default select example" bind:value={user.companyId}>
+              <select class="form-select" aria-label="Default select example" bind:value={user.company}>
                 {#each companies as company}
                   <option value="{company._id}" class="ps-5">{company.name}</option>
                 {/each}

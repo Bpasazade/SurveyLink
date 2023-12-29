@@ -50,9 +50,9 @@
         user_ = await getUser(decoded.id);
 
         const storedUser = localStorage.getItem('user');
-
         if (storedUser) {
             user.set(JSON.parse(storedUser));
+            console.log(JSON.parse(storedUser));
         }
 
         if (user_ == null) {

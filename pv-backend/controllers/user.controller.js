@@ -1,11 +1,12 @@
-const config = require("../config/auth.config");
 const db = require("../models");
-const TargetUser = require("../models/target.user.model");
 const User = db.user;
 const Company = db.company;
 const Group = db.group;
 const Campaign = db.campaign;
 const Sms = db.sms;
+const xlsx = require('xlsx');
+const { v4: uuidv4 } = require("uuid");
+const TargetUser = require("../models/target.user.model");
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -89,12 +90,13 @@ exports.createCampaign = async (req, res) => {
     if (!company) {
       return res.status(404).json({ message: 'Company not found' });
     }
+    const status = 'pending';
     const newCampaign = new Campaign({
       name,
       description,
       company: companyId,
       group: groupId,
-      status: 'pending',
+      status: status,
     });
     const savedCampaign = await newCampaign.save();
     return res.status(200).json(savedCampaign);
@@ -190,5 +192,50 @@ exports.updateSms = async (req, res) => {
   } catch (error) {
     console.error('Error updating sms:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Accounts
+exports.getUsersByCompanyId = async (req, res) => {
+  try {
+    console.log(req.params.companyId);
+    const users = await User.find({ company: req.params.companyId });
+    console.log(users);
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
+};
+
+// Excel file upload
+exports.uploadExcelFile = async (req, res, file) => {
+  try {
+      const { companyId, groupId } = req.body;
+      if (file == undefined) {
+          return res.status(400).send("Please upload an excel file!");
+      }
+      const workbook = xlsx.readFile(req.file.path);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+
+      // Get column headers dynamically
+      const columnHeaders = ['name', 'phoneNumber', 'location'];
+
+      // Process each row
+      const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: columnHeaders });
+
+      const enrichedData = jsonData.map((user) => ({
+          id: uuidv4(),
+          company: companyId,
+          group: groupId,
+          ...user,
+      }));
+
+      // Save the data in the database
+      await TargetUser.insertMany(enrichedData);
+      return res.status(200).json({ message: 'File uploaded successfully!' });
+  } catch (error) {
+      console.error('Error uploading excel file:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
   }
 }

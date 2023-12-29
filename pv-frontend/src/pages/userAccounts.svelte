@@ -1,38 +1,9 @@
-<!-- src/MediaManagement.svelte -->
+<!-- src/UserAccounts.svelte -->
 <script>
-    // Sidebar
-    import Sidebar from "../lib/Sidebar.svelte";
-    
-    // Main Content
-    import trashCan from "../assets/trash-can.svg";
-    import edit from "../assets/message-edit.svg";
-    import user2 from '../assets/user_2.svg'
-
-    // Lib
-    import SearchProfileBar from "../lib/SearchProfileBar.svelte";
-
-    import NewUserModal from "../lib/NewUserModal.svelte";
-    import EditUserModal from "../lib/EditUserModal.svelte";
-    import DeleteUserModal from "../lib/DeleteUserModal.svelte";
-    import { getCompanyUsers } from "../apis/userApis";
-    import { signOut } from "../apis/userApis";
-    import { navigate } from 'svelte-routing';
-
+    // Page Route
     localStorage.setItem('storedRoute', '/userAccounts');
 
-    var company = {
-        name: "",
-        address: "",
-    }
-    var companyid = "";
-
-    // async function getCompany() {
-    //     company = await getCompanyByName(user_.companyName);
-    //     companyid = company._id;
-    // }
-
-    //getCompany();
-
+    // User
     import { user } from '../user.js';
     let loggedInUser;
 
@@ -40,31 +11,36 @@
         loggedInUser = value;
     });
 
-    // var currentUser = getUser(sessionStorage.getItem('userId') );
-    async function signOutUser() {
-        try {
-            await signOut();
-            localStorage.removeItem('accessToken');
-            navigate('/login');
-        } catch (error) {
-            console.error('Error signing out:', error);
-        }
-    }
+    // Sidebar
+    import Sidebar from "../lib/Sidebar.svelte";
+    let rotated = false;
+
+    // Search Profile Bar
+    import SearchProfileBar from "../lib/SearchProfileBar.svelte";
+    
+    // Main Content
+    import trashCan from "../assets/trash-can.svg";
+    import edit from "../assets/message-edit.svg";
+    import user2 from '../assets/user_2.svg'
+
+    // Lib
+    import NewUserModal from "../lib/NewUserModal.svelte";
+    import EditUserModal from "../lib/EditUserModal.svelte";
+    import DeleteUserModal from "../lib/DeleteUserModal.svelte";
+    import { getUsersByCompanyId } from "../apis/userApis";
+    import { fetchUsers } from "../apis/adminApis";
+    import { onMount } from 'svelte';
 
     let users = [];
     let selectedUser = null;
 
     async function loadUsers() {
-        try {
-            users = await getCompanyUsers(companyid);
-        } catch (error) {
-            console.error(error);
-        }
+        console.log(loggedInUser.company);
+        // users = await getUsersByCompanyId(loggedInUser.company);
+        users = await fetchUsers();
     }
 
     loadUsers();
-
-    let rotated = false;
 </script>
 
 <style>
@@ -140,92 +116,24 @@
                           </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Hasan Basri Paşazade</td>
-                                <td>11 Ara 2023, 10:58</td>
-                                <td>534 262 58 06</td>
-                                <td class="fileDesc">
-                                    <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
-                                        <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                            <span>
-                                                <img src="{ trashCan }" alt="Trash Can" width="25">
-                                            </span>
-                                        </button>
-                                        <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
-                                        <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                            <span>
-                                                <img src="{ edit }" alt="Edit" width="25">
-                                            </span>
-                                        </button>
-                                    </div>
-                                </td>
-
-                            </tr>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Hasan Basri Paşazade</td>
-                                <td>11 Ara 2023, 10:58</td>
-                                <td>534 262 58 06</td>
-                                <td class="fileDesc">
-                                    <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
-                                        <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                            <span>
-                                                <img src="{ trashCan }" alt="Trash Can" width="25">
-                                            </span>
-                                        </button>
-                                        <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
-                                        <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                            <span>
-                                                <img src="{ edit }" alt="Edit" width="25">
-                                            </span>
-                                        </button>
-                                    </div>
-                                </td>
-
-                            </tr>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Hasan Basri Paşazade</td>
-                                <td>11 Ara 2023, 10:58</td>
-                                <td>534 262 58 06</td>
-                                <td class="fileDesc">
-                                    <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
-                                        <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                            <span>
-                                                <img src="{ trashCan }" alt="Trash Can" width="25">
-                                            </span>
-                                        </button>
-                                        <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
-                                        <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                            <span>
-                                                <img src="{ edit }" alt="Edit" width="25">
-                                            </span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Hasan Basri Paşazade</td>
-                                <td>11 Ara 2023, 10:58</td>
-                                <td>534 262 58 06</td>
-                                <td class="fileDesc">
-                                    <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
-                                        <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                            <span>
-                                                <img src="{ trashCan }" alt="Trash Can" width="25">
-                                            </span>
-                                        </button>
-                                        <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
-                                        <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                            <span>
-                                                <img src="{ edit }" alt="Edit" width="25">
-                                            </span>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            {#each users as user, index}
+                                <tr>
+                                    <th scope="row">{index + 1}</th>
+                                    <td>{user.name}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.phoneNumber}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-end">
+                                            <button class="btn p-0" type="button" on:click={() => selectedUser = user}>
+                                                <img src={edit} alt="arrow" width="20">
+                                            </button>
+                                            <button class="btn p-0" type="button" on:click={() => selectedUser = user}>
+                                                <img src={trashCan} alt="arrow" width="20">
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {/each}
                         </tbody>
                       </table>
                 </div>

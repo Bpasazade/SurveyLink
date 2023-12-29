@@ -10,7 +10,6 @@
     import userDm from '../assets/user-dm.svg'
     
     import { user } from '../user.js';
-    import { beforeUpdate } from 'svelte'
     let loggedInUser;
 
     user.subscribe(value => {
@@ -38,8 +37,6 @@
 
     import { signOut } from "../apis/userApis";
     import { navigate } from 'svelte-routing';
-    import SearchProfileBar from "../lib/SearchProfileBar.svelte";
-
     async function signOutUser() {
         try {
             await signOut();
@@ -49,7 +46,6 @@
             console.error('Error signing out:', error);
         }
     }
-
 </script>
 
 <style>
@@ -107,10 +103,6 @@
                     <p class="text-black m-0" style="font-size: 15px; font-weight:700;">{ user_.name }</p>
                     <p class="text-secondary m-0" style="font-size: 13px; font-weight:300;">{ user_.email }</p>
                 </div>
-                
-                <!-- <button class="btn p-1" type="button">
-                    <img src="{ arrowDown }" alt="Screens" width="24">
-                </button> -->
 
                 <div class="dropdown">
                     <button class="btn border-0 dropdown-toggle pe-4" type="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -1,5 +1,11 @@
 <script>
     localStorage.setItem('storedRoute', 'userSmsService');
+    // Logged in user
+    import { user } from "../user.js";
+    let loggedInUser;
+    user.subscribe(value => (
+        loggedInUser = value           
+    ));
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
 
@@ -7,7 +13,7 @@
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
     // Main content
-    import phone from "../assets/campaigns2/phone.png";
+    import phone from "../assets/campaigns2/phone_sms.png";
  
     let rotated = false;
 
@@ -27,9 +33,9 @@
     // Group Select
     import { getGroups } from '../apis/userApis.js';
     import { onMount } from "svelte";
-    let companyId = '6589acb4542c4fc443e159a7';
+    
     async function getGroupsHandler() {
-        const response = await getGroups(companyId);
+        const response = await getGroups(loggedInUser.companyId);
         groupList = response;
     }
 
@@ -68,7 +74,7 @@
     let smsList = [];
 
     async function getCompanySmsHandler() {
-        const response = await getSms(companyId);
+        const response = await getSms(loggedInUser.companyId);
         smsList = response;
     }
     getCompanySmsHandler();
@@ -76,7 +82,7 @@
     let groupId = '';
     let date = '';
     async function createSmsHandler() {
-        const response = await createSms(text, groupId, date, companyId);
+        const response = await createSms(text, groupId, date, loggedInUser.companyId);
         smsList = response;
     }
 
@@ -210,15 +216,29 @@
         line-height: 22px;
     }
     textarea:disabled {
-        width: 130% !important;
+        width: 80%;
+        height: 17%;
         resize: none !important;
         overflow: hidden !important;
         min-height: 50px !important;
         max-height: 425px !important;
         box-sizing: border-box;
-        border: none;
+        border-radius: 11px !important;
         padding: 10px;
         font-size: 15px !important;
+        background-color: #EFEFEF !important;
+        position: absolute;
+        bottom: 16.5%;
+        right: 8.5%;
+        text-align: left;
+
+        color: #2E3138;
+
+        font-style: normal;
+        font-weight: 500;
+        line-height: 22px; /* 145.455% */
+        letter-spacing: -0.11px;
+        text-transform: lowercase;
     }
 </style>
 
@@ -259,8 +279,8 @@
                     <div class="row d-flex justify-content-between align-items-center mb-4 g-0" style="position:relative;">
                         <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 70%; height: fit-content;">
                             <div class="form-group mb-4">
-                                <label for="smsMessage" style="color: #697A8D;">SMS Metni</label>
-                                <textarea bind:value={text} on:input={handleText} class="form-control shadow-none" placeholder="Lütfen iletmek istediğiniz mesajı girin" id="smsMessage" style="height: 150px; resize: none;" maxlength="300"></textarea>
+                                <label for="text" style="color: #697A8D;">SMS Metni</label>
+                                <textarea bind:value={text} on:input={handleText} class="form-control shadow-none" placeholder="Lütfen iletmek istediğiniz mesajı girin" id="text" style="height: 150px; resize: none;" maxlength="300"></textarea>
                                 <div class="counter {text.length > maxCharacters ? 'exceeded' : ''}">
                                     {text.length}/{maxCharacters}
                                 </div>
@@ -289,12 +309,10 @@
                         </div>
                         <div class="bg-white rounded grid-box px-5 py-4" style="width: 28%; height: fit-content; position:absolute; top: 0; right: 0;">
                             <div class="d-flex flex-column justify-content-between align-items-center" style="height: fit-content;">
-                                <div>
-                                    <div class="w-100 rounded p-5 d-flex justify-content-center" style="margin-bottom: -180%; margin-top: 30%; height: 425px;">
-                                        <textarea class="form-control shadow-none" disabled style="height: 150px;"
-                                            bind:this={textareaRef} bind:value={text} on:input={autoGrow}></textarea>
-                                    </div>
+                                <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
                                     <img src="{phone}" class="mb-3" alt="phone" width="100%"/>
+                                    <textarea class="form-control shadow-none" disabled
+                                        bind:this={textareaRef} bind:value={text} on:input={autoGrow}></textarea>
                                 </div>
                             </div>
                         </div>
@@ -343,12 +361,12 @@
                                     </div>  
                                 </div>
                                 <div class="bg-white rounded grid-box px-5 py-4" style="width: 28%; height: fit-content; position:absolute; top: 0; right: 0;">
-                                    <div class="d-flex flex-column justify-content-between align-items-center" style="height: fit-content; max-height: 72.5vh !important;">
-                                        <div class="w-100 rounded p-5 d-flex justify-content-center" style="margin-bottom: -180%; margin-top: 30%; height: 425px;">
-                                            <textarea class="form-control shadow-none" disabled style="height: 150px;"
+                                    <div class="d-flex flex-column justify-content-between align-items-center" style="height: fit-content;">
+                                        <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
+                                            <img src="{phone}" class="mb-3" alt="phone" width="100%"/>
+                                            <textarea class="form-control shadow-none" disabled
                                                 bind:this={textareaRef} bind:value={smsMessage} on:input={autoGrow}></textarea>
                                         </div>
-                                        <img src="{phone}" class="mb-3" alt="phone" width="100%"/>
                                     </div>
                                 </div>
                             </div>

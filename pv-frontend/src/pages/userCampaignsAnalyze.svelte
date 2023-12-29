@@ -1,5 +1,13 @@
 <script>
     localStorage.setItem('storedRoute', '/userCampaigns');
+    
+    // User
+    import { user } from '../user.js';
+    let loggedInUser;
+    user.subscribe(value => {
+        loggedInUser = value;
+    });
+    
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
     let rotated = false;
@@ -86,11 +94,9 @@
     // Company Campaigns
     import { getCompanyCampaigns } from '../apis/userApis.js';
     let campaignList = [];
-    let companyId = "6589acb4542c4fc443e159a7"
 
     async function getCompanyCampaignsHandler() {
-        const response = await getCompanyCampaigns(companyId);
-        campaignList = response;
+        campaignList = await getCompanyCampaigns(loggedInUser.company);
     }
     getCompanyCampaignsHandler();
 </script>

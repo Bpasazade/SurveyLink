@@ -416,11 +416,11 @@
         font-family: 'Gilroy-Bold';
     }
     #userDbGrid1 {
-        background: url("./assets/user-dashboard/blue-bg.png") no-repeat center center;
+        background: url("../assets/user-dashboard/blue-bg.png") no-repeat center center;
         background-size: cover;
     }
     #userDbGrid2 {
-        background: url("./assets/user-dashboard/green-bg.png") no-repeat center center;
+        background: url("../assets/user-dashboard/green-bg.png") no-repeat center center;
         background-size: cover;
     }
     #chart1, #chart2, #chart3, #chart4 {

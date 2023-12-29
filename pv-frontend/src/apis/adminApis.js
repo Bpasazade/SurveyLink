@@ -121,19 +121,3 @@ export async function deleteCompany(_id) {
     throw error;
   }
 }
-
-export async function uploadExcelFile(file, companyId, groupId) {
-  try {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('companyId', companyId);
-    formData.append('groupId', groupId);
-    const response = await axios.post('http://localhost:3000/uploadExcelFile', formData);
-    if (response.status !== 200) {
-      throw new Error(response.data.message);
-    }
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-}

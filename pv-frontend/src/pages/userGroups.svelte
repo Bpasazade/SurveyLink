@@ -1,5 +1,11 @@
 <script>
     localStorage.setItem('storedRoute', 'userGroups');
+    
+    // User
+    import { user } from "../user.js";
+    let loggedInUser;
+    user.subscribe(value => (loggedInUser = value));
+
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
 
@@ -11,18 +17,15 @@
     import { getGroups } from '../apis/userApis.js';
     import { onMount } from "svelte";
 
-    let companyId = "6589acb4542c4fc443e159a7"
-
     var groupName = '';
     let groupList = [];
     async function createGroupHandler() {
-        await createGroup(groupName, companyId);
+        await createGroup(groupName, loggedInUser.company);
         getGroupsHandler();
     }
 
     async function getGroupsHandler() {
-        const response = await getGroups(companyId);
-        groupList = response;
+        groupList = await getGroups(loggedInUser.company);
     }
 
     // Group List
@@ -30,7 +33,7 @@
     let groupTargetList = [];
 
     async function getCompanyTargetListHandler() {
-        groupTargetList = await getCompanyTargetList(companyId);
+        groupTargetList = await getCompanyTargetList(loggedInUser.company);
     }
 
     onMount(() => {
@@ -87,11 +90,25 @@
     th, td {
         padding: 25px 40px !important;
     }
+    tr:first-child th:first-child {
+        border-top-left-radius: 6px !important;
+        border-bottom-left-radius: 6px !important;
+    }
+    tr:first-child th:last-child {
+        border-top-right-radius: 6px !important;
+        border-bottom-right-radius: 6px !important;
+    }
+    tr:last-child td:first-child {
+        border-bottom-left-radius: 6px !important;
+    }
+    tr:last-child td:last-child {
+        border-bottom-right-radius: 6px !important;
+    }
 </style>
 
 <main class="m-0 p-0">
     <div class="d-flex m-0 p-0" style="height: 100vh;">
-        <Sidebar page="userSmsService" rotated={false} />
+        <Sidebar page="userGroups" rotated={false} />
 
         <div class="col-md px-0" id="main-content-div">
             <SearchProfileBar/>
@@ -135,9 +152,9 @@
                     </div>
                 </div>
 
-                <div class="grid-box px-0" style="height: 60vh;;">
+                <div class="grid-box px-0 " style="max-height: 60vh;">
                     <!-- table -->
-                    <div class="table-responsive rounded">
+                    <div class="table-responsive rounded" style="margin-bottom: -20px;">
                         <table class="table table-borderless table-hover">
                             <thead>
                                 <tr>

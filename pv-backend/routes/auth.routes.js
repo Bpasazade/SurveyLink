@@ -29,7 +29,7 @@ module.exports = function(app) {
 
   app.get("/users/:id", controller.getUser);
 
-  app.get('/auth/signout', controller.signout);
+  app.get("/users/:companyId", controller.getUsersByCompanyId);
 
-  app.get('/users/:companyId', controller.getUsersByCompanyId);
+  app.get('/auth/signout', controller.signout);
 };

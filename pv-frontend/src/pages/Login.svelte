@@ -5,7 +5,7 @@
     import { user } from '../user.js';
     import RubuPlusLogo from '../assets/rubuplus-logo.svg'
     import plus from '../assets/plus.svg'
-    import leftImage from '../assets/phone_mockup.png'
+    import leftImage from '../assets/phone-mockup.png'
     import userLogo from '../assets/user.svg'
     import smartLock from '../assets/smart-lock.svg'
     import eye from '../assets/eye.svg'
@@ -47,7 +47,7 @@
   }
   .login-left {
     /* set background image */
-      background-image: url("./assets/left_background.png");
+      background-image: url("../assets/left_background.png");
       background-repeat: no-repeat;
       background-size: cover;
       color: white;
