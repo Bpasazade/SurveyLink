@@ -127,6 +127,19 @@ export async function getCompanyTargetList(companyId) {
   }
 }
 
+// Update group
+export async function updateGroup(groupId, name, companyId) {
+  try {
+    const response = await axios.put(`http://localhost:3000/groups/${groupId}`, { name, companyId });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Campaign Apis
 // Create campaign
 export async function createCampaign(name, description, companyId) {

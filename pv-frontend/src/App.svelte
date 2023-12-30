@@ -10,7 +10,6 @@
     import UserCampaigns from './pages/userCampaignsAnalyze.svelte';
     import UserCampaigns2 from "./pages/userCampaignsAll.svelte";
     import UserSmsService from "./pages/userSmsService.svelte";
-    import ExcelToJson from "./lib/excelToJson.svelte";
     import UserGroups from "./pages/userGroups.svelte";
     import { getUser } from './apis/userApis.js';
 
@@ -97,7 +96,6 @@
     <Route path="/userCampaigns2" component={UserCampaigns2} />
     <Route path="/userSmsService" component={UserSmsService} />
     <Route path="/userGroups" component={UserGroups} />
-    <Route path="/excelToJson" component={ExcelToJson} />
 </Router>
 
 <style>

@@ -82,6 +82,25 @@ exports.getGroupList = async (req, res) => {
   }
 }
 
+// Update group
+exports.updateGroup = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const { name, companyId } = req.body;
+    const group = await Group.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+    group.name = name;
+    group.company = companyId;
+    const savedGroup = await group.save();
+    return res.status(200).json(savedGroup);
+  } catch (error) {
+    console.error('Error updating group:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 // Create campaign
 exports.createCampaign = async (req, res) => {
   try {

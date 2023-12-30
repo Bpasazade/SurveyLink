@@ -33,6 +33,8 @@ module.exports = function(app) {
 
   app.get("/groups/list/:companyId", controller.getGroupList);
 
+  app.put("/groups/:groupId", controller.updateGroup);
+
   app.post("/campaigns", controller.createCampaign);
 
   app.get("/campaigns/:companyId", controller.getCampaigns);
