@@ -7,6 +7,7 @@ const Sms = db.sms;
 const xlsx = require('xlsx');
 const { v4: uuidv4 } = require("uuid");
 const TargetUser = require("../models/target.user.model");
+const mongoose = require('mongoose');
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -44,6 +45,7 @@ exports.adminBoard = (req, res) => {
 exports.createGroup = async (req, res) => {
   try {
     const { name, companyId } = req.body;
+    console.log(name, companyId);
     const newGroup = new Group({
       name,
       company: companyId,
@@ -227,34 +229,77 @@ exports.getUsersByCompanyId = async (req, res) => {
 };
 
 // Excel file upload
+// exports.uploadExcelFile = async (req, res, file) => {
+//   try {
+//       const { companyId, groupId } = req.body;
+//       if (file == undefined) {
+//           return res.status(400).send("Please upload an excel file!");
+//       }
+//       const workbook = xlsx.readFile(req.file.path);
+//       const sheetName = workbook.SheetNames[0];
+//       const worksheet = workbook.Sheets[sheetName];
+
+//       // Get column headers dynamically
+//       const columnHeaders = ['name', 'phoneNumber', 'location'];
+
+//       // Process each row
+//       const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: columnHeaders });
+
+//       const enrichedData = jsonData.map((user) => ({
+//           id: uuidv4(),
+//           company: companyId,
+//           group: groupId,
+//           ...user,
+//       }));
+
+//       // Save the data in the database
+//       await TargetUser.insertMany(enrichedData);
+//       return res.status(200).json({ message: 'File uploaded successfully!' });
+//   } catch (error) {
+//       console.error('Error uploading excel file:', error);
+//       return res.status(500).json({ message: 'Internal Server Error' });
+//   }
+// }
+
+const batchSize = 100;
+
 exports.uploadExcelFile = async (req, res, file) => {
-  try {
-      const { companyId, groupId } = req.body;
-      if (file == undefined) {
-          return res.status(400).send("Please upload an excel file!");
-      }
-      const workbook = xlsx.readFile(req.file.path);
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
+    try {
+        const { companyId, groupId } = req.body;
+        if (file == undefined) {
+            return res.status(400).send("Please upload an excel file!");
+        }
 
-      // Get column headers dynamically
-      const columnHeaders = ['name', 'phoneNumber', 'location'];
+        const workbook = xlsx.readFile(req.file.path);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
 
-      // Process each row
-      const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: columnHeaders });
+        const columnHeaders = ['name', 'phoneNumber', 'location'];
 
-      const enrichedData = jsonData.map((user) => ({
-          id: uuidv4(),
-          company: companyId,
-          group: groupId,
-          ...user,
-      }));
+        const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: columnHeaders });
 
-      // Save the data in the database
-      await TargetUser.insertMany(enrichedData);
-      return res.status(200).json({ message: 'File uploaded successfully!' });
-  } catch (error) {
-      console.error('Error uploading excel file:', error);
-      return res.status(500).json({ message: 'Internal Server Error' });
-  }
-}
+        // Split jsonData into batches
+        const batches = [];
+        for (let i = 0; i < jsonData.length; i += batchSize) {
+            const batch = jsonData.slice(i, i + batchSize);
+            batches.push(batch);
+        }
+
+        // Process each batch and insert into the database
+        for (const batch of batches) {
+            const enrichedData = batch.map((user) => ({
+                id: uuidv4(),
+                company: companyId,
+                group: groupId,
+                ...user,
+            }));
+
+            await TargetUser.insertMany(enrichedData);
+        }
+
+        return res.status(200).json({ message: 'File uploaded successfully!' });
+    } catch (error) {
+        console.error('Error uploading excel file:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};

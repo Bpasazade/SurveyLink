@@ -65,7 +65,7 @@ export async function getUser(_id) {
 
 export async function getUsersByCompanyId(companyId) {
   try {
-    const response = await axios.get(`http://localhost:3000/users/${companyId}`);
+    const response = await axios.get(`http://localhost:3000/users-all/${companyId}`);
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

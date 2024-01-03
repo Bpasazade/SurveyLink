@@ -18,4 +18,6 @@ module.exports = function(app) {
     app.put('/companies/:id', controller.updateCompany);
 
     app.delete('/companies/:id', controller.deleteCompany);
+
+    app.get('/campaigns', controller.getAllCampaigns);
 }

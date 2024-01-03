@@ -159,6 +159,7 @@ exports.signin = (req, res) => {
         email: user.email,
         company: user.company,
         role: authorities,
+        userType: user.userType,
         accessToken: token
       });
     });
@@ -168,7 +169,7 @@ exports.getAllUsers = async (req, res) => {
   try {
     // const roleName = "user";
     // const users = await User.find({ role: roleName });
-    const users = await User.find({ company: "657045d7b1f7fa8f0a0e4c7c" });
+    const users = await User.find();
     console.log(users);
     res.status(200).json(users);
   } catch (error) {
@@ -230,7 +231,7 @@ exports.getUsersByCompanyId = async (req, res) => {
   try {
     const { companyId } = req.params;
     console.log("companyId", companyId);
-    const users = await User.find({ role: "user" });
+    const users = await User.find({ company: companyId, role: "user" });
     console.log(users);
     res.status(200).json(users);
   } catch (error) {

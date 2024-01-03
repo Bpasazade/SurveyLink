@@ -10,6 +10,8 @@
     import subLeft from '../assets/sub_left.svg';
     import done from '../assets/done.svg';
 
+    export let loggedInUser;
+
     let user = {
       name: "",
       email: "",
@@ -20,7 +22,7 @@
       mainUserDegree: "",
       numberOfScreens: "",
       role: "user",
-      userType: "master",
+      userType: "user",
     };
     
 
@@ -173,19 +175,15 @@
             <hr class="my-3" style="color: #25324B14; border: solid 1px #25324B14">
 
             <!-- Company Name -->
+            {#if loggedInUser.userType == "admin"}
             <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group">
-              <!-- <select class="form-select py-3 border-0" aria-label="Default select example" bind:value={user.companyId}>
-                <option selected disabled>Şirket Adı</option>
-                {#each companies as company}
-                <option value="{company._id}" class="ps-5">{company.name}</option>
-                {/each}
-              </select> -->
               <select class="form-select" aria-label="Default select example" bind:value={user.company}>
                 {#each companies as company}
                   <option value="{company._id}" class="ps-5">{company.name}</option>
                 {/each}
               </select>
             </div>
+            {/if}
 
             <div class="row">
               <div class="col">
@@ -198,14 +196,17 @@
                 </div>
               </div>
 
+              {#if loggedInUser.userType == "admin"}
               <div class="col">
                 <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group" role="group" aria-label="Basic example">
                   <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.userType} required>
-                    <option disabled>Kullanıcı Tipi</option>
-                    <option value="master" class="ps-5">master</option>
-                    <option value="slave" class="ps-5">slave</option>
+                    <option value="">Kullanıcı Tipi</option>
+                    
+                      <option value="master" class="ps-5">master</option>
+                      <option value="slave" class="ps-5">slave</option>
                 </div>
               </div>
+              {/if}
             </div>
 
           </div>

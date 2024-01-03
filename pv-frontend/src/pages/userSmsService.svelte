@@ -14,20 +14,36 @@
 
     // Main content
     import phone from "../assets/campaigns2/phone_sms.png";
+    import preview from "../assets/preview.svg";
+    
  
     let rotated = false;
 
     // Pagination
-    let selection = 'new-sms';
+    let selection = 'sms-table';
     let newSmsButton = false;
     let editSmsButton = false;
 
-    toggle('new-sms-button');
-
     function toggle(button) {
-        newSmsButton = button === 'new-sms-button';
-        editSmsButton = button === 'edit-sms-button';
-        selection = button === 'new-sms-button' ? 'new-sms' : 'edit-sms';
+        if (button === 'new-sms-button') {
+            if (newSmsButton) {
+                newSmsButton = false;
+                selection = 'sms-table';
+            } else {
+                newSmsButton = true;
+                selection = 'new-sms';
+            }
+            editSmsButton = false;
+        } else if (button === 'edit-sms-button') {
+            if (editSmsButton) {
+                editSmsButton = false;
+                selection = 'sms-table';
+            } else {
+                editSmsButton = true;
+                selection = 'edit-sms';
+            }
+            newSmsButton = false;
+        }
     }
 
     // Group Select
@@ -35,7 +51,7 @@
     import { onMount } from "svelte";
     
     async function getGroupsHandler() {
-        const response = await getGroups(loggedInUser.companyId);
+        const response = await getGroups(loggedInUser.company);
         groupList = response;
     }
 
@@ -74,7 +90,7 @@
     let smsList = [];
 
     async function getCompanySmsHandler() {
-        const response = await getSms(loggedInUser.companyId);
+        const response = await getSms(loggedInUser.company);
         smsList = response;
     }
     getCompanySmsHandler();
@@ -82,7 +98,7 @@
     let groupId = '';
     let date = '';
     async function createSmsHandler() {
-        const response = await createSms(text, groupId, date, loggedInUser.companyId);
+        const response = await createSms(text, groupId, date, loggedInUser.company);
         smsList = response;
     }
 
@@ -91,7 +107,7 @@
     
     let smsMessage = '';
     let smsGroupId = '';
-    let smsDate = '';
+    let smsDate = 'sms-table';
 
     let smsSelection = '';
     let selectedSms;
@@ -112,6 +128,14 @@
         smsMessage = event.target.value.slice(0, maxCharacters);
     }
 
+    // Edit Sms Table
+    function editSmsTable(event) {
+        // get object of selected sms
+        const index = event.target.closest('tr').dataset.index;
+        smsSelection = smsList[index]._id;
+        toggle('edit-sms-button');
+    }
+
 </script>
 
 <style>
@@ -124,6 +148,23 @@
     .grid-box {
         border-radius: 6px !important;
         box-shadow: 0px 2px 6px 0px rgba(67, 89, 113, 0.12);
+    }
+    .table>:not(caption)>*>* {
+        padding: 25px 30px !important;
+    }
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    tr:first-child th:first-child {
+        border-top-left-radius: 6px;
+    }
+    tr:first-child th:last-child {
+        border-top-right-radius: 6px;
     }
     .userCampaignsDiv1 {
         border-radius: 8px; 
@@ -158,13 +199,18 @@
         padding-right: 15px !important;
     }
     textarea {
-        padding-left: 15px !important;
+        padding-left: 16px !important;
         padding-top: 10px !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
     }
     select {
         height: 50px !important;
         border: 1px solid #EBE9F1 !important;
+        padding-left: 16px !important;
         border-radius: 10px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
     }
     .form-select option {
         color: black;
@@ -176,6 +222,7 @@
         font-weight: 600 !important;
         height: 50px !important;
         background: url({calendar}) !important;
+        padding-left: 16px !important;
     }
     .form-group {
         position: relative;
@@ -240,6 +287,12 @@
         letter-spacing: -0.11px;
         text-transform: lowercase;
     }
+    .ellipsis {
+        max-width: 250px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
 </style>
 
 <main class="m-0 p-0">
@@ -275,7 +328,38 @@
                     </div>
                 </div>
 
-                {#if selection === 'new-sms'}
+                {#if selection === 'sms-table'}
+                    <table class="table table-hover px-0 grid-box">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Sms Metni</th>
+                                <th scope="col">Grup</th>
+                                <th scope="col">Tarih</th>
+                                <th scope="col">Detaylar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each smsList as sms, index}
+                                <tr data-index={index}>
+                                    <th scope="row">{index + 1}</th>
+                                    <td class="ellipsis">{sms.message}</td>
+                                    <td>{sms.groupId}</td>
+                                    <td>{sms.date}</td>
+                                    <td>
+                                        <button class="btn me-2 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable}>
+                                            <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
+                                        </button>
+
+                                        <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
+                                            <i class='bx bxs-message-square-detail' style="font-size: 22px; color: #267BC0;"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
+                {:else if selection === 'new-sms'}
                     <div class="row d-flex justify-content-between align-items-center mb-4 g-0" style="position:relative;">
                         <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 70%; height: fit-content;">
                             <div class="form-group mb-4">
@@ -288,7 +372,7 @@
                             <div class="form-group w-100 mb-4">
                                 <label for="listName">Grup Seçiniz</label>
                                 <select class="form-select shadow-none" aria-label="Default select example" bind:value={groupId}>
-                                    <option selected value="1">Grup Seçiniz</option>
+                                    <option selected value="">Grup Seçiniz</option>
                                     {#each groupList as group}
                                         <option value={group._id}>{group.name}</option>
                                     {/each}
@@ -322,6 +406,7 @@
                         <div class="form-group">
                             <label for="smsSelection" class="col-md-3 col-form-label" style="background-color: transparent !important;">SMS Seçiniz</label>
                             <select class="form-select shadow-none col-md-3 mb-4" aria-label="Default select example" bind:value={smsSelection}>
+                                <option selected value="">Lütfen SMS Seçiniz</option>
                                 {#each smsList as sms}
                                     <option value={sms._id}>{sms.message}</option>
                                 {/each}

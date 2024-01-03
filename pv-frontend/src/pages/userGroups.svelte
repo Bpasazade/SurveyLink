@@ -21,6 +21,7 @@
     var groupName = '';
     let groupList = [];
     async function createGroupHandler() {
+        console.log(loggedInUser.company);
         await createGroup(groupName, loggedInUser.company);
         getGroupsHandler();
     }
@@ -32,7 +33,7 @@
     let updatedGroupName = '';
     async function updateGroupHandler() {
         let groupId = groupSelection;
-        await updateGroup(groupId, selectedGroup.name, updatedGroupName);
+        await updateGroup(groupId, updatedGroupName, loggedInUser.company);
         getGroupsHandler();
     }
 
@@ -52,11 +53,19 @@
     // Selected group
     let groupSelection = '';
     let selectedGroup;
+    let selectedTargetList = [];
     let editGroupBtn;
-    $: if (groupSelection) {
-        selectedGroup = groupTargetList.filter(user => user.group == groupSelection);
-        groupName = groupList.filter(group => group._id == groupSelection)[0].name;
-        editGroupBtn.disabled = false;
+    let flag = false;
+    $: if (groupSelection !== '') {
+        selectedGroup = groupList.find(group => group._id == groupSelection);
+        selectedTargetList = groupTargetList.filter(target => target.group == groupSelection);
+        if (!flag) {
+            updatedGroupName = selectedGroup.name;
+            flag = true;
+        }
+        if (editGroupBtn) {
+            editGroupBtn.disabled = false;
+        }
     }
 </script>
 
@@ -128,6 +137,7 @@
                     <div class="form-group me-3">
                         <label for="groupSelection" class="col-md-3 col-form-label" style="background-color: transparent !important;">Grup Seçiniz</label>
                         <select class="form-select shadow-none" aria-label="Default select example" bind:value={groupSelection}>
+                            <option selected value="">Lütfen Bir Grup Seçiniz</option>
                             {#each groupList as group}
                                 <option value={group._id}>{group.name}</option>
                             {/each}
@@ -162,6 +172,7 @@
                                         <input type="text" class="form-control shadow-none" id="groupName" placeholder="Grup Adı Giriniz" bind:value={updatedGroupName}>
                                     </div>
                                     <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Grubu Sil</button>
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
                                         <button type="submit" class="btn" data-bs-dismiss="modal" style="background-color: #04A3DA; color: white;" on:click={updateGroupHandler}>Kaydet</button>
                                     </div>
@@ -180,7 +191,6 @@
                                     <input type="text" class="form-control shadow-none" id="groupName" placeholder="Grup Adı Giriniz" bind:value={groupName}>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Grubu Sil</button>
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
                                     <button type="submit" class="btn" data-bs-dismiss="modal" style="background-color: #04A3DA; color: white;" on:click={createGroupHandler}>Kaydet</button>
                                 </div>
@@ -189,32 +199,41 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="grid-box px-0 " style="max-height: 60vh;">
-                    <!-- table -->
-                    <div class="table-responsive rounded" style="margin-bottom: -20px;">
-                        <table class="table table-borderless table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">ID</th>
-                                    <th scope="col">İsim</th>
-                                    <th scope="col">Telefon Numarası</th>
-                                    <th scope="col">Lokasyon</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {#each selectedGroup as targetUser}
+                    <div class="grid-box px-0 " style="max-height: 60vh;">
+                        <!-- table -->
+                        <div class="table-responsive rounded" style="margin-bottom: -20px;">
+                            <table class="table table-borderless table-hover">
+                                <thead>
                                     <tr>
-                                        <td>{targetUser._id}</td>
-                                        <td>{targetUser.name}</td>
-                                        <td>{targetUser.phoneNumber}</td>
-                                        <td>{targetUser.location}</td>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">İsim</th>
+                                        <th scope="col">Telefon Numarası</th>
+                                        <th scope="col">Lokasyon</th>
                                     </tr>
-                                {/each}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {#if selectedTargetList.length > 0}
+                                        {#each selectedTargetList as targetUser}
+                                            <tr>
+                                                <td>{targetUser._id}</td>
+                                                <td>{targetUser.name}</td>
+                                                <td>{targetUser.phoneNumber}</td>
+                                                <td>{targetUser.location}</td>
+                                            </tr>
+                                        {/each}
+                                    {:else if groupSelection == ''}
+                                        <tr>
+                                            <td colspan="4" class="text-center">Lütfen bir grup seçiniz.</td>
+                                        </tr>
+                                    {:else if selectedTargetList.length == 0}
+                                        <tr>
+                                            <td colspan="4" class="text-center">Bu gruba ait kişi listesi bulunmamaktadır.</td>
+                                        </tr>
+                                    {/if}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>

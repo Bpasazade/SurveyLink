@@ -7,7 +7,29 @@
     user.subscribe(value => {
         loggedInUser = value;
     });
-    
+
+    // Campaign
+    import { campaign } from '../campaign.js';
+    let selectedCampaign;
+    let selectElement;
+
+    onMount(async () => {
+        campaignList = await getCompanyCampaigns(loggedInUser.company);
+        campaign.subscribe(value => {
+            selectedCampaign = value;
+            if (selectElement && selectedCampaign && campaignList.length > 0) {
+                const selectedIndex = campaignList.findIndex(c => c._id === selectedCampaign._id);
+                if (selectedIndex !== -1) {
+                    tick().then(() => {
+                        selectElement.selectedIndex = selectedIndex;
+                    });
+                } else {
+                    console.warn("Selected campaign not found in the campaignList.");
+                }
+            }
+        });
+    });
+
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
     let rotated = false;
@@ -28,7 +50,7 @@
     
     // Charts
     import Chart from 'chart.js/auto';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
 
     let canvas;
     onMount(() => {
@@ -98,7 +120,7 @@
     async function getCompanyCampaignsHandler() {
         campaignList = await getCompanyCampaigns(loggedInUser.company);
     }
-    getCompanyCampaignsHandler();
+    
 </script>
 
 <style>
@@ -150,12 +172,11 @@
         height: 32vh !important;
     }
     #userDbGrid1 {
-        background-color: #0480DA;
+        background: url("../assets/user-dashboard/blue-bg.png") no-repeat center center;
         background-size: cover;
     }
     #userDbGrid2 {
-        /* background: url({userDbGrid2Bg}) no-repeat center center; */
-        background-color: #07C509;
+        background: url("../assets/user-dashboard/green-bg.png") no-repeat center center;
         background-size: cover;
     }
 </style>
@@ -169,9 +190,10 @@
             <div class="row d-flex flex-column px-3 pt-1 mx-0 pe-4">
                 <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-between align-items-center">
                     <div>
-                          <select class="form-select shadow-none border-0 py-2" aria-label="Default select example" style="border-radius: 8px; color: #697A8D !important; font-size: 14px; font-weight: 500; background-color: #F8F8F8;">
+                          <select class="form-select shadow-none border-0 py-2" aria-label="Default select example" style="border-radius: 8px; color: #697A8D !important; font-size: 14px; font-weight: 500; background-color: #F8F8F8;"
+                            bind:this={selectElement}>
                             {#each campaignList as campaign}
-                                <option value={campaign.id}>{campaign.name}</option>
+                                <option value={campaign._id}>{campaign.name}</option>
                             {/each}
                           </select>
                     </div>

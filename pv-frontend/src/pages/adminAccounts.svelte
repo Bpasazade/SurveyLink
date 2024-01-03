@@ -1,6 +1,14 @@
 <!-- src/MediaManagement.svelte -->
 <script>
     localStorage.setItem('storedRoute', '/adminAccounts');
+
+    // User
+    import { user } from "../user.js";
+    let loggedInUser = user;
+    user.subscribe(value => {
+        loggedInUser = value;
+    });
+
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
     
@@ -24,6 +32,7 @@
     async function loadUsers() {
         try {
             users = await fetchUsers();
+            console.log(users);
         } catch (error) {
             console.error(error);
         }
@@ -49,98 +58,36 @@
     main {
         height: 100vh;
     }
-    #navbar {
-        border-bottom: solid 2px #EAEBED !important;
-    }
-    #sidebar {
-        border-right: solid 2px #EAEBED !important;
-    }
-    #search-addon {
-        border-right: none;
-        border-top-left-radius: 0.375rem;
-        border-bottom-left-radius: 0.375rem;
-        padding-left: 0.75rem;
-        background-color: #F4F5F6;
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-    }
-    #search-form {
-        border-left: none;
-        border-top-right-radius: 0.375rem;
-        border-bottom-right-radius: 0.375rem;
-        background-color: #F4F5F6;
-        padding-left: 0;
-        padding-top: 0.75rem;
-        padding-bottom: 0.75rem;
-    }
-    #search-form:focus {
-        box-shadow: none;
-        font-weight: 400;
-        color: #25324B !important;
-    }
     #main-content-div {
-        background-color: #f7f7f7;
+        background-color: #F5F5F9;
+        height: 100vh;
     }
-    #mediaTable {
+    .grid-box {
+        border-radius: 6px !important;
+        box-shadow: 0px 2px 6px 0px rgba(67, 89, 113, 0.12);
+    }
+    .table>:not(caption)>*>* {
+        padding: 25px 30px !important;
+    }
+    table {
         border-collapse: separate;
-        border-spacing: 0 1.3rem;
+        border-spacing: 0;
+        overflow: hidden;
     }
-    tr > td {
-        text-align: left;
-        border-width: 2px 0;
-        border-style: solid;
-        border-color: transparent;
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
     }
-    td {
-        vertical-align: middle !important;
+    /* required css to make rounded table (below) */
+    tr:first-child th:first-child {
+        border-top-left-radius: 6px;
     }
-    tr:hover > .fileDesc {
-        text-align: left;
-        border-width: 2px 0; 
-        border-color: #DDDDDD;
-        border-style: solid;
-        background-color: #F6F6F6;
-    }
-    th {
-        font-weight: 600 !important;
-    }
-    td, th {
-        padding: 0.60rem !important;
-        text-align: left;
-        font-size: 16px;
-        font-weight: 400;
-        position: relative;
-    }
-    td:nth-child(2) {
-        border-left: 2px solid transparent;
-    }
-    td:last-child {
-        border-right: 2px solid transparent;
-    }
-    tr:hover > td:nth-child(2) {
-        border-left-width: 2px;
-        border-right-width: 0px;
-        border-radius: 9px 0 0 9px;
-    }
-    tr:hover > td:last-child {
-        border-right-width: 2px;
-        border-left-width: 0px;
-        border-radius: 0 9px 9px 0;
-    }
-    #mediaTable td::before, th::before {
-        content: "";
-        position: absolute;
-        bottom: -0.80rem;
-        left: 0;
-        width: 103%;
-        height: 2px;
-        background-color: #E6E8EC;
-        z-index: 1;
+    tr:first-child th:last-child {
+        border-top-right-radius: 6px;
     }
 </style>
 
 <!-- Create User Modal -->
-<NewUserModal />
+<NewUserModal loggedInUser = {loggedInUser} />
 
 <!-- Edit User Modal -->
 <EditUserModal user = {selectedUser} />
@@ -168,45 +115,39 @@
 
                 <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
                 <div class="container mx-0 px-0">
-                    <div class="col-md-12 px-4 bg-white rounded mb-4 py-1">
-                        <table class="table table-borderless " id="mediaTable">
+                    <div class="col-md-12 bg-white rounded mb-4 py-1">
+                        <table class="table table-hover">
                             <thead>
-                                <tr>
-                                    <th scope="col"></th>
-                                    <th scope="col">İsim - Soyisim</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Unvan</th>
-                                    <th scope="col">Şirket Adı</th>
-                                    <th scope="col" style="width: 60px !important;"></th>
-                                  </tr>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Ad-Soyad</th>
+                                <th scope="col">E-mail</th>
+                                <th scope="col">Telefon</th>
+                                <th scope="col" style="width: 60px;"></th>
+                              </tr>
                             </thead>
-                            <tbody id="user-table-tbody">
-                                {#each users as user, index}
-                                <tr class="text-center">
-                                    <td>
-                                        <input class="form-check-input" type="checkbox" value="" id="{user._id}">
-                                    </td>
-                                    <td class="fileDesc">{user.name}</td>
-                                    <td class="fileDesc">{user.email}</td>
-                                    <td class="fileDesc">{user.mainUserDegree}</td>
-                                    <td class="fileDesc">{user.companyName}</td>
-                                    <td class="fileDesc">
-                                        <div class="col d-flex justify-content-center align-items-center" style="width: fit-content;">
-                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                                <span>
-                                                    <img src="{ trashCan }" alt="Trash Can" width="25">
-                                                </span>
-                                            </button>
-                                            <div class="vr" style="width: 2px; color: #DDDDDD;"></div>
-                                            <button class="btn shadow-0 d-flex justify-content-between align-items-center" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                                <span>
-                                                    <img src="{ edit }" alt="Edit" width="25">
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {/each}
+                            <tbody>
+                                {#if users.length !== 0}
+                                    {#each users as user, index}
+                                        <tr>
+                                            <th scope="row">{index + 1}</th>
+                                            <td>{user.name}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.phoneNumber}</td>
+                                            <td>
+                                                <div class="d-flex justify-content-end">
+                                                    <button class="btn p-0" type="button" data-bs-target="#editCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                        <img src={edit} alt="arrow" width="24">
+                                                    </button>
+                                                    <div class="vr mx-3" style="width: 2px; color: #DDDDDD;"></div>
+                                                    <button class="btn p-0" type="button" data-bs-target="#deleteCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                        <img src={trashCan} alt="arrow" width="24">
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {/each}
+                                {/if}
                             </tbody>
                         </table>
                     </div>

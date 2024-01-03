@@ -34,17 +34,6 @@
     }
     getTheUser();
 
-
-    // var currentUser = getUser(sessionStorage.getItem('userId') );
-    async function signOutUser() {
-        try {
-            await signOut();
-            localStorage.removeItem('accessToken');
-            navigate('/login');
-        } catch (error) {
-            console.error('Error signing out:', error);
-        }
-    }
     let rotated = false;
 
     import layers from '../assets/dashboard-layers.svg'
@@ -111,6 +100,21 @@
             }
         });
     });
+
+    // Company Campaigns
+    import { getAllCampaigns } from "../apis/adminApis.js";
+    import { getAllCompanies } from "../apis/adminApis.js"; 
+    let campaignList = [];
+    let companyList = [];
+    let campaignCompanies = [];
+    
+    onMount(async () => {
+        campaignList = await getAllCampaigns();
+        companyList = await getAllCompanies();
+        for (let i = 0; i < campaignList.length; i++) {
+            campaignCompanies.push(companyList.find(company => company._id === campaignList[i].company));
+        }
+    });
 </script>
 
 <style>
@@ -145,6 +149,7 @@
     .timeline {
         position: relative;
         margin-left: 40px;
+        
     }
 
     /* The actual timeline (the vertical ruler) */
@@ -157,6 +162,7 @@
         bottom: 0;
         margin-left: -3px;
         margin-bottom: -27px;
+        height: 100%;
     }
 
     /* Container around content */
@@ -338,49 +344,37 @@
                 <div class="container mx-0 px-0">
                     <div class="row g-0 d-flex justify-content-between">
                         <div class="bg-white rounded mb-4 grid-box" style="width: 65%; height: 43vh;">
-                            <table class="table table-hover">
+                            <table class="table table-hover px-0">
                                 <thead>
-                                  <tr>
-                                    <th scope="col">ID</th>
-                                    <th scope="col">Firma</th>
-                                    <th scope="col">Kampanya</th>
-                                    <th scope="col">Tarih</th>
-                                  </tr>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Firma</th>
+                                        <th scope="col">Kampanya Adı</th>
+                                        <th scope="col">Tarih</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                  <tr>
-                                    <td>#552</td>
-                                    <td>Rubu Plus</td>
-                                    <td>PVM Tanıtım Anketi</td>
-                                    <td>11 Ara 2023, 10:58</td>
-                                  </tr>
-                                  <tr>
-                                    <td>#552</td>
-                                    <td>Rubu Plus</td>
-                                    <td>PVM Tanıtım Anketi</td>
-                                    <td>11 Ara 2023, 10:58</td>
-                                  </tr>
-                                  <tr>
-                                    <td>#552</td>
-                                    <td>Rubu Plus</td>
-                                    <td>PVM Tanıtım Anketi</td>
-                                    <td>11 Ara 2023, 10:58</td>
-                                  </tr>
-                                  <tr>
-                                    <td>#552</td>
-                                    <td>Rubu Plus</td>
-                                    <td>PVM Tanıtım Anketi</td>
-                                    <td>11 Ara 2023, 10:58</td>
-                                  </tr>
+                                    {#each campaignList as campaign, index}
+                                        <tr>
+                                            <th scope="row">{index + 1}</th>
+                                            {#if companyList.length > 0}
+                                                <td>{campaignCompanies[index].name}</td>
+                                            {:else}
+                                                <td>Şirket Silinmiş</td>
+                                            {/if}
+                                            <td>{campaign.name}</td>
+                                            <td>{campaign.date}</td>
+                                        </tr>
+                                    {/each}
                                 </tbody>
-                              </table>
+                            </table>
                         </div>
-                        <div class="container d-flex flex-column bg-white grid-box px-0 mx-0" style="width: 33%; height: 42vh;">
+                        <div class="container d-flex flex-column bg-white grid-box px-0 mx-0" style="width: 33%; height: 43vh;">
                             <div class="d-flex justify-content-between align-items-center p-4" style="border-bottom: 1px solid #E8E8E8;">
                                 <h1 class="text m-0" style="color: #414141; font-size: 16px; font-weight: 700;">Son İşlemler</h1>
                                 <button class="btn btn-sm ms-2 shadow-0 px-2 py-1" style="background-color: #F5F5F9; color: #414141; font-size: 11px; font-weight: 500; border-radius: 7px; color: #809FB8;">Tümü</button>
                             </div>
-                            <div class="timeline pt-3">
+                            <div class="d-flex flex-column justify-content-between h-100 timeline py-3">
                                 <div class="container-timeline right">
                                   <div class="content">
                                     <h2 class="timeline-date">11 Aralık 2023  / Pazartesi</h2>

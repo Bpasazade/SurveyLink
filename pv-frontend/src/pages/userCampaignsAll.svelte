@@ -154,6 +154,15 @@
         campaignId = selectedCampaign._id;
     }
 
+    // Campaigns Inspect Table
+    import { campaign } from '../campaign.js';
+    function inspectCampaign(event) {
+        const rowIndex = event.target.closest('tr').getAttribute('data-index');
+        const selectedCampaign = campaignList[rowIndex];
+        campaign.set(selectedCampaign);
+        navigate('/userCampaigns');
+    }
+
     // Campaigns Table Edit
     function editCampaignTable(event) {
         campaignSelection = event.target.closest('tr').firstElementChild.innerText;
@@ -164,6 +173,7 @@
 
     // Excel File Upload
     import { uploadExcelFile } from "../apis/userApis";
+    import { navigate } from "svelte-routing";
 
     let excelFile = null;
     let selectedGroup;
@@ -242,7 +252,7 @@
     input {
         border: 1px solid #EBE9F1 !important;
         border-radius: 10px !important;
-        font-size: 17px !important;
+        font-size: 15px !important;
         font-weight: 600 !important;
     }
     ::placeholder {
@@ -264,17 +274,22 @@
     }
     input[type="text"] {
         height: 50px !important;
-        padding-left: 15px !important;
+        padding-left: 17px !important;
         padding-top: 10px !important;
     }
     textarea {
-        padding-left: 15px !important;
+        padding-left: 16px !important;
         padding-top: 10px !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
     }
     select {
         height: 50px !important;
         border: 1px solid #EBE9F1 !important;
+        padding-left: 16px !important;
         border-radius: 10px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
     }
     /* color black selected option */
     .form-select option {
@@ -340,6 +355,12 @@
         height: 50px !important;
         background-color: white !important;
 
+    }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        transition: background-color 5000s ease-in-out 0s;
     }
     .form-group {
         position: relative;
@@ -457,7 +478,7 @@
                         </thead>
                         <tbody>
                             {#each campaignList as campaign, index}
-                                <tr>
+                                <tr data-index={index}>
                                     <th scope="row">{index + 1}</th>
                                     <td>{campaign.name}</td>
                                     <td>{campaign.date}</td>
@@ -481,7 +502,7 @@
                                     </td>
                                     {/if}
                                     <td>
-                                        <button class="btn me-2 p-0" type="button" style="border: none;">
+                                        <button class="btn me-2 p-0" type="button" style="border: none;" on:click={inspectCampaign}>
                                             <img src={preview} alt="edit" width="22"/>
                                         </button>
 
@@ -746,6 +767,7 @@
                         <div class="form-group">
                             <label for="campaignSelection" class="col-md-3 col-form-label" style="background-color: transparent !important;">Kampanya Seçiniz</label>
                             <select class="form-select shadow-none col-md-3 mb-4" aria-label="Default select example" bind:value={campaignSelection}>
+                                <option selected value="">Lütfen Kampanya Seçiniz</option>
                                 {#each campaignList as campaign}
                                     <option value={campaign._id}>{campaign.name}</option>
                                 {/each}

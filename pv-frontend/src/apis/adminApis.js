@@ -121,3 +121,16 @@ export async function deleteCompany(_id) {
     throw error;
   }
 }
+
+// All Campaigns
+export async function getAllCampaigns() {
+  try {
+    const response = await axios.get('http://localhost:3000/campaigns');
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}

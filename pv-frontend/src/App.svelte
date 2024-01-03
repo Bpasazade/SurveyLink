@@ -4,14 +4,19 @@
     import Login from './pages/Login.svelte';
     import AdminDashboard from './pages/adminDashboard.svelte';
     import AdminCompanies from './pages/adminCompanies.svelte';
+    import AdminCampaigns from "./pages/adminCampaigns.svelte";
     import AdminAccounts from './pages/adminAccounts.svelte';
+    import AdminTemplates from "./pages/adminTemplates.svelte";
     import UserDashboard from './pages/userDashboard.svelte';
     import UserAccounts from './pages/userAccounts.svelte';
     import UserCampaigns from './pages/userCampaignsAnalyze.svelte';
     import UserCampaigns2 from "./pages/userCampaignsAll.svelte";
     import UserSmsService from "./pages/userSmsService.svelte";
     import UserGroups from "./pages/userGroups.svelte";
+    import UserTemplates from "./pages/userTemplates.svelte";
     import { getUser } from './apis/userApis.js';
+
+    import Template from './lib/Template.svelte';
 
     // Lib
     import './lib/EditUserModal.svelte';
@@ -51,7 +56,6 @@
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             user.set(JSON.parse(storedUser));
-            console.log(JSON.parse(storedUser));
         }
 
         if (user_ == null) {
@@ -89,91 +93,51 @@
     <Route path="/login" component={Login} />
     <Route path="/adminDashboard" component={AdminDashboard} />
     <Route path="/adminCompanies" component={AdminCompanies} />
+    <Route path="/adminCampaigns" component={AdminCampaigns} />
     <Route path="/adminAccounts" component={AdminAccounts} />
+    <Route path="/adminTemplates" component={AdminTemplates} />
     <Route path="/userDashboard" component={UserDashboard} />
     <Route path="/userAccounts" component={UserAccounts} />
     <Route path="/userCampaigns" component={UserCampaigns} />
     <Route path="/userCampaigns2" component={UserCampaigns2} />
     <Route path="/userSmsService" component={UserSmsService} />
     <Route path="/userGroups" component={UserGroups} />
+    <Route path="/userTemplates" component={UserTemplates} />
+    <Route path="/template" component={Template} />
 </Router>
 
 <style>
     @font-face {
-        font-family: 'Gilroy-BlackItalic';
-        src: url('./assets/Fonts/Gilroy-BlackItalic.ttf') format('opentype');
+        font-family: 'Gilroy-Black';
+        src: url('./assets/Fonts/Gilroy-BlackItalic.otf') format('opentype');
     }
     @font-face {
         font-family: 'Gilroy-Bold';
-        src: url('./assets/Fonts/Gilroy-Bold.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-BoldItalic';
-        src: url('./assets/Fonts/Gilroy-BoldItalic.ttf') format('opentype');
+        src: url('./assets/Fonts/Gilroy-Bold.otf') format('opentype');
     }
     @font-face {
         font-family: 'Gilroy-ExtraBold';
-        src: url('./assets/Fonts/Gilroy-ExtraBold.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-ExtraBoldItalic';
-        src: url('./assets/Fonts/Gilroy-ExtraBoldItalic.ttf') format('opentype');
+        src: url('./assets/Fonts/Gilroy-ExtraBold.otf') format('opentype');
     }
     @font-face {
         font-family: 'Gilroy-Heavy';
-        src: url('./assets/Fonts/Gilroy-Heavy.ttf') format('opentype');
+        src: url('./assets/Fonts/Gilroy-Heavy.otf') format('opentype');
     }
     @font-face {
         font-family: 'Gilroy-HeavyItalic';
         src: url('./assets/Fonts/Gilroy-HeavyItalic.ttf') format('opentype');
     }
     @font-face {
-        font-family: 'Gilroy-Light';
-        src: url('./assets/Fonts/Gilroy-Light.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-LightItalic';
-        src: url('./assets/Fonts/Gilroy-LightItalic.ttf') format('opentype');
-    }
-    @font-face {
         font-family: 'Gilroy-Medium';
-        src: url('./assets/Fonts/Gilroy-Medium.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-MediumItalic';
-        src: url('./assets/Fonts/Gilroy-MediumItalic.ttf') format('opentype');
+        src: url('./assets/Fonts/Gilroy-Medium.otf') format('opentype');
     }
     @font-face {
         font-family: 'Gilroy-Regular';
-        src: url('./assets/Fonts/Gilroy-Regular.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-RegularItalic';
-        src: url('./assets/Fonts/Gilroy-RegularItalic.ttf') format('opentype');
+        src: url('./assets/Fonts/Gilroy-Regular.otf') format('opentype');
     }
     @font-face {
         font-family: 'Gilroy-SemiBold';
-        src: url('./assets/Fonts/Gilroy-SemiBold.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-SemiBoldItalic';
-        src: url('./assets/Fonts/Gilroy-SemiBoldItalic.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-Thin';
-        src: url('./assets/Fonts/Gilroy-Thin.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-ThinItalic';
-        src: url('./assets/Fonts/Gilroy-ThinItalic.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-UltraLight';
-        src: url('./assets/Fonts/Gilroy-UltraLight.ttf') format('opentype');
-    }
-    @font-face {
-        font-family: 'Gilroy-UltraLightItalic';
-        src: url('./assets/Fonts/Gilroy-UltraLightItalic.ttf') format('opentype');
+        src: url('./assets/Fonts/Gilroy-SemiBold.otf') format('opentype');
     }
         
     :global(body) {

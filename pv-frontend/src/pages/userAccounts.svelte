@@ -9,6 +9,7 @@
 
     user.subscribe(value => {
         loggedInUser = value;
+        console.log(loggedInUser);
     });
 
     // Sidebar
@@ -28,16 +29,12 @@
     import EditUserModal from "../lib/EditUserModal.svelte";
     import DeleteUserModal from "../lib/DeleteUserModal.svelte";
     import { getUsersByCompanyId } from "../apis/userApis";
-    import { fetchUsers } from "../apis/adminApis";
-    import { onMount } from 'svelte';
 
     let users = [];
     let selectedUser = null;
 
     async function loadUsers() {
-        console.log(loggedInUser.company);
-        // users = await getUsersByCompanyId(loggedInUser.company);
-        users = await fetchUsers();
+        users = await getUsersByCompanyId(loggedInUser.company);
     }
 
     loadUsers();
@@ -76,7 +73,7 @@
 </style>
 
 <!-- Create User Modal -->
-<NewUserModal />
+<NewUserModal loggedInUser={loggedInUser} />
 
 <!-- Edit User Modal -->
 {#if selectedUser !== null}
@@ -96,12 +93,12 @@
             <SearchProfileBar/>
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
                 {#if loggedInUser.userType == "master"}
-                <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-end align-items-center grid-box">
-                    <button class="btn px-3 py-2" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;">
-                        <img src={user2} alt="arrow" width="20" class="me-2">
-                        Hesap Oluştur 
-                    </button>
-                </div>
+                    <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-end align-items-center grid-box">
+                        <button class="btn px-3 py-2" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" data-bs-toggle="modal" data-bs-target="#newUserModal">
+                            <img src={user2} alt="arrow" width="20" class="me-2">
+                            Hesap Oluştur
+                        </button>
+                    </div>
                 {/if}
 
                 <div class="bg-white rounded mb-4 grid-box px-0" style="height: 43vh;">
@@ -116,26 +113,29 @@
                           </tr>
                         </thead>
                         <tbody>
-                            {#each users as user, index}
-                                <tr>
-                                    <th scope="row">{index + 1}</th>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.phoneNumber}</td>
-                                    <td>
-                                        <div class="d-flex justify-content-end">
-                                            <button class="btn p-0" type="button" on:click={() => selectedUser = user}>
-                                                <img src={edit} alt="arrow" width="20">
-                                            </button>
-                                            <button class="btn p-0" type="button" on:click={() => selectedUser = user}>
-                                                <img src={trashCan} alt="arrow" width="20">
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            {/each}
+                            {#if users.length !== 0}
+                                {#each users as user, index}
+                                    <tr>
+                                        <th scope="row">{index + 1}</th>
+                                        <td>{user.name}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.phoneNumber}</td>
+                                        <td>
+                                            <div class="d-flex justify-content-end">
+                                                <button class="btn p-0" type="button" data-bs-target="#editCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                    <img src={edit} alt="arrow" width="24">
+                                                </button>
+                                                <div class="vr mx-3" style="width: 2px; color: #DDDDDD;"></div>
+                                                <button class="btn p-0" type="button" data-bs-target="#deleteCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                    <img src={trashCan} alt="arrow" width="24">
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {/each}
+                            {/if}
                         </tbody>
-                      </table>
+                    </table>
                 </div>
             </div>
         </div>
