@@ -139,6 +139,22 @@ exports.getCampaigns = async (req, res) => {
   }
 }
 
+exports.getCampaignByName = async (req, res) => {
+  try {
+    const campaignName = req.params.name;
+    const company = req.query.company;
+    console.log(campaignName, company);
+    let campaign = await Campaign.find({ company: company, name: campaignName });
+    if (campaign.length == 0) {
+      res.status(404).send({ message: "Not found campaign with id " + id });
+    }
+    return res.status(200).json(campaign);
+  } catch (error) {
+    console.error('Error retrieving campaign:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 // Update campaign
 exports.updateCampaign = async (req, res) => {
   try {

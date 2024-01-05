@@ -8,6 +8,9 @@ var corsOptions = {
   origin: "http://localhost:3000"
 };
 
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+
 app.use(cors());
 
 // parse requests of content-type - application/json
@@ -15,6 +18,8 @@ app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, './templates')));
 
 const db = require("./models");
 const UserType = require("./models/user.type.model");
@@ -36,13 +41,14 @@ db.mongoose
 
 // simple route
 app.get("/", (req, res) => {
-  console.log("Hello world");
+  res.render('index', { id: null });
 });
 
 // routes
 require("./routes/auth.routes")(app);
 require("./routes/user.routes")(app);
 require("./routes/admin.routes")(app);
+require("./routes/target.user.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

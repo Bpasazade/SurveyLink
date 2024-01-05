@@ -1,0 +1,63 @@
+<!-- index.ejs -->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/index.css">
+</head>
+<body>
+    <main>
+        <form id="surveyForm">
+            <!-- Section 1 -->
+            <div id="section1" class="section h-100 p-4">
+                <div class="mb-5 h-100 d-flex flex-column align-items-center justify-content-center">
+                    <h1 class="text text-title w-100 text-center">BELEDİYE İŞİ</h1>
+                    <h1 class="text text-title w-100 text-center">GÖNÜL İŞİ</h1>
+                    <h1 class="text text-subtitle w-100 text-left">SAYIN;</h1>
+                    <h1 id="name" class="text text-name w-100 text-center"></h1>
+                    <h1 class="text text-subtitle w-100 text-center mb-5">
+                        İzmir Kemalpaşa Belediye Başkanı Sayın Arif UĞURLU’nun Size Bir Mesajı Var!
+                    </h1>
+                    <button type="button" class="w-75" id="next1" onclick="showNextSection('section1', 'section2')">İzlemek İstiyorum</button>
+                </div>
+            </div> 
+            <!-- Section 2 -->
+            <div id="section2" class="video-container section h-100" style="display: none;">
+                <video id="video" class="w-100" autoplay controls>
+                    <source src="/video.mp4" type="video/mp4">
+                </video>
+            </div>
+            <!-- Section 3 -->
+            <div id="section3" class="section h-100 p-4" style="display: none;">
+                <div class="mb-5 h-100 d-flex flex-column align-items-center justify-content-center">
+                    <h1 class="text text-title w-100 text-center">TÜRKİYE İÇİN</h1>
+                    <h1 class="text text-title w-100 text-center">HIZ KESMEDEN</h1>
+                    <h1 class="text text-title w-100 text-center mb-4">DEVAM</h1>
+                    <button type="button" class="w-75 mb-2" id="next2-yes" onclick="showNextSection('section3', 'section4')">EVET BİLİYORUM</button>
+                    <button type="button" class="w-75" id="next2-no" onclick="showNextSection('section3', 'section5')">HAYIR BİLMİYORUM</button>
+                </div>
+            </div>
+            <!-- Section 4 -->
+            <!-- another video -->
+            <div id="section4" class="video-container section h-100" style="display: none;">
+                <video id="video" class="w-100" autoplay>
+                    <source src="/video.mp4" type="video/mp4">
+                </video>
+            </div>
+            <!-- Section 5 -->
+            <!-- another video -->
+            <div id="section5" class="video-container section h-100" style="display: none;">
+                <video id="video" class="w-100" autoplay>
+                    <source src="/video.mp4" type="video/mp4">
+                </video>
+            </div>
+        </form>
+    </main>
+</body>
+</html>

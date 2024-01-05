@@ -1,4 +1,5 @@
 const db = require('../models');
+const TargetUser = require('../models/target.user.model');
 const Company = db.company;
 const Campaign = db.campaign;
 
@@ -42,8 +43,13 @@ exports.getCompany = async (req, res) => {
 
 exports.getCompanyByName = async (req, res) => {
     try {
-        const companyName = req.params.companyName;
-        const company = Company.findOne({ name: companyName });
+        const companyName = req.params.name;
+        const id = req.query.id;
+        const company = await Company.find({ name: companyName });
+        let user = await TargetUser.find({ _id: id, company: company[0]._id });
+        if (user.length == 0) {
+            res.status(404).send({ message: "Not found TargetUser with id " + id });
+        }
         return res.status(200).json(company);
     } catch (error) {
         console.error('Error retrieving company:', error);

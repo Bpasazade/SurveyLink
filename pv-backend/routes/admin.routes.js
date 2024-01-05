@@ -15,6 +15,8 @@ module.exports = function(app) {
 
     app.get('/companies/:id', controller.getCompany);
 
+    app.get('/companiesbyname/:name', controller.getCompanyByName);
+
     app.put('/companies/:id', controller.updateCompany);
 
     app.delete('/companies/:id', controller.deleteCompany);

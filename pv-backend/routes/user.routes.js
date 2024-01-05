@@ -41,6 +41,8 @@ module.exports = function(app) {
 
   app.put("/campaigns/:campaignId", controller.updateCampaign);
 
+  app.get("/campaignsbyname/:name", controller.getCampaignByName);
+
   app.post("/sms", controller.createSms);
 
   app.get("/sms/:companyId", controller.getSms);
