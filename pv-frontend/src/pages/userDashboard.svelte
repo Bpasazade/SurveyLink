@@ -1,5 +1,13 @@
 <!-- src/userDashboard.svelte -->
 <script>
+
+    // User
+    import { user } from '../user.js';
+    let loggedInUser;
+    user.subscribe(value => {
+        loggedInUser = value;
+    });
+
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
 
@@ -23,7 +31,8 @@
     let canvas1, canvas2, canvas3, canvas4, canvas5, canvas6, canvas7;
 
     import { onMount } from 'svelte';
-    onMount(() => {
+    onMount(async () => {
+        await getAllSurveyStatsFunc();
         const ctx1 = canvas1.getContext('2d');
         const ctx2 = canvas2.getContext('2d');
         const ctx3 = canvas3.getContext('2d');
@@ -315,10 +324,10 @@
                 },
             ],
             data: {
-                labels: ["Açılma", "İzlenme", "Cevaplama"],
+                labels: ["Evet", "Hayır"],
                 datasets: [
                 {
-                    data: [70, 20, 10],
+                    data: [percentages.yes, percentages.no],
                     backgroundColor: ["#0077B6", "#00B4D8", "#F8F8F8"],
                     borderWidth: 0,
                 },
@@ -365,10 +374,10 @@
                 },
             ],
             data: {
-                labels: ["Açılma", "İzlenme", "Cevaplama"],
+                labels: ["İzlendi", "İzlenmedi"],
                 datasets: [
                 {
-                    data: [70, 30],
+                    data: [percentages.videoSeen, 100 - percentages.videoSeen],
                     backgroundColor: ["#0077B6", "#00B4D8"],
                     borderWidth: 0,
                 },
@@ -386,6 +395,35 @@
             },
         });
     });
+
+    // Get All Survey Stats
+    import { getAllSurveyStats } from '../apis/userApis.js';
+    let videoIntroStats;
+    let surveyView = 0;
+    let videoIntroSeen = 0;
+    let videoIntroWatched = 0;
+    let yes = 0;
+    let no = 0;
+    let videoYesSeen = 0;
+    let videoNoSeen = 0;
+    let percentages = {};
+    async function getAllSurveyStatsFunc() {
+        const response = await getAllSurveyStats(loggedInUser.company);
+        if (response) {
+            surveyView = response.surveyView;
+            videoIntroSeen = response.videoIntroSeen;
+            videoIntroWatched = response.videoWatched;
+            yes = response.yes;
+            no = response.no;
+            videoYesSeen = response.videoYesSeen;
+            videoNoSeen = response.videoNoSeen;
+        }
+        percentages = {
+            yes: (yes / (yes + no)) * 100,
+            no: (no / (yes + no)) * 100,
+            videoSeen: ((videoIntroSeen + videoYesSeen + videoNoSeen) / (surveyView * 3) * 100).toFixed(0),
+        }
+    }
 </script>
   
 <style>
@@ -447,7 +485,7 @@
                                 <img src={messages} alt="layers" class="img-responsive" width="42">
                                 <span>
                                     <h6 class="grid-box-text mb-2 fs-5">SMS Gönderilen</h6>
-                                    <h1 class="grid-box-number fs-2">75,140</h1>
+                                    <h1 class="grid-box-number fs-2">0</h1>
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
@@ -460,7 +498,7 @@
                                 <img src={layers} alt="layers" class="img-responsive" width="42">
                                 <span>
                                     <h6 class="grid-box-text mb-2 fs-5">Açılma Sayısı</h6>
-                                    <h1 class="grid-box-number fs-2">14,695</h1>
+                                    <h1 class="grid-box-number fs-2">{ surveyView }</h1>
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
@@ -472,7 +510,7 @@
                                 <img src={videos} alt="layers" class="img-responsive" width="42">
                                 <span>
                                     <h6 class="grid-box-text mb-2 fs-5">İzlenme Sayısı</h6>
-                                    <h1 class="grid-box-number fs-2">12,043</h1>
+                                    <h1 class="grid-box-number fs-2">{ videoIntroSeen + videoYesSeen + videoNoSeen }</h1>
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
@@ -484,7 +522,7 @@
                                 <img src={stats} alt="layers" class="img-responsive" width="42">
                                 <span>
                                     <h6 class="grid-box-text mb-2 fs-5">Cevaplama Sayısı</h6>
-                                    <h1 class="grid-box-number fs-2">5,430</h1>
+                                    <h1 class="grid-box-number fs-2">{ yes + no }</h1>
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
@@ -499,7 +537,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1">Giriş Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{videoIntroSeen}</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
 
@@ -509,7 +547,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF;">%81,95</h6>
                             </div>
 
@@ -519,7 +557,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
                         </div>
@@ -528,7 +566,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1">Giriş Video Tam İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ videoIntroWatched }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
@@ -538,7 +576,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
@@ -548,7 +586,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
                         </div>
@@ -584,7 +622,7 @@
                         <div class="col-md d-flex flex-column justify-content-between bg-white rounded mb-4 p-4 me-4 grid-box">
                             <div class="d-flex justify-content-start align-items-center" style="margin-bottom: 20px;">
                                 <img src={pieChart} alt="layers" class="img-responsive me-2" width="20">
-                                <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Genel Analiz Grafiği</h6>
+                                <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Anket Cevap Grafiği</h6>
                             </div>
                             <div class="w-100 d-flex justify-content-center align-items-center p-2 ps-3" style="margin-bottom: 13px;">
                                 <canvas id="chart6" aria-label="chart" bind:this={canvas6} style="width: 27vh; height: 27vh;"></canvas>
@@ -609,7 +647,7 @@
                         <div class="col-md d-flex flex-column justify-content-between bg-white rounded mb-4 p-4 grid-box">
                             <div class="d-flex justify-content-start align-items-center" style="margin-bottom: 20px;">
                                 <img src={pieChart} alt="layers" class="img-responsive me-2" width="20">
-                                <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Genel Analiz Grafiği</h6>
+                                <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Video İzlenme Grafiği</h6>
                             </div>
                             <div class="w-100 d-flex justify-content-center align-items-center p-2 ps-3" style="margin-bottom: 13px;">
                                 <canvas id="chart7" aria-label="chart" bind:this={canvas7} style="width: 27vh; height: 27vh;"></canvas>
@@ -617,11 +655,11 @@
                             <div class="d-flex justify-content-center align-items-center px-3">
                                 <div class="d-flex justify-content-start align-items-center rounded me-3" style="padding:14px; background-color: #F7F8FA;">
                                     <div class="me-2" style="width: 13px; height: 13px; background-color: #0077B6; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">Evet</h6>
+                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">İzlendi</h6>
                                 </div>
                                 <div class="d-flex justify-content-start align-items-center rounded" style="padding:14px; background-color: #F7F8FA;">
                                     <div class="me-2" style="width: 13px; height: 13px; background-color: #00B4D8; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">Hayır</h6>
+                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">İzlenmedi</h6>
                                 </div>
                             </div>
                         </div>

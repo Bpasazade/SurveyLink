@@ -52,4 +52,6 @@ module.exports = function(app) {
   app.put("/sms/:smsId", controller.updateSms);
 
   app.post('/uploadExcelFile', excelUploads.single('file'), controller.uploadExcelFile);
+
+  app.get("/getEjsFile", controller.getEjsFileAsString);
 };

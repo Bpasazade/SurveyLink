@@ -35,7 +35,6 @@
         if (campaignList.length > 0) {
             selectedCampaign = campaignList[0];
             selectedCampaignId = selectedCampaign._id;
-            console.log(selectedCampaign);
             getSurveyStatsHandler();
         }
     });
@@ -118,11 +117,6 @@
         });
     });
 
-    let selection = "chart";
-    function select(button) {
-        selection = button;
-    }
-
     // Company Campaigns
     import { getCompanyCampaigns } from '../apis/userApis.js';
     let campaignList = [];
@@ -143,7 +137,6 @@
     let videoNoSeen = 0;
     async function getSurveyStatsHandler() {
         videoIntroStats = await getSurveyStats(loggedInUser.company, selectedCampaign._id);
-        console.log(videoIntroStats);
         videoIntroSeen = videoIntroStats.videoIntroSeen;
         videoIntroWatched = videoIntroStats.videoWatched;
         yes = videoIntroStats.yes;
@@ -166,9 +159,23 @@
     import { getGroupTargetList } from '../apis/userApis.js';
     async function getGroupTargetListHandler(groups) {
         groupTargetList = await getGroupTargetList(groups);
-        console.log(groupTargetList);
     }
 
+    // Selected Tab (Stats or Users)
+    let selectedButton = null;
+    let selectedTab = null;
+    const toggle = (button) => {
+        // Toggle the selected state
+        selectedButton = selectedButton === button ? null : button;
+
+        if(button == 1) {
+            selectedTab = "stats";
+        } else if(button == 2) {
+            selectedTab = "users";
+        }
+    };
+
+    toggle(1);
 </script>
 
 <style>
@@ -227,6 +234,21 @@
         background: url("../assets/user-dashboard/green-bg.png") no-repeat center center;
         background-size: cover;
     }
+    .btn-selected,
+    .btn-selected:hover {
+        border: 0px solid #697A8D;
+        background-color: #697A8D !important;
+    }
+
+    .btn-selected svg path,
+    .btn-selected:hover svg path{
+        fill: white;
+    }
+
+    .btn-selected span,
+    .btn-selected:hover span {
+        color: #FFFFFF;
+    }
 </style>
 
 <main class="m-0 p-0">
@@ -246,19 +268,25 @@
                           </select>
                     </div>
                     <div>
-                        <button class="btn px-3 py-2" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" on:click={() => select("chart")}>
-                            <img src={graph} alt="arrow" width="20" class="me-2">
-                            İstatistik
+                        <button class="btn px-3 py-2 me-2 {selectedButton === 1 ? 'btn-selected' : ''}" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" on:click={() => toggle(1)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="me-2" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M17.1785 16.3629H3.63756V2.82193C3.63756 2.37213 3.26898 2.00354 2.8223 2.00354C2.37249 2.00354 2.00391 2.37213 2.00391 2.82193V17.1812C2.00391 17.6279 2.37249 17.9965 2.8223 17.9965H17.1816C17.6314 17.9965 18 17.6279 18 17.1781C18 16.7283 17.6283 16.3629 17.1785 16.3629Z" fill="#697A8D"/>
+                                <path d="M12.3962 9.59081C11.9808 9.74387 11.5154 9.37528 11.1718 9.19099C10.066 8.55064 8.64788 8.83177 7.87947 9.85632L5.23688 13.3485C4.96512 13.7078 5.03697 14.2232 5.39618 14.4949C5.7554 14.7667 6.2708 14.6948 6.54256 14.3356L9.18514 10.8434C9.62558 10.2187 10.3877 10.5716 10.8844 10.9246C12.062 11.6462 13.73 11.1807 14.3766 9.96252L16.0353 6.96696L16.2914 7.78535C16.4288 8.21954 16.9005 8.45693 17.3253 8.32262C17.7595 8.18518 17.9969 7.72288 17.8626 7.2887L17.0223 4.63674C16.8943 4.21192 16.4132 3.9714 15.9884 4.09947L13.3208 4.93973C12.2963 5.24272 12.8086 6.83889 13.8081 6.51091L14.5359 6.27976L12.9335 9.17224C12.821 9.37528 12.6274 9.53458 12.3962 9.59081Z" fill="#697A8D"/>
+                            </svg>
+                            <span class="mb-0">İstatistik</span>
                         </button>
-                        <button class="btn px-3 py-2" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" on:click={() => select("users")}>
-                            <img src={user2} alt="arrow" width="20" class="me-2">
-                            Kişiler 
+                        <button class="btn px-3 py-2 {selectedButton === 2 ? 'btn-selected' : ''}" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500;" on:click={() => toggle(2)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="me-2" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M9.89428 9.70725C11.0048 9.70725 11.9664 9.3275 12.752 8.57823C13.5377 7.82909 13.936 6.91246 13.936 5.85351C13.936 4.79491 13.5377 3.87817 12.7519 3.12878C11.9661 2.37976 11.0046 2 9.89428 2C8.78366 2 7.82233 2.37976 7.03664 3.1289C6.25095 3.87805 5.85254 4.79479 5.85254 5.85351C5.85254 6.91246 6.25095 7.82921 7.03677 8.57835C7.82258 9.32737 8.78405 9.70725 9.89428 9.70725Z" fill="#697A8D"/>
+                                <path d="M16.9661 14.3032C16.9434 13.9914 16.8976 13.6514 16.8301 13.2922C16.762 12.9304 16.6743 12.5884 16.5693 12.2758C16.4609 11.9526 16.3134 11.6335 16.1311 11.3278C15.9419 11.0104 15.7196 10.734 15.4702 10.5066C15.2095 10.2687 14.8902 10.0774 14.5209 9.93787C14.153 9.79907 13.7452 9.72876 13.3091 9.72876C13.1378 9.72876 12.9721 9.79578 12.6522 9.99438C12.4553 10.1168 12.2249 10.2584 11.9679 10.415C11.7481 10.5486 11.4503 10.6737 11.0825 10.787C10.7236 10.8977 10.3592 10.9539 9.99962 10.9539C9.64 10.9539 9.27577 10.8977 8.91653 10.787C8.5491 10.6738 8.25131 10.5487 8.03175 10.4152C7.77711 10.26 7.54667 10.1184 7.34682 9.99426C7.02727 9.79565 6.86148 9.72864 6.69018 9.72864C6.25387 9.72864 5.84624 9.79907 5.47843 9.93799C5.10946 10.0773 4.79004 10.2686 4.529 10.5067C4.27973 10.7343 4.05736 11.0105 3.86839 11.3278C3.68621 11.6335 3.53873 11.9525 3.43016 12.2759C3.32531 12.5885 3.23761 12.9304 3.1695 13.2922C3.10204 13.6509 3.0562 13.9911 3.03354 14.3036C3.01127 14.6097 3 14.9275 3 15.2484C3 16.0836 3.27845 16.7597 3.82755 17.2584C4.36986 17.7505 5.08744 18.0001 5.96006 18.0001H14.0399C14.9126 18.0001 15.6299 17.7506 16.1723 17.2584C16.7216 16.7601 17 16.0838 17 15.2483C16.9999 14.9259 16.9885 14.6079 16.9661 14.3032Z" fill="#697A8D"/>
+                            </svg>
+                            <span>Kişiler</span> 
                         </button>
                     </div>
                     
                 </div>
 
-                {#if selection == "chart"}
+                {#if selectedTab == "stats"}
                 <div class="container mx-0 px-0 mb-3">
                     <div class="row g-0 d-flex justify-content-between">
                         <div class="bg-white rounded mb-3 p-4 grid-box" style="width: 65%; height: 42vh;">
@@ -365,7 +393,7 @@
                     </div>
                 </div>
 
-                {:else if selection == "users"}
+                {:else if selectedTab == "users"}
                 <div class="bg-white rounded mb-4 grid-box px-0" style="height: 43vh;">
                     <table class="table table-hover">
                         <thead>
@@ -374,27 +402,95 @@
                             <th scope="col">Ad-Soyad</th>
                             <th scope="col">Tarih</th>
                             <th scope="col">Telefon</th>
-                            <th scope="col">Giriş Videosu</th>
-                            <th scope="col">Cevap</th>
-                            <th scope="col"></th>
+                            <th scope="col">Link Açılma</th>
+                            <th scope="col">Giriş Videosu Soru</th>
+                            <th scope="col">Giriş Videosu Görüntüleme</th>
+                            <th scope="col">Giriş Videosu İzlenme</th>
+                            <th scope="col">Soru 1 Cevap</th>
+                            <th scope="col">Soru 1 Video Görüntüleme</th>
+                            <th scope="col">Soru 1 Video İzlenme</th>
                           </tr>
                         </thead>
                         <tbody>
-                            {#each groupTargetList as target, index}
-                            <tr>
-                                <td>{ index + 1 }</td>
-                                <td>{ target.name }</td>
-                                <td>{ target.date }</td>
-                                <td>{ target.phoneNumber }</td>
-                                {#if target.answers[0][index].answer && target.answers[0][index].answer.includes("page-opened")}
-                                    <td>Evet</td>
-                                {/if}
-                                <td>Hayır</td>
-                                <td>
-                                    <span class="bg-light py-2 px-3 rounded">LOREM</span>
-                                </td>
-                            </tr>
-                            {/each}
+                            {#if groupTargetList.length == 0}
+                                <tr>
+                                    <td colspan="11" class="text-center">Veri bulunamadı.</td>
+                                </tr>
+                            {:else}
+                                {#each groupTargetList as target, index}
+                                    <tr>
+                                        <td>{ index + 1 }</td>
+                                        <td>{ target.name }</td>
+                                        <td>{ target.date }</td>
+                                        <td>{ target.phoneNumber }</td>
+                                            {#if target.answers[0].length > 0} 
+                                                {#if target.answers[0][0].answer == "page-opened"}
+                                                    <td>Evet</td>
+                                                {:else}
+                                                    <td>Hayır</td>
+                                                {/if}
+
+                                                {#if target.answers[0][1]}
+                                                    {#if target.answers[0][1].answer == "video-open"}
+                                                        <td>Evet</td>
+                                                    {/if}
+                                                {:else}
+                                                    <td>Hayır</td>
+                                                {/if}
+
+                                                {#if target.answers[0][2]}
+                                                    {#if target.answers[0][2].answer == "video-played"}
+                                                        <td>Açıldı</td>
+                                                    {/if}
+                                                {:else}
+                                                    <td>Açılmadı</td>
+                                                {/if}
+
+                                                {#if target.answers[0][3]}
+                                                    {#if target.answers[0][3].answer == "video-ended"}
+                                                        <td>İzlendi</td>
+                                                    {/if}
+                                                {:else}
+                                                    <td>İzlenmedi</td>
+                                                {/if}
+
+                                                {#if target.answer && target.answer[0] && target.answer[0][4]}
+                                                    {#if target.answers[0][4].answer == "yes"}
+                                                        <td>Evet</td>
+                                                    {:else if target.answers[0][4].answer == "no"}
+                                                        <td>Hayır</td>
+                                                    {/if}
+                                                {:else}
+                                                    <td>Hayır</td>
+                                                {/if}
+
+                                                {#if target.answers[0][5]}
+                                                    {#if target.answers[0][5].answer == "video-yes-started" || target.answers[0][5].answer == "video-no-started"}
+                                                        <td>Görüntülendi</td>
+                                                    {/if}
+                                                {:else}
+                                                    <td>Görüntülenmedi</td>
+                                                {/if}
+
+                                                {#if target.answers[0][6]}
+                                                    {#if target.answers[0][6].answer == "video-yes-ended" || target.answers[0][6].answer == "video-no-ended"}
+                                                        <td>İzlendi</td>
+                                                    {/if}
+                                                {:else}
+                                                    <td>İzlenmedi</td>
+                                                {/if}
+                                            {:else}
+                                                <td>Hayır</td>
+                                                <td>Hayır</td>
+                                                <td>Açlmadı</td>
+                                                <td>İzlenmedi</td>
+                                                <td>Hayır</td>
+                                                <td>Görüntülenmedi</td>
+                                                <td>İzlenmedi</td>
+                                            {/if}
+                                    </tr>
+                                {/each}
+                            {/if}
                         </tbody>
                       </table>
                 </div>

@@ -149,3 +149,68 @@ exports.getSurveyStats = async (req, res) => {
         return res.status(500).json({ message: err.message });
     }
 }
+
+exports.getAllSurveyStats = async (req, res) => {
+    try {
+        // Get company and campaign from data
+        const company = req.query.company;
+
+        // Check if the Company exists
+        const companyData = await Company.findOne({ _id: mongo.ObjectId(company) });
+        if (!companyData) {
+            return res.status(404).json({ message: "Not found Company with name " + company });
+        }
+
+        // Get the number of users who have opened the survey
+        const surveyView = await Response.countDocuments({ company, answer: 'page-opened' });
+
+        // Get the number of users who have seen the video intro
+        const videoIntroSeen = await Response.countDocuments({ company, answer: 'video-played' });
+        console.log(videoIntroSeen);
+
+        // Get the number of users who have watched the whole video
+        const videoWatched = await Response.countDocuments({ company, answer: 'video-ended' });
+
+        // Get the number of users who have answered yes to the question
+        const yes = await Response.countDocuments({ company, answer: 'yes' });
+
+        // Get the number of users who have answered no to the question
+        const no = await Response.countDocuments({ company, answer: 'no' });
+
+        // Get the number of users who have have seen video yes
+        const videoYesSeen = await Response.countDocuments({ company, answer: 'video-yes-started' });
+
+        // Get the number of users who have have seen video no
+        const videoNoSeen = await Response.countDocuments({ company, answer: 'video-no-started' });
+
+        return res.status(200).json({ surveyView, videoIntroSeen, videoWatched, yes, no, videoYesSeen, videoNoSeen });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
+}
+
+exports.checkUserResponsed = async (req, res) => {
+    try {
+        // Get id, company, campaign from data
+        const id = req.query.id;
+
+        // Check if the TargetUser exists
+        const targetUserData = await TargetUser.findOne({ _id: mongo.ObjectId(id) });
+        if (!targetUserData) {
+            console.log(targetUserData);
+            return res.status(404).json({ message: "Not found user with id " + id });
+        }
+
+        // Check if the TargetUser has already responded
+        const response = await Response.findOne({ targetUser: id });
+        if (response) {
+            return res.status(200).json({ responsed: true });
+        } else {
+            return res.status(200).json({ responsed: false });
+        }
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
+}

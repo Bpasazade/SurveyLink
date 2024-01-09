@@ -8,4 +8,8 @@ module.exports = function(app) {
     app.post('/answer', controller.saveAnswer);
 
     app.get('/survey', controller.getSurveyStats);
+
+    app.get('/surveyAll', controller.getAllSurveyStats);
+
+    app.get('/checkUserResponsed', controller.checkUserResponsed);
 }

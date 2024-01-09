@@ -13,9 +13,7 @@
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
     // Main content
-    import phone from "../assets/campaigns2/phone_sms.png";
-    import preview from "../assets/preview.svg";
-    
+    import phone from "../assets/campaigns2/phone_sms.png";    
  
     let rotated = false;
 
@@ -135,7 +133,6 @@
         smsSelection = smsList[index]._id;
         toggle('edit-sms-button');
     }
-
 </script>
 
 <style>
@@ -362,6 +359,10 @@
                 {:else if selection === 'new-sms'}
                     <div class="row d-flex justify-content-between align-items-center mb-4 g-0" style="position:relative;">
                         <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 70%; height: fit-content;">
+                            <div class="form-group mb-4">
+                                <label for="smsName" style="color: #697A8D;">SMS Başlığı</label>
+                                <input type="text" class="form-control shadow-none" id="smsName" placeholder="Lütfen sms başlığı giriniz">
+                            </div>
                             <div class="form-group mb-4">
                                 <label for="text" style="color: #697A8D;">SMS Metni</label>
                                 <textarea bind:value={text} on:input={handleText} class="form-control shadow-none" placeholder="Lütfen iletmek istediğiniz mesajı girin" id="text" style="height: 150px; resize: none;" maxlength="300"></textarea>

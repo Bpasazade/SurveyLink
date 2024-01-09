@@ -121,6 +121,7 @@
                                         <td>{user.email}</td>
                                         <td>{user.phoneNumber}</td>
                                         <td>
+                                            {#if loggedInUser._id !== user.id}
                                             <div class="d-flex justify-content-end">
                                                 <button class="btn p-0" type="button" data-bs-target="#editCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
                                                     <img src={edit} alt="arrow" width="24">
@@ -130,6 +131,7 @@
                                                     <img src={trashCan} alt="arrow" width="24">
                                                 </button>
                                             </div>
+                                            {/if}
                                         </td>
                                     </tr>
                                 {/each}

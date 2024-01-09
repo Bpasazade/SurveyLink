@@ -95,14 +95,14 @@
     <Route path="/adminCompanies" component={AdminCompanies} />
     <Route path="/adminCampaigns" component={AdminCampaigns} />
     <Route path="/adminAccounts" component={AdminAccounts} />
-    <Route path="/adminTemplates" component={AdminTemplates} />
+    <!-- <Route path="/adminTemplates" component={AdminTemplates} /> -->
     <Route path="/userDashboard" component={UserDashboard} />
     <Route path="/userAccounts" component={UserAccounts} />
     <Route path="/userCampaigns" component={UserCampaigns} />
     <Route path="/userCampaigns2" component={UserCampaigns2} />
     <Route path="/userSmsService" component={UserSmsService} />
     <Route path="/userGroups" component={UserGroups} />
-    <Route path="/userTemplates" component={UserTemplates} />
+    <!-- <Route path="/userTemplates" component={UserTemplates} /> -->
     <Route path="/template" component={Template} />
 </Router>
 

@@ -219,6 +219,18 @@
     function uploadFile() {
         uploadExcelFile(excelFile, loggedInUser.company, selectedGroup);
     }
+
+    // Get Ejs File
+    import { getEjsFileAsString } from '../apis/userApis.js';
+
+    let ejsFile = '';
+    async function getEjsFileHandler() {
+        const response = await getEjsFileAsString('index');
+        ejsFile = response.fileContent;
+        console.log(ejsFile);
+    }
+
+    onMount(getEjsFileHandler);
 </script>
 
 <style>
@@ -787,7 +799,8 @@
                         </div>
                         <div class="bg-white rounded grid-box px-5 py-4" style="width: 28%; height: fit-content; position:absolute; top: 0; right: 0;">
                             <div class="d-flex flex-column justify-content-between align-items-center" style="height: fit-content; max-height: 72.5vh !important;">
-                                <img src="{phone}" class="mb-3" alt="phone" width="100%"/>
+                                <!-- <img src="{phone}" class="mb-3" alt="phone" width="100%"/> -->
+                                {@html ejsFile}
                             </div>
                         </div>
                     </div>

@@ -359,3 +359,20 @@ exports.uploadExcelFile = async (req, res, file) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+// get an ejs file into a string
+const fs = require('fs');
+const path = require('path');
+const ejs = require('ejs');
+
+exports.getEjsFileAsString = async (req, res) => {
+  try {
+    const { fileName } = req.query;
+    const filePath = path.join(__dirname, `../views/${fileName}.ejs`);
+    const fileContent = await fs.readFileSync(filePath, 'utf8');
+    return res.status(200).json({ fileContent });
+  } catch (error) {
+    console.error('Error getting ejs file:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
