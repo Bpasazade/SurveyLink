@@ -114,10 +114,25 @@ export async function getGroups(companyId) {
   }
 }
 
-// Get Group List
+// Get Company Target List
 export async function getCompanyTargetList(companyId) {
   try {
     const response = await axios.get(`http://localhost:3000/groups/list/${companyId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get Group Target List
+export async function getGroupTargetList(groups) {
+  try {
+    console.log(typeof(groups));
+    // send groups as query
+    const response = await axios.get('http://localhost:3000/groups-target-list', { params: { groups } });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
@@ -142,9 +157,9 @@ export async function updateGroup(groupId, name, companyId) {
 
 // Campaign Apis
 // Create campaign
-export async function createCampaign(name, description, companyId) {
+export async function createCampaign(name, description, companyId, groups) {
   try {
-    const response = await axios.post('http://localhost:3000/campaigns', { name, description, companyId });
+    const response = await axios.post('http://localhost:3000/campaigns', { name, description, companyId, groups });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
@@ -233,6 +248,19 @@ export async function uploadExcelFile(file, companyId, groupId) {
     }
     return response.data;
   } catch (error) {
+    throw error;
+  }
+}
+
+// Get Survey Stats
+export async function getSurveyStats(company, campaign) {
+  try {
+    const response = await axios.get(`http://localhost:3000/survey?company=${company}&campaign=${campaign}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
     throw error;
   }
 }

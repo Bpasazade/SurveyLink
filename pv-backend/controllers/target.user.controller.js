@@ -7,7 +7,6 @@ const Response = db.response;
 
 exports.getUserPage = (req, res) => {
     const id = req.params.id;
-    console.log(id);
     const company = req.params.company;
     const campaign = req.params.campaign;
 
@@ -92,7 +91,8 @@ exports.saveAnswer = async (req, res) => {
             targetUser: id,
             campaign,
             company,
-            answer
+            answer,
+            timestamp: new Date()
         });
 
         const savedResponse = await response.save();
@@ -101,4 +101,51 @@ exports.saveAnswer = async (req, res) => {
         console.error(err);
         return res.status(500).json({ message: err.message });
     }
-};
+}
+
+exports.getSurveyStats = async (req, res) => {
+    try {
+        // Get company and campaign from data
+        const company = req.query.company;
+        const campaign = req.query.campaign;
+
+        // Check if the Company exists
+        const companyData = await Company.findOne({ _id: mongo.ObjectId(company) });
+        if (!companyData) {
+            return res.status(404).json({ message: "Not found Company with name " + company });
+        }
+
+        // Check if the Campaign exists
+        const campaignData = await Campaign.findOne({ _id: mongo.ObjectId(campaign) });
+        if (!campaignData) {
+            return res.status(404).json({ message: "Not found Campaign with name " + campaign });
+        }
+
+        // Get the number of users who have opened the survey
+        const surveyView = await Response.countDocuments({ campaign, company, answer: 'page-opened' });
+
+        // Get the number of users who have seen the video intro
+        const videoIntroSeen = await Response.countDocuments({ campaign, company, answer: 'video-played' });
+        console.log(videoIntroSeen);
+
+        // Get the number of users who have watched the whole video
+        const videoWatched = await Response.countDocuments({ campaign, company, answer: 'video-ended' });
+        
+        // Get the number of users who have answered yes to the question
+        const yes = await Response.countDocuments({ campaign, company, answer: 'yes' });
+        
+        // Get the number of users who have answered no to the question
+        const no = await Response.countDocuments({ campaign, company, answer: 'no' });
+
+        // Get the number of users who have have seen video yes
+        const videoYesSeen = await Response.countDocuments({ campaign, company, answer: 'video-yes-started' });
+
+        // Get the number of users who have have seen video no
+        const videoNoSeen = await Response.countDocuments({ campaign, company, answer: 'video-no-started' });
+
+        return res.status(200).json({ surveyView, videoIntroSeen, videoWatched, yes, no, videoYesSeen, videoNoSeen });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: err.message });
+    }
+}

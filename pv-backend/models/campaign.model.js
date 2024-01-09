@@ -9,10 +9,12 @@ const Campaign = mongoose.model(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Company"
         },
-        group: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Group"
-        },
+        groups: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Group"
+            }
+        ],
         status: String,
     })
 );

@@ -121,7 +121,7 @@
       <div class="image-container w-100" style="padding: 4.75rem;">
         <img src="{ RubuPlusLogo }" alt="Logo" class="mb-5"><br>
         <div class="mt-4">
-          <span class="text text-uppercase" style="font-size: 39px; font-weight: 300; font-family: 'Gilroy-UltraLight'; line-height: 52px; margin-bottom: 6rem">Kişiselleştirilmiş</span><br>
+          <span class="text text-uppercase" style="font-size: 39px; font-weight: 300; font-family: 'Gilroy-Regular'; line-height: 52px; margin-bottom: 6rem">Kişiselleştirilmiş</span><br>
           <span class="text text-uppercase" style="font-size: 47px; font-weight: 900; font-family: 'Gilroy-Bold'; line-height: 42px">Video Mesaj (pvm) Platformu</span><br>
         </div>
       </div>

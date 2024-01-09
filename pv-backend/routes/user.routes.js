@@ -31,7 +31,9 @@ module.exports = function(app) {
 
   app.get("/groups/:companyId", controller.getGroups);
 
-  app.get("/groups/list/:companyId", controller.getGroupList);
+  app.get("/groups/list/:companyId", controller.getCompanyTargetList);
+
+  app.get("/groups-target-list", controller.getGroupTargetList);
 
   app.put("/groups/:groupId", controller.updateGroup);
 

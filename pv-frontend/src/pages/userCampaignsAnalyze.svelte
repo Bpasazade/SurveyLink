@@ -23,11 +23,21 @@
                     tick().then(() => {
                         selectElement.selectedIndex = selectedIndex;
                     });
+                    getSurveyStatsHandler();
+                    console.log(selectedCampaign);
                 } else {
                     console.warn("Selected campaign not found in the campaignList.");
                 }
             }
         });
+
+        // get initial campaign selection
+        if (campaignList.length > 0) {
+            selectedCampaign = campaignList[0];
+            selectedCampaignId = selectedCampaign._id;
+            console.log(selectedCampaign);
+            getSurveyStatsHandler();
+        }
     });
 
     // Sidebar
@@ -121,6 +131,44 @@
         campaignList = await getCompanyCampaigns(loggedInUser.company);
     }
     
+    // Get Survey Stats
+    import { getSurveyStats } from '../apis/userApis.js';
+    let videoIntroStats;
+    let surveyView = 0;
+    let videoIntroSeen = 0;
+    let videoIntroWatched = 0;
+    let yes = 0;
+    let no = 0;
+    let videoYesSeen = 0;
+    let videoNoSeen = 0;
+    async function getSurveyStatsHandler() {
+        videoIntroStats = await getSurveyStats(loggedInUser.company, selectedCampaign._id);
+        console.log(videoIntroStats);
+        videoIntroSeen = videoIntroStats.videoIntroSeen;
+        videoIntroWatched = videoIntroStats.videoWatched;
+        yes = videoIntroStats.yes;
+        no = videoIntroStats.no;
+        videoYesSeen = videoIntroStats.videoYesSeen;
+        videoNoSeen = videoIntroStats.videoNoSeen;
+        surveyView = videoIntroStats.surveyView;
+    }
+
+    // Selected Campaign
+    let selectedCampaignId;
+    let groupTargetList = [];
+    $: if (selectedCampaignId) {
+        selectedCampaign = campaignList.find(c => c._id === selectedCampaignId);
+        getGroupTargetListHandler(selectedCampaign.groups);
+        getSurveyStatsHandler();
+    }
+
+    // Selected Campaign Groups TargetList
+    import { getGroupTargetList } from '../apis/userApis.js';
+    async function getGroupTargetListHandler(groups) {
+        groupTargetList = await getGroupTargetList(groups);
+        console.log(groupTargetList);
+    }
+
 </script>
 
 <style>
@@ -191,7 +239,7 @@
                 <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-between align-items-center">
                     <div>
                           <select class="form-select shadow-none border-0 py-2" aria-label="Default select example" style="border-radius: 8px; color: #697A8D !important; font-size: 14px; font-weight: 500; background-color: #F8F8F8;"
-                            bind:this={selectElement}>
+                            bind:this={selectElement} bind:value={selectedCampaignId}>
                             {#each campaignList as campaign}
                                 <option value={campaign._id}>{campaign.name}</option>
                             {/each}
@@ -225,8 +273,8 @@
                               <div class="col-6" style="height: 47%;">
                                 <div class="px-4 pt-4 pb-2 bg-white rounded grid-box d-flex flex-column justify-content-between h-100">
                                     <img src={layers} alt="layers" class="mb-4" width="42">
-                                    <h6 class="dashboard-grid-text mb-2">Toplam Kampanya Sayısı</h6>
-                                    <h1 class="dashboard-grid-number" style="color: #696CFF;">0</h1>
+                                    <h6 class="dashboard-grid-text mb-2">Toplam Anket Açılma Sayısı</h6>
+                                    <h1 class="dashboard-grid-number" style="color: #696CFF;">{ surveyView }</h1>
                                 </div>
                               </div>
                               <div class="col-6" style="height: 47%;">
@@ -240,14 +288,14 @@
                                 <div class="px-4 pt-4 pb-2 bg-white rounded grid-box d-flex flex-column justify-content-between h-100">
                                     <img src={videos} alt="videos" class="mb-4" width="42">
                                     <h6 class="dashboard-grid-text mb-2">Toplam PVM İzlenme Sayısı</h6>
-                                    <h1 class="dashboard-grid-number" style="color: #05AF07;">0</h1>
+                                    <h1 class="dashboard-grid-number" style="color: #05AF07;">{ videoIntroSeen + videoYesSeen + videoNoSeen }</h1>
                                 </div>
                               </div>
                               <div class="col-6" style="height: 47%;">
                                 <div class="px-4 pt-4 pb-2 bg-white rounded grid-box d-flex flex-column justify-content-between h-100">
                                     <img src={stats} alt="stats" class="mb-4" width="42">
                                     <h6 class="dashboard-grid-text mb-2">Toplam PVM Yanıtlanma Sayısı</h6>
-                                    <h1 class="dashboard-grid-number" style="color: #FF2222;">0</h1>
+                                    <h1 class="dashboard-grid-number" style="color: #FF2222;">{ yes + no }</h1>
                                 </div>
                               </div>
                             </div>
@@ -261,7 +309,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1">Giriş Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ videoIntroSeen }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
 
@@ -271,7 +319,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF;">%81,95</h6>
                             </div>
 
@@ -281,7 +329,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
                         </div>
@@ -290,7 +338,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1">Giriş Video Tam İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ videoIntroWatched }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
@@ -300,7 +348,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
@@ -310,7 +358,7 @@
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">12043</h1>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
                         </div>
@@ -332,50 +380,21 @@
                           </tr>
                         </thead>
                         <tbody>
+                            {#each groupTargetList as target, index}
                             <tr>
-                                <td>#552</td>
-                                <td>Hasan Basri Paşazade</td>
-                                <td>11 Ara 2023, 10:58</td>
-                                <td>534 262 58 06</td>
-                                <td>İzlenmedi</td>
+                                <td>{ index + 1 }</td>
+                                <td>{ target.name }</td>
+                                <td>{ target.date }</td>
+                                <td>{ target.phoneNumber }</td>
+                                {#if target.answers[0][index].answer && target.answers[0][index].answer.includes("page-opened")}
+                                    <td>Evet</td>
+                                {/if}
                                 <td>Hayır</td>
                                 <td>
                                     <span class="bg-light py-2 px-3 rounded">LOREM</span>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>#552</td>
-                                <td>Hasan Basri Paşazade</td>
-                                <td>11 Ara 2023, 10:58</td>
-                                <td>534 262 58 06</td>
-                                <td>İzlenmedi</td>
-                                <td>Hayır</td>
-                                <td>
-                                    <span class="bg-light py-2 px-3 rounded">LOREM</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#552</td>
-                                <td>Hasan Basri Paşazade</td>
-                                <td>11 Ara 2023, 10:58</td>
-                                <td>534 262 58 06</td>
-                                <td>İzlenmedi</td>
-                                <td>Hayır</td>
-                                <td>
-                                    <span class="bg-light py-2 px-3 rounded">LOREM</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#552</td>
-                                <td>Hasan Basri Paşazade</td>
-                                <td>11 Ara 2023, 10:58</td>
-                                <td>534 262 58 06</td>
-                                <td>İzlenmedi</td>
-                                <td>Hayır</td>
-                                <td>
-                                    <span class="bg-light py-2 px-3 rounded">LOREM</span>
-                                </td>
-                            </tr>
+                            {/each}
                         </tbody>
                       </table>
                 </div>

@@ -74,7 +74,21 @@
     }
 
     let groupList = [];
-    onMount(getGroupsHandler);
+
+
+    // Target User List
+    import { getCompanyTargetList } from '../apis/userApis.js';
+    let targetUserList = [];
+
+    async function getCompanyTargetListHandler() {
+        const response = await getCompanyTargetList(loggedInUser.company);
+        targetUserList = response;
+    }
+
+    onMount(async () => {
+        await getGroupsHandler();
+        await getCompanyTargetListHandler();
+    });
 
     let selection = 'campaigns-table';
     let newCampaignButton = false;
@@ -115,8 +129,28 @@
     let campaignName = '';
     let campaignDescription = '';
 
+    let selectedIndexes = [];
+    let selectedGroupList = [];
+    function handleCheckboxChange(index) {
+        // Check if the checkbox is checked or unchecked
+        const isChecked = selectedIndexes.includes(index);
+        
+        // Update the selectedIndexes array based on the checkbox state
+        if (isChecked) {
+            selectedIndexes = selectedIndexes.filter(i => i !== index);
+        } else {
+            selectedIndexes = [...selectedIndexes, index];
+        }
+
+        // Log the selected indexes (you can replace this with your desired logic)
+        console.log("Selected Indexes:", selectedIndexes);
+        selectedGroupList = groupList.filter((group, index) => selectedIndexes.includes(index));
+        console.log('selectedGroupList', selectedGroupList);
+    }
+
     async function createCampaignHandler(event) {
-        const response = await createCampaign(campaignName, campaignDescription, loggedInUser.company);
+        selectedGroupList = groupList.filter((group, index) => selectedIndexes.includes(index));
+        const response = await createCampaign(campaignName, campaignDescription, loggedInUser.company, selectedGroupList);
         uploadFile();
         if (response) {
             // refresh page
@@ -608,33 +642,28 @@
                                             <table class="table table-hover mt-3 pb-2 rounded" style="border: 1px solid #EBE9F1;">
                                                 <thead>
                                                     <tr>
+                                                        <th scope="col">#</th>
                                                         <th scope="col">Grup Adı</th>
                                                         <th scope="col">Oluşturulma Tarihi</th>
-                                                        <th scope="col">Detaylar</th>
                                                         <th scope="col">Kişi Sayısı</th>
                                                         <th scope="col">İşlemler</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                    {#each groupList as group, index}
                                                     <tr>
-                                                        <td>#552</td>
-                                                        <td>Yeni Grup</td>
-                                                        <td>852.536 Kişi</td>
+                                                        <td>{index + 1}</td>
+                                                        <td>{group.name}</td>
                                                         <td>11 Ara 2023, 10:58</td>
+                                                        <td>{targetUserList.filter(user => user.group === group._id).length}</td>
                                                         <td class="d-flex">
                                                             <button class="btn me-2 p-0" type="button" style="border: none;">
                                                                 <img src={preview} alt="edit" width="22"/>
                                                             </button>
-
-                                                            <button class="btn me-2 p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
-                                                                <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
-                                                            </button>
-
-                                                            <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
-                                                                <i class='bx bxs-message-square-detail' style="font-size: 22px; color: #267BC0;"></i>
-                                                            </button>
+                                                            <input type="checkbox" class="form-check-input shadow-none" style="width: 20px; height: 20px;" on:change={() => handleCheckboxChange(index)}/>
                                                         </td>
                                                     </tr>
+                                                    {/each}
                                                 </tbody>
                                             </table>
                                         </div>

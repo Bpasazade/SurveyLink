@@ -13,6 +13,10 @@ const TargetUser = mongoose.model(
         company: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'
+        },
+        timestamp: {
+            type: Date,
+            default: Date.now
         }
     })
 );

@@ -6,4 +6,6 @@ module.exports = function(app) {
     app.get('/target-users/:id', controller.getUser);
 
     app.post('/answer', controller.saveAnswer);
+
+    app.get('/survey', controller.getSurveyStats);
 }
