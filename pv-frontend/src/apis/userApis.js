@@ -128,10 +128,10 @@ export async function getCompanyTargetList(companyId) {
 }
 
 // Get Group Target List
-export async function getGroupTargetList(groups) {
+export async function getGroupTargetList(campaign, groups) {
   try {
     // send groups as query
-    const response = await axios.get('http://localhost:3000/groups-target-list', { params: { groups } });
+    const response = await axios.get('http://localhost:3000/groups-target-list', { params: { campaign, groups } });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
@@ -196,9 +196,9 @@ export async function updateCampaign(campaignId, name, description, companyId) {
 
 // Sms Apis
 // Create sms
-export async function createSms(message, groupId, date, companyId) {
+export async function createSms(title, message, groupId, date, companyId) {
   try {
-    const response = await axios.post('http://localhost:3000/sms', { message, groupId, date, companyId });
+    const response = await axios.post('http://localhost:3000/sms', { title, message, groupId, date, companyId });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

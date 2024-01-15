@@ -87,19 +87,17 @@ exports.getCompanyTargetList = async (req, res) => {
 // Get Group Target List
 exports.getGroupTargetList = async (req, res) => {
   try {
-    const { groups } = req.query;
-    
-    console.log(groups);
+    const { campaign, groups } = req.query;
     const groupIds = Object.values(groups).map(groupId => new mongoose.Types.ObjectId(groupId));
 
     // aggregate to gather all answers for each target user
-    const result = await TargetUser.aggregate([
+    let result = await TargetUser.aggregate([
       {
         $match: { group: { $in: groupIds } }
       },
       {
         $lookup: {
-          from: 'responses', // Assuming your answers collection is named 'answers'
+          from: 'responses',
           localField: '_id',
           foreignField: 'targetUser',
           as: 'answers'
@@ -108,7 +106,7 @@ exports.getGroupTargetList = async (req, res) => {
       {
         $group: {
           _id: '$_id',
-          name: { $first: '$name' }, // Adjust the field names based on your TargetUser schema
+          name: { $first: '$name' },
           phoneNumber: { $first: '$phoneNumber' },
           location: { $first: '$location' },
           group: { $first: '$group' },
@@ -117,6 +115,10 @@ exports.getGroupTargetList = async (req, res) => {
         }
       }
     ]);
+    result = result.sort((a, b) => a.name.localeCompare(b.name));
+    if (result.length == 0) {
+      return res.status(404).json({ message: 'Target users not found' });
+    }
     res.status(200).json(result);
   } catch (error) {
     console.error('Error getting group list:', error);
@@ -219,7 +221,7 @@ const moment = require('moment');
 // Create sms
 exports.createSms = async (req, res) => {
   try {
-    const { message, groupId, date, companyId,  } = req.body;
+    const { title, message, groupId, date, companyId,  } = req.body;
     console.log(message, date, companyId, groupId);
     const company = await Company.findById(companyId);
     if (!company) {
@@ -227,6 +229,7 @@ exports.createSms = async (req, res) => {
     }
     const formattedDate = moment(date).format('YYYY-MM-DDTHH:mm');
     const newSms = new Sms({
+      title,
       message,
       date: formattedDate,
       groupId: groupId,

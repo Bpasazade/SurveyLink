@@ -19,6 +19,9 @@ $(window).on("load", function() {
                     campaign_id = campaign[0]._id;
                     // Save user opened page
                     saveAnswer('page-opened');
+                    console.log(new Date());
+                    // date dd:mm:yyyy hh:mm
+                    saveAnswer(new Date().toLocaleString());
                 });
             });
 
@@ -39,20 +42,23 @@ $(window).on("load", function() {
             });
 
             // If video ends show next section and save answer
+            let videoIntroEnded = false;
             $('#video-intro').on('ended', function() {
-                console.log('Video ended');
-                showNextSection('section2', 'section3');
-                saveAnswer('video-ended');
+                if (!videoIntroEnded) {
+                    videoIntroEnded = true;
+                    saveAnswer('video-ended');
+                    showNextSection('section2', 'section3');
+                }
             });
 
             //if user clicks yes or no button show next section and save answer
             $('#next2-yes').on('click', function() {
-                showNextSection('section2', 'section3');
+                showNextSection('section3', 'section4');
                 saveAnswer('yes');
             });
 
             $('#next2-no').on('click', function() {
-                showNextSection('section2', 'section3');
+                showNextSection('section3', 'section5');
                 saveAnswer('no');
             });
 
@@ -66,9 +72,13 @@ $(window).on("load", function() {
             });
 
             // If video yes ends
+            let videoYesEnded = false;
             $('#video-yes').on('ended',function(){
-                saveAnswer('video-yes-ended');
-                showNextSection('section4', 'section6');
+                if (!videoYesEnded) {
+                    videoYesEnded = true;
+                    saveAnswer('video-yes-ended');
+                    showNextSection('section4', 'section6');
+                }
             });
 
             // If video no starts
@@ -81,9 +91,13 @@ $(window).on("load", function() {
             });
 
             // If video no ends
+            let videoNoEnded = false;
             $('#video-no').on('ended',function(){
-                saveAnswer('video-no-ended');
-                showNextSection('section5', 'section6');
+                if (!videoNoEnded) {
+                    videoNoEnded = true;
+                    saveAnswer('video-no-ended');
+                    showNextSection('section5', 'section6');
+                }
             });
         }
     });
@@ -129,7 +143,6 @@ async function getUser(id) {
         let responsed = await checkUserResponsed(data._id);
         if (responsed.responsed) {
             showNextSection('section1', 'section6');
-            console.log('User already responsed');
             alreadyResponsed = true;
         }
         return data;
@@ -147,6 +160,14 @@ function showNextSection(currentSectionId, nextSectionId) {
 
     if (nextSectionId === 'section2') {
         $('#video-intro').get(0).play();
+    }
+
+    if (nextSectionId === 'section4') {
+        $('#video-yes').get(0).play();
+    }
+
+    if (nextSectionId === 'section5') {
+        $('#video-no').get(0).play();
     }
 }
 

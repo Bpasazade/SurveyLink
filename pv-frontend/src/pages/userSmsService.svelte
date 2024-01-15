@@ -4,7 +4,7 @@
     import { user } from "../user.js";
     let loggedInUser;
     user.subscribe(value => (
-        loggedInUser = value           
+        loggedInUser = value  
     ));
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
@@ -48,16 +48,16 @@
     import { getGroups } from '../apis/userApis.js';
     import { onMount } from "svelte";
     
+    let groupList = [];
     async function getGroupsHandler() {
         const response = await getGroups(loggedInUser.company);
         groupList = response;
     }
 
-    let groupList = [];
-    onMount(getGroupsHandler);
-
+    getGroupsHandler();
 
     // SMS Form
+    let title = '';
     let text = '';
     let previousText = '';
     let maxCharacters = 160;
@@ -91,12 +91,14 @@
         const response = await getSms(loggedInUser.company);
         smsList = response;
     }
+
     getCompanySmsHandler();
 
     let groupId = '';
     let date = '';
     async function createSmsHandler() {
-        const response = await createSms(text, groupId, date, loggedInUser.company);
+        console.log(loggedInUser.company);
+        const response = await createSms(title, text, groupId, date, loggedInUser.company);
         smsList = response;
     }
 
@@ -330,6 +332,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
+                                <th scope="col">Sms Başlığı</th>
                                 <th scope="col">Sms Metni</th>
                                 <th scope="col">Grup</th>
                                 <th scope="col">Tarih</th>
@@ -340,9 +343,11 @@
                             {#each smsList as sms, index}
                                 <tr data-index={index}>
                                     <th scope="row">{index + 1}</th>
+                                    <td>{sms.title}</td>
                                     <td class="ellipsis">{sms.message}</td>
-                                    <td>{sms.groupId}</td>
-                                    <td>{sms.date}</td>
+                                    <td>{groupList.find(group => group._id === sms.groupId).name}</td>
+                                    <!-- date with month name space hour -->
+                                    <td>{sms.date.slice(8, 10) + '.' + sms.date.slice(5, 7) + '.' + sms.date.slice(0, 4) + ' ' + sms.date.slice(11, 16)}</td>
                                     <td>
                                         <button class="btn me-2 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable}>
                                             <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
@@ -361,7 +366,7 @@
                         <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 70%; height: fit-content;">
                             <div class="form-group mb-4">
                                 <label for="smsName" style="color: #697A8D;">SMS Başlığı</label>
-                                <input type="text" class="form-control shadow-none" id="smsName" placeholder="Lütfen sms başlığı giriniz">
+                                <input type="text" bind:value={title} class="form-control shadow-none" id="smsName" placeholder="Lütfen sms başlığı giriniz">
                             </div>
                             <div class="form-group mb-4">
                                 <label for="text" style="color: #697A8D;">SMS Metni</label>
@@ -409,7 +414,7 @@
                             <select class="form-select shadow-none col-md-3 mb-4" aria-label="Default select example" bind:value={smsSelection}>
                                 <option selected value="">Lütfen SMS Seçiniz</option>
                                 {#each smsList as sms}
-                                    <option value={sms._id}>{sms.message}</option>
+                                    <option value={sms._id}>{sms.title}</option>
                                 {/each}
                             </select>
                         </div>
@@ -417,6 +422,10 @@
                         {#if smsSelection !== ''} 
                             <div class="row d-flex justify-content-between align-items-center g-0" style="position:relative;">
                                 <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 70%; height: fit-content;">
+                                    <div class="form-group mb-4">
+                                        <label for="smsName" style="color: #697A8D;">SMS Başlığı</label>
+                                        <input type="text" bind:value={selectedSms.title} class="form-control shadow-none" id="smsName" placeholder="Lütfen sms başlığı giriniz">
+                                    </div>
                                     <div class="form-group mb-4">
                                         <label for="editSmsMessage" style="color: #697A8D;">SMS Metni</label>
                                         <textarea bind:value={selectedSms.message} on:input={updateHandleText} class="form-control shadow-none" placeholder="Lütfen iletmek istediğiniz mesajı girin" id="editSmsMessage" style="height: 150px; resize: none;" maxlength="160"></textarea>

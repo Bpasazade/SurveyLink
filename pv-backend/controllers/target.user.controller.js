@@ -61,6 +61,7 @@ exports.getUser = (req, res) => {
 exports.saveAnswer = async (req, res) => {
     try {
         // Get id, company, campaign, answer from data
+        const date = req.query.date;
         const id = req.query.id;
         const company = req.query.company;
         const campaign = req.query.campaign;
@@ -88,6 +89,7 @@ exports.saveAnswer = async (req, res) => {
 
         // Save the Response
         const response = new Response({
+            date,
             targetUser: id,
             campaign,
             company,

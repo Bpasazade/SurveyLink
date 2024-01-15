@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Response = mongoose.model(
     "Response",
     new mongoose.Schema({
+        date: Date,
         targetUser: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "TargetUser"

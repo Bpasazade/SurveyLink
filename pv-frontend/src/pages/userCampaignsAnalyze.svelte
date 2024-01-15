@@ -158,7 +158,14 @@
     // Selected Campaign Groups TargetList
     import { getGroupTargetList } from '../apis/userApis.js';
     async function getGroupTargetListHandler(groups) {
-        groupTargetList = await getGroupTargetList(groups);
+        groupTargetList = await getGroupTargetList(selectedCampaignId, groups);
+        groupTargetList = groupTargetList.map(target => {
+            return {
+                ...target,
+                answers: target.answers[0].filter(answer => answer.campaign === selectedCampaignId),
+            };
+        });
+        console.log(groupTargetList);
     }
 
     // Selected Tab (Stats or Users)
@@ -332,7 +339,7 @@
                 </div>
                 
                 <div class="container mx-0 px-0 mb-4">
-                    <div class="row g-0 d-flex justify-content-between" style="height: 19vh;">
+                    <div class="g-0 d-flex justify-content-between" style="height: 19vh;">
                         <div id="userDbGrid1" class="col-md d-flex rounded mb-4 grid-box" style="margin-right: 16px; padding-top: 20px; padding-bottom: 20px;">
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
@@ -400,8 +407,8 @@
                           <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Ad-Soyad</th>
-                            <th scope="col">Tarih</th>
                             <th scope="col">Telefon</th>
+                            <th scope="col">Tarih</th>
                             <th scope="col">Link Açılma</th>
                             <th scope="col">Giriş Videosu Soru</th>
                             <th scope="col">Giriş Videosu Görüntüleme</th>
@@ -421,72 +428,79 @@
                                     <tr>
                                         <td>{ index + 1 }</td>
                                         <td>{ target.name }</td>
-                                        <td>{ target.date }</td>
                                         <td>{ target.phoneNumber }</td>
-                                            {#if target.answers[0].length > 0} 
-                                                {#if target.answers[0][0].answer == "page-opened"}
+                                            {#if target.answers.length != 0}
+                                                
+                                                {#if target.answers[1] != null}
+                                                    <td>{ target.answers[1].answer.substring(0, 10, 'tr-TR') + " " + target.answers[1].answer.substring(11, 16, 'tr-TR') }</td>
+                                                {:else}
+                                                    <td>-</td>
+                                                {/if}
+
+                                                {#if target.answers[0].answer == "page-opened"}
                                                     <td>Evet</td>
                                                 {:else}
                                                     <td>Hayır</td>
                                                 {/if}
 
-                                                {#if target.answers[0][1]}
-                                                    {#if target.answers[0][1].answer == "video-open"}
+                                                {#if target.answers[3]}
+                                                    {#if target.answers[3].answer == "video-open"}
                                                         <td>Evet</td>
                                                     {/if}
                                                 {:else}
                                                     <td>Hayır</td>
                                                 {/if}
 
-                                                {#if target.answers[0][2]}
-                                                    {#if target.answers[0][2].answer == "video-played"}
+                                                {#if target.answers[2]}
+                                                    {#if target.answers[2].answer == "video-played"}
                                                         <td>Açıldı</td>
                                                     {/if}
                                                 {:else}
                                                     <td>Açılmadı</td>
                                                 {/if}
 
-                                                {#if target.answers[0][3]}
-                                                    {#if target.answers[0][3].answer == "video-ended"}
-                                                        <td>İzlendi</td>
+                                                {#if target.answers[4]}
+                                                    {#if target.answers[4].answer == "video-ended"}
+                                                        <td style="color: #05AF07">İzlendi</td>
                                                     {/if}
                                                 {:else}
-                                                    <td>İzlenmedi</td>
+                                                    <td style="color: #CD0000">İzlenmedi</td>
                                                 {/if}
 
-                                                {#if target.answer && target.answer[0] && target.answer[0][4]}
-                                                    {#if target.answers[0][4].answer == "yes"}
+                                                {#if target.answer && target.answer[0] && target.answer[0][5]}
+                                                    {#if target.answers[5].answer == "yes"}
                                                         <td>Evet</td>
-                                                    {:else if target.answers[0][4].answer == "no"}
+                                                    {:else if target.answers[5].answer == "no"}
                                                         <td>Hayır</td>
                                                     {/if}
                                                 {:else}
                                                     <td>Hayır</td>
                                                 {/if}
 
-                                                {#if target.answers[0][5]}
-                                                    {#if target.answers[0][5].answer == "video-yes-started" || target.answers[0][5].answer == "video-no-started"}
+                                                {#if target.answers[6]}
+                                                    {#if target.answers[6].answer == "video-yes-started" || target.answers[6].answer == "video-no-started"}
                                                         <td>Görüntülendi</td>
                                                     {/if}
                                                 {:else}
                                                     <td>Görüntülenmedi</td>
                                                 {/if}
 
-                                                {#if target.answers[0][6]}
-                                                    {#if target.answers[0][6].answer == "video-yes-ended" || target.answers[0][6].answer == "video-no-ended"}
-                                                        <td>İzlendi</td>
+                                                {#if target.answers[7]}
+                                                    {#if target.answers[7].answer == "video-yes-ended" || target.answers[7].answer == "video-no-ended"}
+                                                        <td style="color: #05AF07">İzlendi</td>
                                                     {/if}
                                                 {:else}
-                                                    <td>İzlenmedi</td>
+                                                    <td style="color: #CD0000">İzlenmedi</td>
                                                 {/if}
                                             {:else}
+                                                <td>-</td>
                                                 <td>Hayır</td>
                                                 <td>Hayır</td>
                                                 <td>Açlmadı</td>
-                                                <td>İzlenmedi</td>
+                                                <td style="color: #CD0000">İzlenmedi</td>
                                                 <td>Hayır</td>
                                                 <td>Görüntülenmedi</td>
-                                                <td>İzlenmedi</td>
+                                                <td style="color: #CD0000">İzlenmedi</td>
                                             {/if}
                                     </tr>
                                 {/each}
