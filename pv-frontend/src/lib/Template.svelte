@@ -1,6 +1,6 @@
 <!-- App.svelte -->
 <script>
-    //localStorage.setItem('storedRoute', '/template');
+    localStorage.setItem('storedRoute', '/template');
     import { writable } from 'svelte/store';
 
     // Store to manage the current screen
@@ -21,92 +21,60 @@
         conclusion: 'Conclusion Section',
     };
 
+    import * as echarts from 'echarts';
+    import { onMount } from 'svelte';
+
+    onMount(() => {
+        var dom = document.getElementById('chart-container');
+        var myChart = echarts.init(dom, null, {
+            renderer: 'canvas',
+            useDirtyRect: false
+        });
+        var option;
+
+        option = {
+            xAxis: {
+                type: 'category',
+                data: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00',
+                    '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
+                    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+                    '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    data: [120, 200, 150, 80, 70, 110, 130, 90, 100, 120, 200, 150, 80, 70, 110, 130, 90, 100, 120, 200, 150, 80, 70, 110],
+                    type: 'bar',
+                    itemStyle: {
+                        borderRadius: [15, 15, 0, 0]
+                    }
+                }
+            ]
+        };
+
+
+        if (option && typeof option === 'object') {
+            myChart.setOption(option);
+        }
+
+        //window.addEventListener('resize', myChart.resize);
+    });
+
 
 </script>
 
-<main class="d-flex flex-column justify-content-around">
-    <header>
-        <h1>Your Mobile App</h1>
-    </header>
-    
-    <!-- <nav>
-      <ul>
-        {#each Object.keys(sections) as section}
-          <li on:click={() => changeScreen(section)}>
-            {section.replace(/^\w/, (c) => c.toUpperCase())}
-          </li>
-        {/each}
-      </ul>
-    </nav> -->
-
-    <section>
-      {#if $currentScreen === 'introduction'}
-          <div class="section">
-              <p>{sections.introduction}</p>
-              <button on:click={() => changeScreen('question1')}>
-              Start
-              </button>
-          </div>
-      {/if}
-      {#if $currentScreen === 'question1'}
-          <div class="section">
-              <p>{sections.question1}</p>
-              <button on:click={() => changeScreen('question2')}>
-              Next
-              </button>
-          </div>
-      {/if}
-      {#if $currentScreen === 'question2'}
-          <div class="section">
-              <p>{sections.question2}</p>
-              <button on:click={() => changeScreen('question3')}>
-              Next
-              </button>
-          </div>
-      {/if}
-      {#if $currentScreen === 'question3'}
-          <div class="section">
-              <p>{sections.question3}</p>
-              <button on:click={() => changeScreen('question4')}>
-              Next
-              </button>
-          </div>
-      {/if}
-      {#if $currentScreen === 'question4'}
-          <div class="section">
-              <p>{sections.question4}</p>
-              <button on:click={() => changeScreen('conclusion')}>
-              Next
-              </button>
-          </div>
-      {/if}
-      {#if $currentScreen === 'conclusion'}
-          <div class="section">
-              <p>{sections.conclusion}</p>
-          </div>
-      {/if}
-    </section>
-</main>
+<div id="chart-container" style="height: 250px; width: 400px;"></div>
 
 <style>
-    main {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 16px;
-        height: 100%;
-        border: 1px solid #ccc;
-    }
-
-    header {
-        text-align: center;
-    }
-    section {
-        margin-top: 16px;
-    }
-    /* Media query for small screens */
-    @media (max-width: 600px) {
-        main {
-            padding: 8px; /* Adjust padding for smaller screens */
+    * {
+        margin: 0;
+        padding: 0;
         }
-    }
+        #chart-container {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+        }
 </style>

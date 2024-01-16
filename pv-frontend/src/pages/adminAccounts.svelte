@@ -40,18 +40,6 @@
 
     loadUsers();
     let rotated = false;
-
-    function rotate() {
-        rotated = !rotated;
-
-        // if rotated is true, rotate back to 94 px width smoothly
-        // if rotated is false, rotate to 250 px width smoothly
-        if (rotated) {
-            document.getElementById("sidebar").style.width = "94px";
-        } else {
-            document.getElementById("sidebar").style.width = "250px";
-        }
-    }
 </script>
 
 <style>

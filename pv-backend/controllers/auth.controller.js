@@ -116,7 +116,7 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  console.log(req.body.email);
+  console.log(req.body.rememberMe);
   User.findOne({
     email: req.body.email
   })
@@ -143,12 +143,14 @@ exports.signin = (req, res) => {
         });
       }
 
+      
+
       const token = jwt.sign({ id: user.id },
                               config.secret,
                               {
                                 algorithm: 'HS256',
                                 allowInsecureKeySizes: true,
-                                expiresIn: 86400, // 24 hours
+                                expiresIn: req.body.rememberMe ? '7d' : '1d'
                               });
 
       var authorities = [];

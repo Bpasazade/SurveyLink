@@ -1,4 +1,0 @@
-<!-- Chart.svelte -->
-<script>
-
-</script>

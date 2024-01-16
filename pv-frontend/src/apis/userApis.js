@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-export async function signIn(email, password) {
+export async function signIn(email, password, rememberMe) {
   try {
-    const response = await axios.post('http://localhost:3000/auth/signin', { email, password });
+    const response = await axios.post('http://localhost:3000/auth/signin', { email, password, rememberMe });
 
     if (response.status !== 200) {
-      throw new Error(response.data.message);
+      return response.data;
     }
 
     const { user } = response.data;
@@ -196,9 +196,9 @@ export async function updateCampaign(campaignId, name, description, companyId) {
 
 // Sms Apis
 // Create sms
-export async function createSms(title, message, groupId, date, companyId) {
+export async function createSms(title, message, campaignId, groupId, date, companyId) {
   try {
-    const response = await axios.post('http://localhost:3000/sms', { title, message, groupId, date, companyId });
+    const response = await axios.post('http://localhost:3000/sms', { title, message, campaignId, groupId, date, companyId });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

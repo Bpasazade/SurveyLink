@@ -27,375 +27,7 @@
     localStorage.setItem('storedRoute', '/userDashboard');
     let rotated = false;
 
-    import Chart from 'chart.js/auto';
-    let canvas1, canvas2, canvas3, canvas4, canvas5, canvas6, canvas7;
-
     import { onMount } from 'svelte';
-    onMount(async () => {
-        await getAllSurveyStatsFunc();
-        const ctx1 = canvas1.getContext('2d');
-        const ctx2 = canvas2.getContext('2d');
-        const ctx3 = canvas3.getContext('2d');
-        const ctx4 = canvas4.getContext('2d');
-        const ctx5 = canvas5.getContext('2d');
-        const ctx6 = canvas6.getContext('2d');
-        const ctx7 = canvas7.getContext('2d');
-
-        var background_1 = ctx1.createLinearGradient(90, 0, 0, 0);
-        background_1.addColorStop(0, '#25C5FC');
-        background_1.addColorStop(1, '#0895C6');
-
-        var background_2 = ctx2.createLinearGradient(90, 0, 0, 0);
-        background_2.addColorStop(0, '#FFA451');
-        background_2.addColorStop(1, '#FF7B03');
-
-        var background_3 = ctx3.createLinearGradient(90, 0, 0, 0);
-        background_3.addColorStop(0, '#50FC52');
-        background_3.addColorStop(1, '#07B209');
-
-        var background_4 = ctx4.createLinearGradient(90, 0, 0, 0);
-        background_4.addColorStop(0, '#FA7676');
-        background_4.addColorStop(1, '#FF2A2A');
-
-        var chart1 = new Chart(ctx1, {
-            type: 'doughnut',
-            data: {
-                labels: ["SMS"],
-                datasets: [{
-                    data: [80, 20],
-                    backgroundColor: [background_1, "#E5E5E5"],
-                }],
-                
-            },
-            options: {
-                aspectRatio: 1,
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: 50,
-                borderRadius: 30,
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                    },
-                }
-            },
-            plugins: [
-                        {
-                            afterDraw: function (chart) {
-                                var width = chart.width,
-                                    height = chart.height,
-                                    ctx = chart.ctx;
-
-                                ctx.restore();
-                                ctx.font = "900 30px 'Gilroy-Bold'";
-                                ctx.fillStyle = "#017299";
-                                ctx.textBaseline = "middle";
-
-                                var text = "80%";
-                                var textX = Math.round((width - ctx.measureText(text).width) / 2);
-                                var textY = height / 2;
-
-                                ctx.fillText(text, textX, textY);
-                                ctx.save();
-                            }
-                        }
-                    ]
-        });
-
-        var chart2 = new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: ["Açılma"],
-                datasets: [{
-                    data: [80, 20],
-                    backgroundColor: [background_2, "#E5E5E5"],
-                }],
-                
-            },
-            options: {
-                aspectRatio: 1,
-                responsive: true,
-                cutout: 50,
-                borderRadius: 30,
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                    }
-                }
-            },
-            plugins: [
-                        {
-                            afterDraw: function (chart) {
-                                var width = chart.width,
-                                    height = chart.height,
-                                    ctx = chart.ctx;
-
-                                ctx.restore();
-                                ctx.font = "900 30px 'Gilroy-Bold'";
-                                ctx.fillStyle = "#D96A04";
-                                ctx.textBaseline = "middle";
-
-                                var text = "80%";
-                                var textX = Math.round((width - ctx.measureText(text).width) / 2);
-                                var textY = height / 2;
-
-                                ctx.fillText(text, textX, textY);
-                                ctx.save();
-                            }
-                        }
-                    ]
-        });
-
-        var chart3 = new Chart(ctx3, {
-            type: 'doughnut',
-            data: {
-                labels: ["İzlenme"],
-                datasets: [{
-                    data: [80, 20],
-                    backgroundColor: [background_3, "#E5E5E5"],
-                }],
-                
-            },
-            options: {
-                aspectRatio: 1,
-                responsive: true,
-                cutout: 50,
-                borderRadius: 30,
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                    }
-                }
-            },
-            plugins: [
-                        {
-                            afterDraw: function (chart) {
-                                var width = chart.width,
-                                    height = chart.height,
-                                    ctx = chart.ctx;
-
-                                ctx.restore();
-                                ctx.font = "900 30px 'Gilroy-Bold'";
-                                ctx.fillStyle = "#02A504";
-                                ctx.textBaseline = "middle";
-
-                                var text = "80%";
-                                var textX = Math.round((width - ctx.measureText(text).width) / 2);
-                                var textY = height / 2;
-
-                                ctx.fillText(text, textX, textY);
-                                ctx.save();
-                            }
-                        }
-                    ]
-        });
-
-        var chart4 = new Chart(ctx4, {
-            type: 'doughnut',
-            data: {
-                labels: ["Cevaplama"],
-                datasets: [{
-                    data: [80, 20],
-                    backgroundColor: [background_4, "#E5E5E5"],
-                }],
-                
-            },
-            options: {
-                aspectRatio: 1,
-                responsive: true,
-                cutout: 50,
-                borderRadius: 30,
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                    }
-                }
-            },
-            plugins: [
-                        {
-                            afterDraw: function (chart) {
-                                var width = chart.width,
-                                    height = chart.height,
-                                    ctx = chart.ctx;
-
-                                ctx.restore();
-                                ctx.font = "900 30px 'Gilroy-Bold'";
-                                ctx.fillStyle = "#D60A0A";
-                                ctx.textBaseline = "middle";
-
-                                var text = "80%";
-                                var textX = Math.round((width - ctx.measureText(text).width) / 2);
-                                var textY = height / 2;
-
-                                ctx.fillText(text, textX, textY);
-                                ctx.save();
-                            }
-                        }
-                    ]
-        });
-
-        var chart5 = new Chart(ctx5, {
-            type: "doughnut",
-            plugins: [
-                {
-                    beforeDraw: function (chart) {
-                        const datasetMeta = chart.getDatasetMeta(0);
-                        const innerRadius = datasetMeta.controller.innerRadius;
-                        const outerRadius = datasetMeta.controller.outerRadius;
-                        const heightOfItem = outerRadius - innerRadius;
-
-                        const countOfData = chart.getDatasetMeta(0).data.length;
-                        const additionalRadius = Math.floor(heightOfItem / countOfData);
-
-                        const weightsMap = datasetMeta.data
-                        .map((v) => v.circumference)
-                        .sort((a, b) => a - b)
-                        .reduce((a, c, ci) => {
-                            a.set(c, ci + 1);
-                            return a;
-                        }, new Map());
-
-                        datasetMeta.data.forEach((dataItem) => {
-                            const weight = weightsMap.get(dataItem.circumference);
-                            dataItem.outerRadius = innerRadius + additionalRadius * weight;
-                        });
-                    },
-                },
-            ],
-            data: {
-                labels: ["Açılma", "İzlenme", "Cevaplama"],
-                datasets: [
-                {
-                    data: [40, 30, 20, 10],
-                    backgroundColor: ["#0077B6", "#00B4D8", "#03045E", "#F8F8F8"],
-                    borderWidth: 0,
-                },
-                ],
-            },
-            options: {
-                plugins: {
-                    legend: false,
-                    datalabels: {
-                        display: false,
-                    },
-                },
-                maintainAspectRatio: false,
-                responsive: true,
-            },
-        });
-
-        var chart6 = new Chart(ctx6, {
-            type: "doughnut",
-            plugins: [
-                {
-                    beforeDraw: function (chart) {
-                        const datasetMeta = chart.getDatasetMeta(0);
-                        const innerRadius = datasetMeta.controller.innerRadius;
-                        const outerRadius = datasetMeta.controller.outerRadius;
-                        const heightOfItem = outerRadius - innerRadius;
-
-                        const countOfData = chart.getDatasetMeta(0).data.length;
-                        const additionalRadius = Math.floor(heightOfItem / countOfData);
-
-                        const weightsMap = datasetMeta.data
-                        .map((v) => v.circumference)
-                        .sort((a, b) => a - b)
-                        .reduce((a, c, ci) => {
-                            a.set(c, ci + 1);
-                            return a;
-                        }, new Map());
-
-                        datasetMeta.data.forEach((dataItem) => {
-                            const weight = weightsMap.get(dataItem.circumference);
-                            dataItem.outerRadius = innerRadius + additionalRadius * weight;
-                        });
-                    },
-                },
-            ],
-            data: {
-                labels: ["Evet", "Hayır"],
-                datasets: [
-                {
-                    data: [percentages.yes, percentages.no],
-                    backgroundColor: ["#0077B6", "#00B4D8", "#F8F8F8"],
-                    borderWidth: 0,
-                },
-                ],
-            },
-            options: {
-                plugins: {
-                    legend: false,
-                    datalabels: {
-                        display: false,
-                    },
-                },
-                maintainAspectRatio: false,
-                responsive: true,
-            },
-        });
-
-        var chart7 = new Chart(ctx7, {
-            type: "doughnut",
-            plugins: [
-                {
-                    beforeDraw: function (chart) {
-                        const datasetMeta = chart.getDatasetMeta(0);
-                        const innerRadius = datasetMeta.controller.innerRadius;
-                        const outerRadius = datasetMeta.controller.outerRadius;
-                        const heightOfItem = outerRadius - innerRadius;
-
-                        const countOfData = chart.getDatasetMeta(0).data.length;
-                        const additionalRadius = Math.floor(heightOfItem / countOfData);
-
-                        const weightsMap = datasetMeta.data
-                        .map((v) => v.circumference)
-                        .sort((a, b) => a - b)
-                        .reduce((a, c, ci) => {
-                            a.set(c, ci + 1);
-                            return a;
-                        }, new Map());
-
-                        datasetMeta.data.forEach((dataItem) => {
-                            const weight = weightsMap.get(dataItem.circumference);
-                            dataItem.outerRadius = innerRadius + additionalRadius * weight;
-                        });
-                    },
-                },
-            ],
-            data: {
-                labels: ["İzlendi", "İzlenmedi"],
-                datasets: [
-                {
-                    data: [percentages.videoSeen, 100 - percentages.videoSeen],
-                    backgroundColor: ["#0077B6", "#00B4D8"],
-                    borderWidth: 0,
-                },
-                ],
-            },
-            options: {
-                plugins: {
-                    legend: false,
-                    datalabels: {
-                        display: false,
-                    },
-                },
-                maintainAspectRatio: false,
-                responsive: true,
-            },
-        });
-    });
 
     // Get All Survey Stats
     import { getAllSurveyStats } from '../apis/userApis.js';
@@ -408,6 +40,8 @@
     let videoYesSeen = 0;
     let videoNoSeen = 0;
     let percentages = {};
+
+    var data6, data7;
     async function getAllSurveyStatsFunc() {
         const response = await getAllSurveyStats(loggedInUser.company);
         if (response) {
@@ -420,11 +54,34 @@
             videoNoSeen = response.videoNoSeen;
         }
         percentages = {
-            yes: (yes / (yes + no)) * 100,
-            no: (no / (yes + no)) * 100,
-            videoSeen: ((videoIntroSeen + videoYesSeen + videoNoSeen) / (surveyView * 3) * 100).toFixed(0),
+            yes: (yes / (yes + no)),
+            no: (no / (yes + no)),
+            videoSeen: videoIntroSeen + videoYesSeen + videoNoSeen,
         }
+        data6 = [
+            { value: percentages.yes, name: 'Evet' },
+            { value: percentages.no, name: 'Hayır' },
+            { value: surveyView - (percentages.yes + percentages.no), name: 'Cevaplanmadı' },
+        ];
+        data7 = [
+            { value: percentages.videoSeen, name: 'İzlendi' },
+            { value: surveyView - percentages.videoSeen, name: 'İzlenmedi' },
+        ];
+        
     }
+
+    // Doughnut Charts
+    import DoughnutChart from '../lib/DoughnutChart.svelte';
+    let chart1, chart2, chart3, chart4;
+
+    // Nightingale Charts
+    import NightingaleChart from '../lib/NightingaleChart.svelte';
+    let chart5, chart6, chart7;
+
+    onMount(async () => {
+        await getAllSurveyStatsFunc();
+    });
+
 </script>
   
 <style>
@@ -489,7 +146,7 @@
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
-                                <canvas id="chart1" aria-label="chart" bind:this={canvas1}></canvas>
+                                <DoughnutChart data={[80, 20]} colors={["#317CC0", "#4B9FE9"]} chartContainer={chart1} textColor="#317CC0" />
                             </div>
                     </div>
                     <div class="col-md d-flex bg-white justify-content-center rounded p-4 me-4 grid-box h-100">
@@ -501,7 +158,7 @@
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
-                                <canvas id="chart2" aria-label="chart" bind:this={canvas2} style="width: 13vh; height: 13vh;"></canvas>
+                                <DoughnutChart data={[80, 20]} colors={["#FF7A00", "#FFA654"]} chartContainer={chart2} textColor="#D96A04" />
                             </div>
                     </div>
                     <div class="col-md d-flex justify-content-center bg-white rounded p-4 me-4 grid-box h-100">
@@ -513,7 +170,7 @@
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
-                                <canvas id="chart3" aria-label="chart" bind:this={canvas3} style="width: 13vh; height: 13vh;"></canvas>
+                                <DoughnutChart data={[80, 20]} colors={["#07B209", "#50FC52"]} chartContainer={chart3} textColor="#02A504" />
                             </div>
                     </div>
                     <div class="col-md d-flex justify-content-center bg-white rounded p-4 grid-box h-100">
@@ -525,13 +182,13 @@
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
-                                <canvas id="chart4" aria-label="chart" bind:this={canvas4} style="width: 13vh; height: 13vh;"></canvas>
+                                <DoughnutChart data={[80, 20]} colors={["#FF2A2A", "#FA7676"]} chartContainer={chart4} textColor="#D60A0A" />
                             </div>
                     </div>
                 </div>
                 <div class="container-fluid mx-0 px-3 mb-4">
-                    <div class="d-flex justify-content-between" style="height: 23vh;">
-                        <div id="userDbGrid1" class="col-md d-flex rounde grid-box p-3 rounded" style="margin-right: 16px;">
+                    <div class="d-flex justify-content-between g-2" style="height: 19vh;">
+                        <div id="userDbGrid1" class="col-md d-flex rounde grid-box p-3 rounded">
                             <div class="col-md d-flex flex-column justify-content-between align-items-center h-100">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video İzlenme Sayısı</h6>
@@ -558,7 +215,9 @@
                             </div>
                         </div>
 
-                        <div id="userDbGrid2" class="col-md d-flex rounded grid-box ms-2 h-100" style="margin-left: 16px; padding-top: 20px; padding-bottom: 20px;">
+                        <hr style="width:0px; padding-left: 0.75rem; padding-right: 0.75rem; border: 0;">
+
+                        <div id="userDbGrid2" class="col-md d-flex rounde grid-box p-3 rounded">
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video Tam İzlenme Sayısı</h6>
@@ -587,74 +246,42 @@
                     </div>
                 </div>
                 <div class="container-fluid mx-0 px-3">
-                    <div class="d-flex justify-content-between" style="height: fit-content">
-                        <div class="d-flex flex-column justify-content-between bg-white rounded p-4 grid-box" style="width: 31.5%;">
+                    <div class="d-flex justify-content-between" style="height: 40vh">
+                        <div class="col-md d-flex flex-column justify-content-between bg-white rounded p-4 grid-box">
                             <div class="d-flex justify-content-start align-items-center" style="margin-bottom: 20px;">
                                 <img src={pieChart} alt="layers" class="img-responsive me-2" width="20">
                                 <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Genel Analiz Grafiği</h6>
                             </div>
-                            <div class="w-100 d-flex justify-content-center align-items-center p-2 ps-3" style="margin-bottom: 13px;">
-                                <canvas id="chart5" aria-label="chart" bind:this={canvas5} style="height: 17vh;"></canvas>
-                            </div>
-                            <div class="d-flex justify-content-center align-items-center px-3">
-                                <div class="d-flex justify-content-start align-items-center rounded me-3 p-2" style="background-color: #F7F8FA;">
-                                    <div class="me-2" style="width: 13px; height: 13px; background-color: #0077B6; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">İzleyen</h6>
-                                </div>
-                                <div class="d-flex justify-content-start align-items-center rounded me-3 p-2" style="background-color: #F7F8FA;">
-                                    <div class="me-2" style="width: 13px; height: 13px; background-color: #00B4D8; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">Görüntülenme</h6>
-                                </div>
-                                <div class="d-flex justify-content-start align-items-center rounded p-2" style="background-color: #F7F8FA;">
-                                    <div class="me-2" style="width: 13px; height: 13px; background-color: #03045E; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">İzlemeyen</h6>
-                                </div>
-                                
+                            <div class="w-100 d-flex justify-content-center align-items-center h-100">
+                                <!-- <NightingaleChart chartContainer={chart5} /> -->
                             </div>
                         </div>
+
+                        <hr style="width:0px; padding-left: 0.75rem; padding-right: 0.75rem; border: 0;">
                         
-                        <div class="d-flex flex-column justify-content-between bg-white rounded p-4 grid-box" style="width: 31.5%;">
+                        <div class="col-md d-flex flex-column justify-content-between bg-white rounded p-4 grid-box">
                             <div class="d-flex justify-content-start align-items-center" style="margin-bottom: 20px;">
                                 <img src={pieChart} alt="layers" class="img-responsive me-2" width="20">
                                 <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Anket Cevap Grafiği</h6>
                             </div>
-                            <div class="w-100 d-flex justify-content-center align-items-center p-2 ps-3" style="margin-bottom: 13px;">
-                                <canvas id="chart6" aria-label="chart" bind:this={canvas6} style="height: 17vh;"></canvas>
-                            </div>
-                            <div class="d-flex justify-content-center align-items-center px-3">
-                                <div class="d-flex justify-content-start align-items-center rounded me-3 p-2" style="background-color: #F7F8FA;">
-                                    <div class="me-2" style="width: 13px; height: 13px; background-color: #0077B6; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">Evet</h6>
-                                </div>
-                                <div class="d-flex justify-content-start align-items-center rounded me-3 p-2" style="background-color: #F7F8FA;">
-                                    <div class="me-2" style="width: 13px; height: 13px; background-color: #00B4D8; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">Hayır</h6>
-                                </div>
-                                <div class="d-flex justify-content-start align-items-center rounded p-2" style="background-color: #F7F8FA;">
-                                    <div class="me-2" style="width: 13px; height: 13px; background-color: #F8F8F8; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">Belirtilmemiş</h6>
-                                </div>
-                                
+                            <div class="w-100 d-flex justify-content-center align-items-center h-100">
+                                {#if data6}
+                                    <NightingaleChart data={data6} chartContainer={chart6} />
+                                {/if}
                             </div>
                         </div>
 
-                        <div class="d-flex flex-column justify-content-between bg-white rounded p-4 grid-box" style="width: 31.5%;">
+                        <hr style="width:0px; padding-left: 0.75rem; padding-right: 0.75rem; border: 0;">
+
+                        <div class="col-md d-flex flex-column justify-content-between bg-white rounded p-4 grid-box">
                             <div class="d-flex justify-content-start align-items-center" style="margin-bottom: 20px;">
                                 <img src={pieChart} alt="layers" class="img-responsive me-2" width="20">
                                 <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Video İzlenme Grafiği</h6>
                             </div>
-                            <div class="w-100 d-flex justify-content-center align-items-center p-2 ps-3 h-75" style="margin-bottom: 13px;">
-                                <canvas id="chart7" aria-label="chart" bind:this={canvas7} style="height: 17vh;"></canvas>
-                            </div>
-                            <div class="d-flex justify-content-center align-items-center px-3">
-                                <div class="d-flex justify-content-start align-items-center rounded me-3 p-2" style="background-color: #F7F8FA;">
-                                    <div class="me-2" style="width: 13px; height: 13px; background-color: #0077B6; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">İzlendi</h6>
-                                </div>
-                                <div class="d-flex justify-content-start align-items-center rounded p-2" style="background-color: #F7F8FA;">
-                                    <div class="me-2" style="width: 13px; height: 13px; background-color: #00B4D8; border-radius: 5px"></div>
-                                    <h6 class="grid-box-text m-0" style="font-size: 13px; font-family: 'Gilroy-Medium'; margin-left: 10px; font-weight: 500;">İzlenmedi</h6>
-                                </div>
+                            <div class="w-100 d-flex justify-content-center align-items-center h-100">
+                                {#if data7}
+                                    <NightingaleChart data={data7} chartContainer={chart7} />
+                                {/if}
                             </div>
                         </div>
                     </div>

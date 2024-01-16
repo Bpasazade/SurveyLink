@@ -1,66 +1,81 @@
 <script>
-    import Chart from 'chart.js/auto';
     import { onMount } from 'svelte';
+    import * as echarts from 'echarts';
 
-    let canvas;
+    export let data = [];
 
     onMount(() => {
-        const ctx = canvas.getContext('2d');
-        var background_1 = ctx.createLinearGradient(0, 0, 0, 600);
-        background_1.addColorStop(0, '#327FC7');
-        background_1.addColorStop(1, '#5CB3FE');
-
-        var barChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "24:00"],
-                datasets: [{
-                    label: 'Sample Data',
-                    data: [0, 5000, 50000, 150000, 200000],
-                    backgroundColor: background_1,
-                    borderColor: ['red', 'blue', 'fuchsia', 'green', 'navy'],
-                    borderRadius: 10,
-                    barThickness: 20,
-                }]
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    // remove y-axis grid lines
-                    y: {              
-                        ticks: {
-                            callback: function(value, index, values) {
-                                return value === 0 ? '0k' : value / 1000 + 'k';
-                            }
-                        },
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                    }
-                }
-            }
+        var dom = document.getElementById('chart-container');
+        var myChart = echarts.init(dom, null, {
+            renderer: 'canvas',
+            useDirtyRect: false
         });
+        var option;
+
+        option = {
+            grid: {
+                left: '1%',
+                right: '1%',
+                bottom: '14%',
+                top: '4%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00',
+                    '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
+                    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+                    '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'],
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    data: data,
+                    type: 'bar',
+                    itemStyle: {
+                        borderRadius: [15, 15, 0, 0],
+                        color: new echarts.graphic.LinearGradient(
+                            0, 0, 0, 1,
+                            [
+                                {offset: 0, color: '#317CC0'},
+                                {offset: 0.5, color: '#4B9FE9'},
+                                {offset: 1, color: '#5CB3FE'}
+                            ]
+                        )
+                    },
+                    barWidth: 13,
+                    barGap: 0,
+                }
+            ]
+        };
+
+
+        if (option && typeof option === 'object') {
+            myChart.setOption(option);
+        }
+
+        // Add this line to make the chart responsive
+        window.addEventListener('resize', () => { myChart.resize(); });
+
+        // Remember to remove the event listener when the component is destroyed
+        return () => {
+            window.removeEventListener('resize', () => { myChart.resize(); });
+        };
     });
 </script>
 
+<div id="chart-container"></div>
+
 <style>
-    #barChart {
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        right: 0; 
-        bottom: 0;
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    #chart-container {
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden;
     }
 </style>
-
-<canvas id="barChart" bind:this={canvas}></canvas>

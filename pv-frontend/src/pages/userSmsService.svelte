@@ -46,7 +46,6 @@
 
     // Group Select
     import { getGroups } from '../apis/userApis.js';
-    import { onMount } from "svelte";
     
     let groupList = [];
     async function getGroupsHandler() {
@@ -95,10 +94,11 @@
     getCompanySmsHandler();
 
     let groupId = '';
+    let campaignId = '';
     let date = '';
     async function createSmsHandler() {
         console.log(loggedInUser.company);
-        const response = await createSms(title, text, groupId, date, loggedInUser.company);
+        const response = await createSms(title, text, campaignId, groupId, date, loggedInUser.company);
         smsList = response;
     }
 
@@ -135,6 +135,16 @@
         smsSelection = smsList[index]._id;
         toggle('edit-sms-button');
     }
+
+    // Company Campaigns
+    import { getCampaigns } from '../apis/userApis.js';
+    let campaignList = [];
+    async function getCompanyCampaignsHandler() {
+        const response = await getCampaigns(loggedInUser.company);
+        campaignList = response;
+    }
+
+    getCompanyCampaignsHandler();
 </script>
 
 <style>
@@ -292,6 +302,10 @@
         overflow: hidden;
         white-space: nowrap;
     }
+    .rounded-phone {
+        border-radius: 45px !important;
+        box-shadow: 0px 2px 6px 0px rgba(67, 89, 113, 0.12) !important;
+    }
 </style>
 
 <main class="m-0 p-0">
@@ -363,7 +377,7 @@
                     </table>
                 {:else if selection === 'new-sms'}
                     <div class="row d-flex justify-content-between align-items-center mb-4 g-0" style="position:relative;">
-                        <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 70%; height: fit-content;">
+                        <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 75%; height: fit-content;">
                             <div class="form-group mb-4">
                                 <label for="smsName" style="color: #697A8D;">SMS Başlığı</label>
                                 <input type="text" bind:value={title} class="form-control shadow-none" id="smsName" placeholder="Lütfen sms başlığı giriniz">
@@ -374,6 +388,15 @@
                                 <div class="counter {text.length > maxCharacters ? 'exceeded' : ''}">
                                     {text.length}/{maxCharacters}
                                 </div>
+                            </div>
+                            <div class="form-group w-100 mb-4">
+                                <label for="listName">Kampanya Seçiniz</label>
+                                <select class="form-select shadow-none" aria-label="Default select example" bind:value={campaignId}>
+                                    <option selected value="">Kampanya Seçiniz</option>
+                                    {#each campaignList as campaign}
+                                        <option value={campaign._id}>{campaign.name}</option>
+                                    {/each}
+                                </select>
                             </div>
                             <div class="form-group w-100 mb-4">
                                 <label for="listName">Grup Seçiniz</label>
@@ -395,16 +418,13 @@
                                         <i class='bx bx-check-double mb-0' style="font-size: 24px;"></i>
                                     </button>
                                 </span>
-                            </div>  
-                        </div>
-                        <div class="bg-white rounded grid-box px-5 py-4" style="width: 28%; height: fit-content; position:absolute; top: 0; right: 0;">
-                            <div class="d-flex flex-column justify-content-between align-items-center" style="height: fit-content;">
-                                <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
-                                    <img src="{phone}" class="mb-3" alt="phone" width="100%"/>
-                                    <textarea class="form-control shadow-none" disabled
-                                        bind:this={textareaRef} bind:value={text} on:input={autoGrow}></textarea>
-                                </div>
                             </div>
+                            <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 
+                                style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
+                                <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
+                                    <img src="{phone}" class="" alt="phone" width="100%"/>
+                                </div>
+                            </div>  
                         </div>
                     </div>
                 {:else if selection === "edit-sms"}
@@ -420,8 +440,8 @@
                         </div>
 
                         {#if smsSelection !== ''} 
-                            <div class="row d-flex justify-content-between align-items-center g-0" style="position:relative;">
-                                <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 70%; height: fit-content;">
+                            <div class="d-flex justify-content-between align-items-center g-0" style="position:relative;">
+                                <div id="sms-form-group" class="d-flex flex-column bg-white px-4 py-5 rounded grid-box justify-content-start me-3" style="width: 75%; height: fit-content;">
                                     <div class="form-group mb-4">
                                         <label for="smsName" style="color: #697A8D;">SMS Başlığı</label>
                                         <input type="text" bind:value={selectedSms.title} class="form-control shadow-none" id="smsName" placeholder="Lütfen sms başlığı giriniz">
@@ -432,6 +452,15 @@
                                         <div class="counter {smsMessage.length > maxCharacters ? 'exceeded' : ''}">
                                             {smsMessage.length}/{maxCharacters}
                                         </div>
+                                    </div>
+                                    <div class="form-group w-100 mb-4">
+                                        <label for="listName">Kampanya Seçiniz</label>
+                                        <select class="form-select shadow-none" aria-label="Default select example" bind:value={selectedSms.campaignId}>
+                                            <option selected value="1">Kampanya Seçiniz</option>
+                                            {#each campaignList as campaign}
+                                                <option value={campaign._id}>{campaign.name}</option>
+                                            {/each}
+                                        </select>
                                     </div>
                                     <div class="form-group w-100 mb-4">
                                         <label for="listName">Grup Seçiniz</label>
@@ -455,13 +484,12 @@
                                         </span>
                                     </div>  
                                 </div>
-                                <div class="bg-white rounded grid-box px-5 py-4" style="width: 28%; height: fit-content; position:absolute; top: 0; right: 0;">
-                                    <div class="d-flex flex-column justify-content-between align-items-center" style="height: fit-content;">
-                                        <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
-                                            <img src="{phone}" class="mb-3" alt="phone" width="100%"/>
-                                            <textarea class="form-control shadow-none" disabled
-                                                bind:this={textareaRef} bind:value={smsMessage} on:input={autoGrow}></textarea>
-                                        </div>
+                                <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 
+                                    style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
+                                    <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
+                                        <img src="{phone}" class="" alt="phone" width="100%"/>
+                                        <textarea class="form-control shadow-none" disabled
+                                            bind:this={textareaRef} bind:value={smsMessage} on:input={autoGrow}></textarea>
                                     </div>
                                 </div>
                             </div>

@@ -221,7 +221,7 @@ const moment = require('moment');
 // Create sms
 exports.createSms = async (req, res) => {
   try {
-    const { title, message, groupId, date, companyId,  } = req.body;
+    const { title, message, campaignId, groupId, date, companyId,  } = req.body;
     console.log(message, date, companyId, groupId);
     const company = await Company.findById(companyId);
     if (!company) {
@@ -232,6 +232,7 @@ exports.createSms = async (req, res) => {
       title,
       message,
       date: formattedDate,
+      campaignId,
       groupId: groupId,
       companyId: companyId,
     });
@@ -362,20 +363,3 @@ exports.uploadExcelFile = async (req, res, file) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-
-// get an ejs file into a string
-const fs = require('fs');
-const path = require('path');
-const ejs = require('ejs');
-
-exports.getEjsFileAsString = async (req, res) => {
-  try {
-    const { fileName } = req.query;
-    const filePath = path.join(__dirname, `../views/${fileName}.ejs`);
-    const fileContent = await fs.readFileSync(filePath, 'utf8');
-    return res.status(200).json({ fileContent });
-  } catch (error) {
-    console.error('Error getting ejs file:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
-  }
-}

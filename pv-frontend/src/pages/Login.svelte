@@ -12,12 +12,19 @@
 
     var email = "";
     var password = "";
+    let rememberMe = false;
+    let isInvalid = false;
+
+    // check if checkbox is checked
+    function checkbox() {
+      rememberMe = !rememberMe;
+      console.log(rememberMe);
+    }
   
     async function handleLogin(event) {
       event.preventDefault();
       try {
-        const userData = await signIn(email, password);
-        console.log(userData);
+        const userData = await signIn(email, password, rememberMe);
         user.set(userData);
         const accessToken = userData.accessToken;
         localStorage.setItem("accessToken", accessToken);
@@ -27,7 +34,9 @@
             navigate('/userDashboard');
         }
       } catch (error) {
-        // Handle error, show error message to user
+        isInvalid = true;
+        console.log(email, password);
+        console.log("error");
       }
     }
 
@@ -37,6 +46,17 @@
 
     function onInput (event) {
       password = event.target.value
+    }
+    
+    $: validationClass = "";
+    $: validationAlert = "d-none";
+    $: if (isInvalid && email !== "" && password !== "") {
+      validationClass = "invalid";
+      validationAlert = "d-block invalid-feedback mb-3";
+    } else {
+      isInvalid = false;
+      validationClass = "";
+      validationAlert = "d-none";
     }
 </script>
 
@@ -111,7 +131,24 @@
     border-radius: 2px;
     border: 1px solid rgba(37, 50, 75, 0.05);
     background: #F6F6F6;
-
+  }
+  .input-group-addon {
+    background-color: white;
+  }
+  .invalid {
+    border: 1px solid red !important;
+    background-color: #FDE8E8 !important;
+    margin-bottom: 0 !important;
+  }
+  .invalid:focus,
+  .invalid > span,
+  .invalid > div,
+  .invalid > input,
+  .invalid > input:-webkit-autofill {
+    background-color: transparent !important;
+  }
+  .invalid > span > img, .invalid > div > button > img {
+    filter: invert(1);
   }
 </style>
 
@@ -143,18 +180,23 @@
           </div>
           <p style="font-weight: 400; color: #a3a3a3; font-size: 14px; font-family: 'Gilroy-Light', sans-serif !important">Sisteme giriş için kullanıcı adınızı veya e-posta adresinizi giriniz.</p>
           <form>
-              <div class="input-group mb-3" id="emailInputGroup">
+              <div class="input-group mb-3 { validationClass }" id="emailInputGroup">
                 <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
                   <img src="{ userLogo }" alt="User Logo" width="24" />
                 </span>
                 <input type="email" class="form-control" style="font-size: 14px;" id="inputEmail" aria-describedby="emailHelp" placeholder="E-Posta Adresi Giriniz" bind:value={email} required/>
+                
               </div>
-              <div class="input-group mb-3" id="passwordInputGroup">
+              <div class="{ validationAlert }">
+                Lütfen geçerli bir e-posta adresi giriniz.
+              </div>
+              <div class="input-group mb-3 { validationClass }" id="passwordInputGroup">
                 <span class="input-group-addon bg-white align-items-center d-flex" id="passwordAddon">
                   <img src="{ smartLock }" alt="User Logo" width="24" />
                 </span>
-                <input { type } { value } on:input={ onInput } class="form-control" id="inputPassword" placeholder="Şifre Giriniz" required/>
-                <div class="input-group-addon bg-white align-items-center d-flex" id="passwordSecondAddon">
+                <input { type } { value } on:input={ onInput } class="form-control " id="inputPassword" placeholder="Şifre Giriniz" required/>
+                
+                <div class="input-group-addon align-items-center d-flex" id="passwordSecondAddon">
                   <button type="button" on:click="{ () => show_password = !show_password }" style="border: 0; background:none;">
                     {#if show_password}
                       <img src="{ eye }" alt="User Logo" width="16" />
@@ -164,10 +206,13 @@
                   </button>
                 </div>
               </div>
+              <div class="{ validationAlert }">
+                Lütfen geçerli bir şifre giriniz.
+              </div>
               <div class="d-flex justify-content-between align-items-middle mb-3">
                 <span class="d-flex align-items-center">
-                  <input type="checkbox" id="rememberMe" name="rememberMe" value="rememberMe"/>
-                  <label for="rememberMe" style="font-size: 14px; color: #25324B; font-weight: 500;">Bilgilerimi Hatırla</label>
+                  <input type="checkbox" id="rememberMe" name="rememberMe" value="rememberMe" bind:checked={rememberMe} on:click={checkbox}>
+                  <label for="rememberMe" style="font-size: 14px; color: #25324B; font-weight: 500;">Beni Hatırla</label>
                 </span>
                 <span>
                   <a href="#" style="font-size: 14px; color: #04A3DA; font-weight: 400; text-decoration: none;">Şifremi Unuttum</a>

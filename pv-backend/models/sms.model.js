@@ -6,6 +6,7 @@ const Sms = mongoose.model(
         title: String,
         message: String,
         date: String,
+        campaignId: String,
         groupId: String,
         companyId: String,
     })

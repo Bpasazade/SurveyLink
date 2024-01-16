@@ -219,18 +219,6 @@
     function uploadFile() {
         uploadExcelFile(excelFile, loggedInUser.company, selectedGroup);
     }
-
-    // Get Ejs File
-    import { getEjsFileAsString } from '../apis/userApis.js';
-
-    let ejsFile = '';
-    async function getEjsFileHandler() {
-        const response = await getEjsFileAsString('index');
-        ejsFile = response.fileContent;
-        console.log(ejsFile);
-    }
-
-    onMount(getEjsFileHandler);
 </script>
 
 <style>
@@ -400,7 +388,6 @@
     input[type=file]::-webkit-file-upload-button {
         height: 50px !important;
         background-color: white !important;
-
     }
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
@@ -474,6 +461,10 @@
     .badge-cancel {
         background-color: #9696961A;
         color: #8C8C8C;
+    }
+    .rounded-phone {
+        border-radius: 45px !important;
+        box-shadow: 0px 2px 6px 0px rgba(67, 89, 113, 0.12) !important;
     }
 </style>
 
@@ -566,7 +557,7 @@
                     </table>
                 {:else if selection === 'new-campaigns'}
                     <div class="row d-flex justify-content-between align-items-center g-0" style="position:relative;">
-                        <div id="campaign-form-group" class="d-flex flex-column justify-content-start me-3" style="width: 70%; height: 72.5vh;">
+                        <div id="campaign-form-group" class="d-flex flex-column justify-content-start me-3" style="width: 75%; height: 72.5vh;">
 
                             <!-- Parent Accordion -->
                             <div class="accordion rounded" id="campaign-information-panel-top">
@@ -710,7 +701,6 @@
                                                         <input type="file" class="form-control shadow-none p-0" id="inputGroupFile01" on:change={handleFileUpload}/>
                                                     </div>
                                                     <div class="col form-group  me-3">
-                                                        <label for="listName">Grup Seçiniz</label>
                                                         <select class="form-select shadow-none" aria-label="Default select example" bind:value={selectedGroup}>
                                                             <option selected value="1">Grup Seçiniz</option>
                                                             {#each groupList as group}
@@ -796,14 +786,16 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="bg-white rounded grid-box px-5 py-4" style="width: 28%; height: fit-content; position:absolute; top: 0; right: 0;">
-                            <div class="d-flex flex-column justify-content-between align-items-center" style="height: fit-content; max-height: 72.5vh !important;">
-                                <!-- <img src="{phone}" class="mb-3" alt="phone" width="100%"/> -->
-                                {@html ejsFile}
+                            <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 
+                                style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
+                                <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
+                                    <img src="{phone}" class="" alt="phone" width="100%"/>
+
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 {:else if selection === 'edit-campaigns'}
                     <div class="row d-flex justify-content-between align-items-center g-0" style="position:relative;">
                         <div class="form-group">
@@ -816,9 +808,9 @@
                             </select>
                         </div>
                         
-                        {#if campaignSelection !== ''} 
+                        {#if campaignSelection !== ''}
                             <div class="row d-flex justify-content-between align-items-center g-0" style="position:relative;">
-                                <div id="campaign-form-group" class="d-flex flex-column justify-content-start me-3" style="width: 70%; height: 72.5vh;">
+                                <div id="campaign-form-group" class="d-flex flex-column justify-content-start me-3" style="width: 75%;">
                                     <!-- Parent Accordion -->
                                     <div class="accordion rounded" id="campaign-information-panel-top">
         
@@ -1039,20 +1031,22 @@
                                                             </span>
                                                         </div>
                                                     </span>
-                                                    
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="bg-white rounded grid-box px-5 py-4" style="width: 28%; height: fit-content; position:absolute; top: 0; right: 0;">
-                                    <div class="d-flex flex-column justify-content-between align-items-center" style="height: fit-content; max-height: 72.5vh !important;">
-                                        <img src="{phone}" class="mb-3" alt="phone" width="100%"/>
+                                        <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 
+                                        style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
+                                        <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
+                                            <img src="{phone}" class="" alt="phone" width="100%"/>
+                                            
+                                        </div>
                                     </div>
                                 </div>
+                                
                             </div>
                         {:else}
-                            <div class="d-flex justify-content-center align-items-center" style="width: 100%; height: 72.5vh;">
+                            <div class="d-flex justify-content-center align-items-center" style="width: 100%;">
                                 {#if campaignSelection === ''}
                                     <span class="text-center">Lütfen Kampanya Seçiniz</span>
                                 {:else}
@@ -1064,7 +1058,5 @@
                 {/if}
             </div>
         </div>
-
     </div>
-
 </main>

@@ -11,9 +11,6 @@
     import { getUser } from "../apis/userApis";
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
-    // Bar Chart
-    import BarChart from "../lib/BarChart.svelte";
-
     import jwt_decode from "jwt-decode";
     var decoded = {
         id: null,
@@ -44,62 +41,21 @@
     import Chart from 'chart.js/auto';
     import { onMount } from 'svelte';
 
+    // Bar Chart
+    import BarChart from "../lib/BarChart.svelte";
     let canvas;
-
-    onMount(() => {
-        const ctx = canvas.getContext('2d');
-        var background_1 = ctx.createLinearGradient(0, 0, 0, 600);
-        background_1.addColorStop(0, '#327FC7');
-        background_1.addColorStop(1, '#5CB3FE');
-
-        var barChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "24:00"],
-                datasets: [{
-                    label: 'Sample Data',
-                    data: [0, 5000, 50000, 150000, 200001],
-                    backgroundColor: background_1,
-                    borderColor: ['red', 'blue', 'fuchsia', 'green', 'navy'],
-                    borderRadius: 10,
-                    barThickness: 20,
-                }]
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    // remove y-axis grid lines
-                    y: {              
-                        ticks: {
-                            callback: function(value, index, values) {
-                                return value === 0 ? '0k' : value / 1000 + 'k';
-                            },
-                            size: 20,
-                        },
-                        grid: {
-                            color: '#EBEBEB',
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            size: 20,
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                    }
-                }
-            }
-        });
-    });
+    // let chartData = Array.from({length: 24}, () => 0);
+    // function prepareData() {
+    //     // get the hour from the date string
+    //     dateAnswers.forEach(date => {
+    //         // get HH from the date string (if its string)
+    //         if(date) {
+    //             const hour = date.substring(11, 13);
+    //             chartData[hour] += 1;
+    //         }
+    //     });
+    //     console.log(chartData);
+    // }
 
     // Company Campaigns
     import { getAllCampaigns } from "../apis/adminApis.js";
@@ -302,7 +258,9 @@
                                 <h1 class="text m-0" style="color: #414141; font-size: 16px; font-weight: 700;">Saatlik Veri Analizi</h1>
                                 <button class="btn btn-sm shadow-0 px-2 py-1" style="background-color: #F5F5F9; color: #414141; font-size: 11px; font-weight: 500; border-radius: 7px; color: #809FB8;">Tümü</button>
                             </div>
-                                <canvas id="barChart" bind:this={canvas}></canvas>
+                            <!-- {#if chartData.some(data => data !== 0)}
+                                <BarChart data={chartData} />
+                            {/if} -->
                         </div>
                         <div class="container px-0 mx-0" style="width: 33%; height: 42vh;">
                             <div class="row h-100 g-4">

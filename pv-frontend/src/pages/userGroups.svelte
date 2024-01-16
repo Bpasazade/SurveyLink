@@ -67,6 +67,35 @@
             editGroupBtn.disabled = false;
         }
     }
+
+    // Switch button
+    let activeSwitchStyle = { left: '0%' };
+
+    function switchLeft() {
+        activeSwitchStyle = { left: '0%' };
+        document.getElementById('left-switch-span').style.display = 'block';
+        document.getElementById('right-switch-span').style.display = 'none';
+    }
+
+    function switchRight() {
+        activeSwitchStyle = { left: '50%' };
+        document.getElementById('left-switch-span').style.display = 'none';
+        document.getElementById('right-switch-span').style.display = 'block';
+    }
+
+    // Excel File Upload
+    import { uploadExcelFile } from "../apis/userApis";
+    import { navigate } from "svelte-routing";
+
+    let excelFile = null;
+    
+    function handleFileUpload(event) {
+        excelFile = event.target.files[0];
+    }
+
+    function uploadFile() {
+        uploadExcelFile(excelFile, loggedInUser.company, selectedGroup);
+    }
 </script>
 
 <style>
@@ -124,6 +153,63 @@
     tr:last-child td:last-child {
         border-bottom-right-radius: 6px !important;
     }
+    .switch-button {
+        width: 325px;
+        height: 40px;
+        text-align: center;
+        will-change: transform;
+        z-index: 197 !important;
+        cursor: pointer;
+        transition: 0.3s ease all;
+        border-radius: 45px;
+        background: #FFF;
+    }
+    .switch-button-case {
+        display: inline-block;
+        background: none;
+        width: max-content;
+        height: 100%;
+        color: black;
+        position: relative;
+        border: none;
+        transition: 0.3s ease all;
+        border-radius: 45px;
+        font-size: 14px !important;
+    }
+    .switch-button .active {
+        color: white;
+        background-color: #04A3DA;
+        position: absolute;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        z-index: -1;
+        transition: 0.3s ease-out all;
+        border-radius: 45px;
+    }
+    .switch-button .active-case {
+        color: white;
+    }
+    input[type="text"] {
+        height: 50px !important;
+        padding-left: 17px !important;
+        padding-top: 10px !important;
+    }
+    input[type=file] {
+        color: black;
+        font-size: 15px !important;
+        margin-bottom: 0px !important;
+        align-items: center !important;
+        vertical-align: middle !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+    input[type=file]::-webkit-file-upload-button {
+        height: 50px !important;
+        background-color: white !important;
+    }
 </style>
 
 <main class="m-0 p-0">
@@ -169,12 +255,80 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <input type="text" class="form-control shadow-none" id="groupName" placeholder="Grup Adı Giriniz" bind:value={updatedGroupName}>
+                                        <div class="form-group mb-4 col me-2">
+                                            <label for="groupName" style="color: #697A8D;">Grup Adı</label>
+                                            <input type="text" class="form-control shadow-none" id="groupName" placeholder="Grup Adı Giriniz" bind:value={updatedGroupName}>
+                                        </div>
+                                        <div class="my-4 d-flex justify-content-between">
+                                            <div class="p-1" style="width: fit-content; border: 1px solid rgba(44, 62, 79, 0.10); border-radius: 45px;">
+                                                <div class="switch-button d-flex justify-content-between">
+                                                    <span class="active" style="left: {activeSwitchStyle.left};"></span>
+                                                    <button class="btn w-50 d-flex justify-content-center align-items-center switch-button-case left {activeSwitchStyle.left === '0%' ? 'active-case' : ''}" on:click={switchLeft}>Excel Dosyası Yükle</button>
+                                                    <button class="btn w-50 d-flex justify-content-center align-items-center switch-button-case right {activeSwitchStyle.left === '50%' ? 'active-case' : ''}" on:click={switchRight}>Kişi Ekle</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span id="left-switch-span">
+                                            <div class="d-flex">
+                                                <div class="col form-group mb-3 col me-2">
+                                                    <input type="file" class="form-control shadow-none p-0" id="inputGroupFile01" on:change={handleFileUpload}/>
+                                                </div>
+                                            </div>
+                                        </span>
+
+                                        <span id="right-switch-span" style="display: none;">
+                                            <div class="d-flex">
+                                                <div class="form-group mb-4 col me-2">
+                                                    <label for="personName" style="color: #697A8D;">Adı</label>
+                                                    <input type="text" class="form-control shadow-none" id="personName" placeholder="Lütfen Kişi Adı Giriniz">
+                                                </div>
+                                                <div class="form-group mb-4 col ms-2">
+                                                    <label for="personSurname" style="color: #697A8D;">Soyadı</label>
+                                                    <input type="text" class="form-control shadow-none" id="personSurname" placeholder="Lütfen Kişi Soyadı Giriniz">
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div class="form-group mb-4 col">
+                                                    <label for="personPhone" style="color: #697A8D;">Telefonu</label>
+                                                    <input type="text" class="form-control shadow-none" id="personPhone" placeholder="Lütfen Kişi Telefonu Giriniz">
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div class="form-group mb-4 col">
+                                                    <label for="personEmail" style="color: #697A8D;">Şehir</label>
+                                                    <select class="form-select shadow-none" aria-label="Default select example">
+                                                        <option selected value="1">Lütfen Şehir Seçiniz</option>
+                                                        <option value="2">Ankara</option>
+                                                        <option value="3">İstanbul</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mb-4 col ms-2">
+                                                    <label for="personEmail" style="color: #697A8D;">İlçe</label>
+                                                    <select class="form-select shadow-none" aria-label="Default select example">
+                                                        <option selected value="1">Lütfe İlçe Seçiniz</option>
+                                                        <option value="2">Çankaya</option>
+                                                        <option value="3">Keçiören</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mb-4 col ms-2">
+                                                    <label for="personEmail" style="color: #697A8D;">Mahalle</label>
+                                                    <select class="form-select shadow-none" aria-label="Default select example">
+                                                        <option selected value="1">Lütfen Mahalle Seçiniz</option>
+                                                        <option value="2">Ayrancı</option>
+                                                        <option value="3">Bahçelievler</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </span>
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Grubu Sil</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                                        <button type="submit" class="btn" data-bs-dismiss="modal" style="background-color: #04A3DA; color: white;" on:click={updateGroupHandler}>Kaydet</button>
+                                    <div class="modal-footer d-flex justify-content-between">
+                                        <div>
+                                            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Grubu Sil</button>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                                            <button type="submit" class="btn" data-bs-dismiss="modal" style="background-color: #04A3DA; color: white;" on:click={updateGroupHandler}>Kaydet</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

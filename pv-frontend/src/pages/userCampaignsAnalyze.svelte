@@ -10,6 +10,7 @@
 
     // Campaign
     import { campaign } from '../campaign.js';
+    import { onMount, tick } from 'svelte';
     let selectedCampaign;
     let selectElement;
 
@@ -54,68 +55,23 @@
     import play from '../assets/play.svg'
     import like from '../assets/like.svg'
     import dislike from '../assets/dislike.svg'
-    import user2 from '../assets/user_2.svg'
-    import graph from '../assets/campaigns1/graph.svg'
     
-    // Charts
-    import Chart from 'chart.js/auto';
-    import { onMount, tick } from 'svelte';
-
-    let canvas;
-    onMount(() => {
-        const ctx = canvas.getContext('2d');
-        var background_1 = ctx.createLinearGradient(0, 0, 0, 600);
-        background_1.addColorStop(0, '#327FC7');
-        background_1.addColorStop(1, '#5CB3FE');
-
-        var barChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00","06:00", "07:00", "08:00", "09:00", "10:00", "11:00","12:00", "13:00", "14:00", "15:00", "16:00", "17:00","18:00", "19:00", "20:00", "21:00", "22:00", "23:00"],
-                datasets: [{
-                    label: 'Sample Data',
-                    data: [0, 5000, 50000, 150000, 200001, 5000, 36000, 5000, 50000, 150000, 200001, 5000, 36000, 5000, 50000, 150000, 200001, 5000, 36000, 5000, 50000, 150000, 200001, 5000],
-                    backgroundColor: background_1,
-                    borderColor: ['red', 'blue', 'fuchsia', 'green', 'navy'],
-                    borderRadius: 10,
-                    barThickness: 20,
-                }]
-            },
-            options: {
-                responsive: false,
-                scales: {
-                    // remove y-axis grid lines
-                    y: {              
-                        ticks: {
-                            callback: function(value, index, values) {
-                                return value === 0 ? '0k' : value / 1000 + 'k';
-                            },
-                            size: 20,
-                        },
-                        grid: {
-                            color: '#EBEBEB',
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            size: 20,
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltip: {
-                        enabled: false,
-                    }
-                }
+    // Chart
+    import BarChart from '../lib/BarChart.svelte';
+    // chart data array 24 indexes filled with 0
+    let chartData = Array.from({length: 24}, () => 0);
+    function prepareData() {
+        // get the hour from the date string
+        dateAnswers.forEach(date => {
+            // get HH from the date string (if its string)
+            if(date) {
+                const hour = date.substring(11, 13);
+                chartData[hour] += 1;
             }
         });
-    });
+        console.log(chartData);
+    }
+    
 
     // Company Campaigns
     import { getCompanyCampaigns } from '../apis/userApis.js';
@@ -155,6 +111,8 @@
         getSurveyStatsHandler();
     }
 
+    let dateAnswers = [];
+
     // Selected Campaign Groups TargetList
     import { getGroupTargetList } from '../apis/userApis.js';
     async function getGroupTargetListHandler(groups) {
@@ -166,6 +124,11 @@
             };
         });
         console.log(groupTargetList);
+        dateAnswers = groupTargetList.map(target => {
+            // save every targets answers' second element (date) to a new array
+            return target.answers[1] ? target.answers[1].answer : null;
+        });
+        prepareData();
     }
 
     // Selected Tab (Stats or Users)
@@ -173,8 +136,10 @@
     let selectedTab = null;
     const toggle = (button) => {
         // Toggle the selected state
-        selectedButton = selectedButton === button ? null : button;
-
+        // if the button is already selected, dont deselect it
+        if(selectedButton !== button) {
+            selectedButton = button;
+        }
         if(button == 1) {
             selectedTab = "stats";
         } else if(button == 2) {
@@ -295,13 +260,14 @@
 
                 {#if selectedTab == "stats"}
                 <div class="container mx-0 px-0 mb-3">
-                    <div class="row g-0 d-flex justify-content-between">
+                    <div class="g-0 d-flex justify-content-between">
                         <div class="bg-white rounded mb-3 p-4 grid-box" style="width: 65%; height: 42vh;">
-                            <div class="d-flex justify-content-between p-3">
+                            <div class="d-flex justify-content-between pb-4 pt-2 ps-2">
                                 <h1 class="text m-0" style="color: #414141; font-size: 16px; font-weight: 700;">Saatlik Veri Analizi</h1>
-                                <button class="btn btn-sm shadow-0 px-2 py-1" style="background-color: #F5F5F9; color: #414141; font-size: 11px; font-weight: 500; border-radius: 7px; color: #809FB8;">Tümü</button>
                             </div>
-                                <canvas id="barChart" aria-label="chart" bind:this={canvas}></canvas>
+                            {#if chartData.some(data => data !== 0)}
+                                <BarChart data={chartData} />
+                            {/if}
                         </div>
                         <div class="container px-0 mx-0" style="width: 33%; height: 42vh;">
                             <div class="row h-100 g-4">
@@ -340,59 +306,57 @@
                 
                 <div class="container mx-0 px-0 mb-4">
                     <div class="g-0 d-flex justify-content-between" style="height: 19vh;">
-                        <div id="userDbGrid1" class="col-md d-flex rounded mb-4 grid-box" style="margin-right: 16px; padding-top: 20px; padding-bottom: 20px;">
-                            <div class="col-md d-flex flex-column justify-content-between align-items-center">
+                        <div id="userDbGrid1" class="col-md d-flex rounde grid-box p-3 rounded">
+                            <div class="col-md d-flex flex-column justify-content-between align-items-center h-100">
                                 <img src={play} alt="layers" class="mb-3" width="42">
-                                <h6 class="dashboard-grid-text text-white mb-1">Giriş Video İzlenme Sayısı</h6>
-                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ videoIntroSeen }</h1>
+                                <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video İzlenme Sayısı</h6>
+                                <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{videoIntroSeen}</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
-                            <hr style="width:1px; border: 1px solid #0073C5;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">
-                                <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
+                                <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF;">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
-                            <hr style="width:1px; border: 1px solid #0073C5;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
-                                <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
+                                <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
                         </div>
 
-                        <div id="userDbGrid2" class="col-md d-flex rounded mb-4 grid-box ms-2" style="margin-left: 16px; padding-top: 20px; padding-bottom: 20px;">
+                        <hr style="width:0px; padding-left: 0.75rem; padding-right: 0.75rem; border: 0;">
+
+                        <div id="userDbGrid2" class="col-md d-flex rounde grid-box p-3 rounded">
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
-                                <h6 class="dashboard-grid-text text-white mb-1">Giriş Video Tam İzlenme Sayısı</h6>
+                                <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video Tam İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ videoIntroWatched }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
-                            <hr style="width:1px; border: 1px solid #0073C5;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">
-                                <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
+                                <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
-                            <hr style="width:1px; border: 1px solid #0073C5;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
-                                <h6 class="dashboard-grid-text text-white mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
+                                <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
                                 <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
