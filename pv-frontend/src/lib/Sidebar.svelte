@@ -7,7 +7,6 @@
     import arrow from '../assets/sidebar-arrow.svg';
 
     export let page;
-    console.log(page);
     export let rotated;
 
     let sidebarWidth = 260;
@@ -170,9 +169,17 @@
     
     <ul class="nav nav-pills flex-column p-4">
         {#if !rotated}
-            <img src="{ RLogo }" alt="Logo" class="img-responsive pt-2 ms-2" style="width:fit-content; margin-bottom: 3rem">
+            {#if page.includes('admin')}
+                <a href="/adminDashboard"><img src="{ RLogo }" alt="Logo" class="img-responsive pt-2 ms-2" style="width:fit-content; margin-bottom: 3rem"></a>
+            {:else}
+                <a href="/userDashboard"><img src="{ RLogo }" alt="Logo" class="img-responsive pt-2 ms-2" style="width:fit-content; margin-bottom: 3rem"></a>
+            {/if}
         {:else}
-            <img src="{ logoSmall }" alt="Logo" class="img-responsive pt-2 ms-2" width="26" style="margin-bottom: 3rem">
+            {#if page.includes('admin')}
+                <a href="/adminDashboard"><img src="{ logoSmall }" alt="Logo" class="img-responsive pt-2 ms-2" style="width:fit-content; margin-bottom: 3rem"></a>
+            {:else}
+                <a href="/userDashboard"><img src="{ logoSmall }" alt="Logo" class="img-responsive pt-2 ms-2" style="width:fit-content; margin-bottom: 3rem"></a>
+            {/if}
         {/if}
             
         {#if page.includes('admin')}

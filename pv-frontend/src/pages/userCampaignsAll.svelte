@@ -226,14 +226,6 @@
     
     onMount(async () => {
         const importPromises = Object.entries(componentFiles).map(async ([path, importer]) => {
-            // default import is a promise for the component
-            // we want to await it so that we can use the component
-            // but Property 'default' does not exist on type '{}' error occurs
-            // so we need to add the type of the component
-            // how to do that?
-            // answer: https://stackoverflow.com/questions/65565852/property-default-does-not-exist-on-type-in-svelte
-            // this doesnt work: const { default: component }: { default: any } = await importer();
-            //const { default: component } = await importer();
             const { default: component }: { default: any } = await importer() as any;
             return { path, component };
         });
@@ -242,7 +234,7 @@
         console.log('components', components);
     });
 
-    let selectedTemplate = '';
+    let selectedTemplate;
     var selectedTemplateComponent = null;
     // pick selected template according to selectedTemplate (which is path)
     $: if (selectedTemplate) {
@@ -522,8 +514,7 @@
                         <button
                             class="btn align-items-center me-2 px-3 userCampaignsDiv1 {editCampaignButton ? 'active-button' : ''}"
                             type="button"
-                            on:click={() => toggle("edit-campaign-button")}
-                            >
+                            on:click={() => toggle("edit-campaign-button")}>
                             <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
                                 <path d="M12.8752 1.00024H3.2921C2.02546 1.00024 1.00049 2.02522 1.00049 3.29186V16.2082C1.00049 17.4749 2.02546 18.4998 3.2921 18.4998H9.44195L9.62528 17.4749C9.70862 17.0082 9.92528 16.5915 10.2586 16.2499L15.1668 11.35V3.29186C15.1668 2.02522 14.1418 1.00024 12.8752 1.00024ZM4.33374 4.3335H7.667C8.12532 4.3335 8.50031 4.70849 8.50031 5.16681C8.50031 5.62513 8.12532 6.00013 7.667 6.00013H4.33374C3.87542 6.00013 3.50043 5.62513 3.50043 5.16681C3.50043 4.70849 3.87542 4.3335 4.33374 4.3335ZM8.50031 12.6666H4.33374C3.87542 12.6666 3.50043 12.2916 3.50043 11.8333C3.50043 11.375 3.87542 11 4.33374 11H8.50031C8.95863 11 9.33362 11.375 9.33362 11.8333C9.33362 12.2916 8.95863 12.6666 8.50031 12.6666ZM11.8336 9.33338H4.33374C3.87542 9.33338 3.50043 8.95839 3.50043 8.50007C3.50043 8.04174 3.87542 7.66675 4.33374 7.66675H11.8336C12.2919 7.66675 12.6669 8.04174 12.6669 8.50007C12.6669 8.95839 12.2919 9.33338 11.8336 9.33338Z" fill="#697A8D"/>
                                 <path d="M11.4401 20.9997C11.2759 20.9997 11.1159 20.9347 10.9984 20.8164C10.8543 20.6723 10.7893 20.4673 10.8251 20.2656L11.2668 17.7615C11.2884 17.6357 11.3501 17.519 11.4401 17.4282L17.6274 11.2416C18.3874 10.48 19.1341 10.6858 19.5424 11.0941L20.5732 12.125C21.1424 12.6933 21.1424 13.6183 20.5732 14.1874L14.3859 20.3748C14.2959 20.4656 14.1792 20.5264 14.0525 20.5481L11.5484 20.9897C11.5126 20.9964 11.4759 20.9997 11.4401 20.9997Z" fill="#697A8D"/>
@@ -609,9 +600,10 @@
                                         <div class="my-3">
                                             <div class="form-group mb-4">
                                                 <label for="campaingTemplate">Kampanya Şablonu Seçiniz</label>
-                                                <select class="form-select shadow-none" aria-label="Default select example" bind:value={selectedTemplate}>
+                                                <select class="form-select shadow-none" aria-label="" bind:value={selectedTemplate}>
+                                                    <option selected value="1">Şablon Seçiniz</option>
                                                     {#each components as { path }}
-                                                        <option value={path}>{path.replace('/public/', '').replace('.svelte', '')}</option>
+                                                        <option value={path}>{path.replace('/public/', '').replace('.svelte', '')} Şablonu</option>
                                                     {/each}
                                                 </select>
                                             </div>
@@ -691,10 +683,7 @@
                                                         <td>{group.name}</td>
                                                         <td>11 Ara 2023, 10:58</td>
                                                         <td>{targetUserList.filter(user => user.group === group._id).length}</td>
-                                                        <td class="d-flex">
-                                                            <button class="btn me-2 p-0" type="button" style="border: none;">
-                                                                <img src={preview} alt="edit" width="22"/>
-                                                            </button>
+                                                        <td class="">
                                                             <input type="checkbox" class="form-check-input shadow-none" style="width: 20px; height: 20px;" on:change={() => handleCheckboxChange(index)}/>
                                                         </td>
                                                     </tr>
@@ -933,25 +922,17 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            {#each groupList as group, index}
                                                             <tr>
-                                                                <td>#552</td>
-                                                                <td>Yeni Grup</td>
-                                                                <td>852.536 Kişi</td>
+                                                                <td>{index + 1}</td>
+                                                                <td>{group.name}</td>
                                                                 <td>11 Ara 2023, 10:58</td>
-                                                                <td class="d-flex">
-                                                                    <button class="btn me-2 p-0" type="button" style="border: none;">
-                                                                        <img src={preview} alt="edit" width="22"/>
-                                                                    </button>
-        
-                                                                    <button class="btn me-2 p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
-                                                                        <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
-                                                                    </button>
-        
-                                                                    <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
-                                                                        <i class='bx bxs-message-square-detail' style="font-size: 22px; color: #267BC0;"></i>
-                                                                    </button>
+                                                                <td>{targetUserList.filter(user => user.group === group._id).length}</td>
+                                                                <td class="">
+                                                                    <input type="checkbox" class="form-check-input shadow-none" style="width: 20px; height: 20px;" on:change={() => handleCheckboxChange(index)}/>
                                                                 </td>
                                                             </tr>
+                                                            {/each}
                                                         </tbody>
                                                     </table>
                                                 </div>

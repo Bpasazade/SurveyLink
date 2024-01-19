@@ -423,6 +423,7 @@
                                 style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
                                 <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
                                     <img src="{phone}" class="" alt="phone" width="100%"/>
+                                    <textarea class="form-control shadow-none" disabled bind:this={textareaRef} bind:value={text} on:input={autoGrow}></textarea>
                                 </div>
                             </div>  
                         </div>
@@ -488,8 +489,7 @@
                                     style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
                                     <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
                                         <img src="{phone}" class="" alt="phone" width="100%"/>
-                                        <textarea class="form-control shadow-none" disabled
-                                            bind:this={textareaRef} bind:value={smsMessage} on:input={autoGrow}></textarea>
+                                        <textarea class="form-control shadow-none" disabled bind:this={textareaRef} bind:value={smsMessage} on:input={autoGrow}></textarea>
                                     </div>
                                 </div>
                             </div>

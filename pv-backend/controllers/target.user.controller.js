@@ -178,10 +178,16 @@ exports.getAllSurveyStats = async (req, res) => {
         // Get the number of users who have have seen video yes
         const videoYesSeen = await Response.countDocuments({ company, answer: 'video-yes-started' });
 
+        // Get the number of users who have have watched video yes
+        const videoYesWatched = await Response.countDocuments({ company, answer: 'video-yes-ended' });
+
         // Get the number of users who have have seen video no
         const videoNoSeen = await Response.countDocuments({ company, answer: 'video-no-started' });
 
-        return res.status(200).json({ surveyView, videoIntroSeen, videoWatched, yes, no, videoYesSeen, videoNoSeen });
+        // Get the number of users who have have watched video no
+        const videoNoWatched = await Response.countDocuments({ company, answer: 'video-no-ended' });
+
+        return res.status(200).json({ surveyView, videoIntroSeen, videoWatched, yes, no, videoYesSeen, videoYesWatched, videoNoSeen, videoNoWatched });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: err.message });

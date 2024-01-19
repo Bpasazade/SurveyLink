@@ -113,30 +113,30 @@
                         <img src="{ arrowDown }" alt="Screens" width="24">
                     </button>
                     <ul class="dropdown-menu border-0 mt-4">
-                        <a class="dropdown-item p-0" href="#" on:click={navigateToUserProfile}>
+                        <button class="dropdown-item p-0" on:click={navigateToUserProfile}>
                             <li class="px-4 py-3">
                                 <img class="me-3" src="{ userDm }" alt="Screens" width="24">
                                 Profil Bilgilerim
                             </li>
-                        </a>
-                        <a class="dropdown-item p-0" href="#">
+                        </button>
+                        <button class="dropdown-item p-0" disabled>
                             <li class="px-4 py-3">
                                 <img class="me-3" src="{ cog }" alt="Screens" width="24">
                                 Ayarlar
                             </li>
-                        </a>
-                        <a class="dropdown-item p-0" href="#">
+                        </button>
+                        <button class="dropdown-item p-0" disabled>
                             <li id="help" class="px-4 py-3">
                                 <img class="me-3" src="{ helpCircle }" alt="Screens" width="24">
                                 Yardım
                             </li>
-                        </a>
-                        <a class="dropdown-item p-0" href="#" on:click={signOutUser}>
+                        </button>
+                        <button class="dropdown-item p-0" on:click={signOutUser}>
                             <li class="px-4 py-3">
                                 <img class="me-3" src="{ powerOff }" alt="Screens" width="24">
                                 Çıkış Yap   
                             </li>
-                        </a>
+                        </button>
                     </ul>
                 </div>
             </div>

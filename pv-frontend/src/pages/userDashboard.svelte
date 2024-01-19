@@ -38,14 +38,16 @@
     let yes = 0;
     let no = 0;
     let videoYesSeen = 0;
+    let videoYesWatched = 0;
     let videoNoSeen = 0;
+    let videoNoWatched = 0;
     let percentages = {
         yes: 0,
         no: 0,
         videoSeen: 0,
     };
 
-    var data6, data7;
+    var data5, data6, data7;
     async function getAllSurveyStatsFunc() {
         const response = await getAllSurveyStats(loggedInUser.company);
         if (response) {
@@ -55,7 +57,9 @@
             yes = response.yes;
             no = response.no;
             videoYesSeen = response.videoYesSeen;
+            videoYesWatched = response.videoYesWatched;
             videoNoSeen = response.videoNoSeen;
+            videoNoWatched = response.videoNoWatched;
         }
         if (yes && no && videoYesSeen && videoNoSeen) {
             percentages = {
@@ -64,7 +68,13 @@
                 videoSeen: videoIntroSeen + videoYesSeen + videoNoSeen,
             }
         }
-        
+        let videoSeen = videoIntroSeen + videoYesSeen + videoNoSeen;
+        let videoWatched = videoIntroWatched + videoYesWatched + videoNoWatched;
+        data5 = [
+            { value: videoSeen, name: 'Görüntüleyen' },
+            { value: videoWatched, name: 'Tam İzleyen'},
+            { value: surveyView - videoSeen, name: 'İzlemeyen' }
+        ];
         data6 = [
             { value: percentages.yes, name: 'Evet' },
             { value: percentages.no, name: 'Hayır' },
@@ -260,7 +270,9 @@
                                 <h6 class="grid-box-text m-0 fs-5 m" style="font-size: 16px; font-family: 'Gilroy-Medium';">Genel Analiz Grafiği</h6>
                             </div>
                             <div class="w-100 d-flex justify-content-center align-items-center h-100">
-                                <!-- <NightingaleChart chartContainer={chart5} /> -->
+                                {#if data5}
+                                    <NightingaleChart data={data5} chartContainer={chart5} />
+                                {/if}
                             </div>
                         </div>
 
