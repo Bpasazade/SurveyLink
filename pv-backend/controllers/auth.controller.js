@@ -9,7 +9,6 @@ var bcrypt = require("bcryptjs");
 const { mongo } = require("mongoose");
 
 exports.signup = (req, res) => {
-  console.log("req.bpdy ", req.body);
   const user = new User({
     name: req.body.name,
     lastname: req.body.lastname,
@@ -21,8 +20,6 @@ exports.signup = (req, res) => {
     role: req.body.role,
     userType: req.body.userType,
   });
-
-  console.log(req.body);
 
     user.save((err, user) => {
       if (err) {
@@ -116,7 +113,6 @@ exports.signup = (req, res) => {
 };
 
 exports.signin = (req, res) => {
-  console.log(req.body.rememberMe);
   User.findOne({
     email: req.body.email
   })
@@ -172,7 +168,6 @@ exports.getAllUsers = async (req, res) => {
     // const roleName = "user";
     // const users = await User.find({ role: roleName });
     const users = await User.find();
-    console.log(users);
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching users', error: error.message });
@@ -183,7 +178,6 @@ exports.getUser = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
-    console.log(user);
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user', error: error.message });
@@ -232,9 +226,7 @@ exports.signout = async (req, res) => {
 exports.getUsersByCompanyId = async (req, res) => {
   try {
     const { companyId } = req.params;
-    console.log("companyId", companyId);
     const users = await User.find({ company: companyId, role: "user" });
-    console.log(users);
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching users', error: error.message });

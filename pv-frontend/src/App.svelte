@@ -1,22 +1,21 @@
 <script>
-    import { Route, Router, navigate } from "svelte-routing";
+    import { Route, Router, navigate, useLocation } from "svelte-routing";
     import { onMount } from "svelte";
     import Login from './pages/Login.svelte';
     import AdminDashboard from './pages/adminDashboard.svelte';
     import AdminCompanies from './pages/adminCompanies.svelte';
     import AdminCampaigns from "./pages/adminCampaigns.svelte";
     import AdminAccounts from './pages/adminAccounts.svelte';
-    import AdminTemplates from "./pages/adminTemplates.svelte";
     import UserDashboard from './pages/userDashboard.svelte';
     import UserAccounts from './pages/userAccounts.svelte';
     import UserCampaigns from './pages/userCampaignsAnalyze.svelte';
     import UserCampaigns2 from "./pages/userCampaignsAll.svelte";
     import UserSmsService from "./pages/userSmsService.svelte";
     import UserGroups from "./pages/userGroups.svelte";
-    import UserTemplates from "./pages/userTemplates.svelte";
+    import UserProfile from "./pages/UserProfile.svelte";
     import { getUser } from './apis/userApis.js';
 
-    import Template from './lib/Template.svelte';
+    import Survey from './lib/Survey.svelte';
 
     // Lib
     import './lib/EditUserModal.svelte';
@@ -36,8 +35,21 @@
     }
 
     var user_;
-
+    let lastLocation = localStorage.getItem('storedRoute');
     onMount(async () => {
+        const urlParams = Object.fromEntries((new URLSearchParams(window.location.search)).entries());
+        if (Object.keys(urlParams)[0]) {
+            if (Object.keys(urlParams)[0].length > 20) {
+                navigate(`/survey`);
+                console.log('survey');
+                return;
+            }
+        }
+
+        if (location.pathname === '/survey') {
+            return;
+        }
+
         if (token == null) {
             navigate('/login');
             return;
@@ -83,6 +95,9 @@
             }
         }
     });
+
+    // Surveys
+    import Kampanya2 from "../public/Kampanya 2.svelte";
 </script>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
@@ -95,15 +110,14 @@
     <Route path="/adminCompanies" component={AdminCompanies} />
     <Route path="/adminCampaigns" component={AdminCampaigns} />
     <Route path="/adminAccounts" component={AdminAccounts} />
-    <!-- <Route path="/adminTemplates" component={AdminTemplates} /> -->
     <Route path="/userDashboard" component={UserDashboard} />
     <Route path="/userAccounts" component={UserAccounts} />
     <Route path="/userCampaigns" component={UserCampaigns} />
     <Route path="/userCampaigns2" component={UserCampaigns2} />
     <Route path="/userSmsService" component={UserSmsService} />
     <Route path="/userGroups" component={UserGroups} />
-    <!-- <Route path="/userTemplates" component={UserTemplates} /> -->
-    <Route path="/template" component={Template} />
+    <Route path="/userProfile" component={UserProfile} />
+    <Route path="/survey" component={Survey} />
 </Router>
 
 <style>

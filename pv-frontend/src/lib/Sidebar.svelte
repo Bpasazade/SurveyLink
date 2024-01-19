@@ -7,6 +7,7 @@
     import arrow from '../assets/sidebar-arrow.svg';
 
     export let page;
+    console.log(page);
     export let rotated;
 
     let sidebarWidth = 260;

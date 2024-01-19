@@ -46,6 +46,10 @@
             console.error('Error signing out:', error);
         }
     }
+
+    function navigateToUserProfile() {
+        navigate('/userProfile');
+    }
 </script>
 
 <style>
@@ -109,7 +113,7 @@
                         <img src="{ arrowDown }" alt="Screens" width="24">
                     </button>
                     <ul class="dropdown-menu border-0 mt-4">
-                        <a class="dropdown-item p-0" href="#">
+                        <a class="dropdown-item p-0" href="#" on:click={navigateToUserProfile}>
                             <li class="px-4 py-3">
                                 <img class="me-3" src="{ userDm }" alt="Screens" width="24">
                                 Profil Bilgilerim

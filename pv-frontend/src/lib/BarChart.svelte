@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import * as echarts from 'echarts';
+    import * as echarts from 'echarts/core';
 
     export let data = [];
 
@@ -19,6 +19,13 @@
                 bottom: '14%',
                 top: '4%',
                 containLabel: true
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: '{b} : {c}'
             },
             xAxis: {
                 type: 'category',

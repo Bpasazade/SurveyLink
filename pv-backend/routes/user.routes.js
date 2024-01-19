@@ -35,6 +35,8 @@ module.exports = function(app) {
 
   app.get("/groups-target-list", controller.getGroupTargetList);
 
+  app.get("/target-users/:userId", controller.getTargetUser);
+
   app.put("/groups/:groupId", controller.updateGroup);
 
   app.post("/campaigns", controller.createCampaign);
@@ -42,6 +44,8 @@ module.exports = function(app) {
   app.get("/campaigns/:companyId", controller.getCampaigns);
 
   app.put("/campaigns/:campaignId", controller.updateCampaign);
+
+  app.get("/campaigns/campaign/:campaignId", controller.getCampaignById);
 
   app.get("/campaignsbyname/:name", controller.getCampaignByName);
 

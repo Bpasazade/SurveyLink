@@ -61,6 +61,7 @@
     // chart data array 24 indexes filled with 0
     let chartData = Array.from({length: 24}, () => 0);
     function prepareData() {
+        chartData = Array.from({length: 24}, () => 0);
         // get the hour from the date string
         dateAnswers.forEach(date => {
             // get HH from the date string (if its string)
@@ -232,12 +233,12 @@
             <div class="row d-flex flex-column px-3 pt-1 mx-0 pe-4">
                 <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-between align-items-center">
                     <div>
-                          <select class="form-select shadow-none border-0 py-2" aria-label="Default select example" style="border-radius: 8px; color: #697A8D !important; font-size: 14px; font-weight: 500; background-color: #F8F8F8;"
-                            bind:this={selectElement} bind:value={selectedCampaignId}>
-                            {#each campaignList as campaign}
-                                <option value={campaign._id}>{campaign.name}</option>
-                            {/each}
-                          </select>
+                        <select class="form-select shadow-none border-0 py-2" aria-label="Default select example" style="border-radius: 8px; color: #697A8D !important; font-size: 14px; font-weight: 500; background-color: #F8F8F8;"
+                          bind:this={selectElement} bind:value={selectedCampaignId}>
+                          {#each campaignList as campaign}
+                              <option value={campaign._id}>{campaign.name}</option>
+                          {/each}
+                        </select>
                     </div>
                     <div>
                         <button class="btn px-3 py-2 me-2 {selectedButton === 1 ? 'btn-selected' : ''}" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" on:click={() => toggle(1)}>
@@ -267,6 +268,10 @@
                             </div>
                             {#if chartData.some(data => data !== 0)}
                                 <BarChart data={chartData} />
+                            {:else}
+                                <div class="d-flex justify-content-center align-items-center" style="height: 32vh;">
+                                    <h1 class="text m-0" style="color: #414141; font-size: 16px; font-weight: 700;">Veri bulunamadı.</h1>
+                                </div>
                             {/if}
                         </div>
                         <div class="container px-0 mx-0" style="width: 33%; height: 42vh;">
@@ -407,16 +412,16 @@
                                                     <td>Hayır</td>
                                                 {/if}
 
-                                                {#if target.answers[3]}
-                                                    {#if target.answers[3].answer == "video-open"}
+                                                {#if target.answers[2]}
+                                                    {#if target.answers[2].answer == "video-open"}
                                                         <td>Evet</td>
                                                     {/if}
                                                 {:else}
                                                     <td>Hayır</td>
                                                 {/if}
 
-                                                {#if target.answers[2]}
-                                                    {#if target.answers[2].answer == "video-played"}
+                                                {#if target.answers[3]}
+                                                    {#if target.answers[3].answer == "video-played"}
                                                         <td>Açıldı</td>
                                                     {/if}
                                                 {:else}

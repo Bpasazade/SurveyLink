@@ -39,7 +39,11 @@
     let no = 0;
     let videoYesSeen = 0;
     let videoNoSeen = 0;
-    let percentages = {};
+    let percentages = {
+        yes: 0,
+        no: 0,
+        videoSeen: 0,
+    };
 
     var data6, data7;
     async function getAllSurveyStatsFunc() {
@@ -53,11 +57,14 @@
             videoYesSeen = response.videoYesSeen;
             videoNoSeen = response.videoNoSeen;
         }
-        percentages = {
-            yes: (yes / (yes + no)),
-            no: (no / (yes + no)),
-            videoSeen: videoIntroSeen + videoYesSeen + videoNoSeen,
+        if (yes && no && videoYesSeen && videoNoSeen) {
+            percentages = {
+                yes: (yes / (yes + no)),
+                no: (no / (yes + no)),
+                videoSeen: videoIntroSeen + videoYesSeen + videoNoSeen,
+            }
         }
+        
         data6 = [
             { value: percentages.yes, name: 'Evet' },
             { value: percentages.no, name: 'Hayır' },

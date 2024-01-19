@@ -117,12 +117,14 @@
                             <tbody>
                                 {#if users.length !== 0}
                                     {#each users as user, index}
+                                    {#if user.role !== "admin"}
                                         <tr>
                                             <th scope="row">{index + 1}</th>
                                             <td>{user.name}</td>
                                             <td>{user.email}</td>
                                             <td>{user.phoneNumber}</td>
                                             <td>
+                                                
                                                 <div class="d-flex justify-content-end">
                                                     <button class="btn p-0" type="button" data-bs-target="#editCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
                                                         <img src={edit} alt="arrow" width="24">
@@ -132,8 +134,10 @@
                                                         <img src={trashCan} alt="arrow" width="24">
                                                     </button>
                                                 </div>
+                                                
                                             </td>
                                         </tr>
+                                        {/if}
                                     {/each}
                                 {/if}
                             </tbody>

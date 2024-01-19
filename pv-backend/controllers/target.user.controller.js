@@ -1,5 +1,6 @@
 const { mongo } = require('mongoose');
 const db = require('../models');
+const mongoose = require('mongoose');
 const TargetUser = db.targetUser;
 const Company = db.company;
 const Campaign = db.campaign;
@@ -28,7 +29,6 @@ exports.getUserPage = (req, res) => {
     TargetUser.findOne({ _id: mongo.ObjectId(id) })
         .then(data => {
             if (!data) {
-                console.log(data);
                 res.status(404).send({ message: "Not found user with id " + id });
             } else {
                 res.render('index', { user: data });
@@ -66,7 +66,6 @@ exports.saveAnswer = async (req, res) => {
         const company = req.query.company;
         const campaign = req.query.campaign;
         const answer = req.query.answer;
-        console.log(id, company, campaign, answer);
 
         // Check if the Company exists
         const companyData = await Company.findOne({ _id: mongo.ObjectId(company) });
@@ -83,7 +82,6 @@ exports.saveAnswer = async (req, res) => {
         // Check if the TargetUser exists
         const targetUserData = await TargetUser.findOne({ _id: mongo.ObjectId(id) });
         if (!targetUserData) {
-            console.log(targetUserData);
             return res.status(404).json({ message: "Not found user with id " + id });
         }
 
@@ -128,7 +126,6 @@ exports.getSurveyStats = async (req, res) => {
 
         // Get the number of users who have seen the video intro
         const videoIntroSeen = await Response.countDocuments({ campaign, company, answer: 'video-played' });
-        console.log(videoIntroSeen);
 
         // Get the number of users who have watched the whole video
         const videoWatched = await Response.countDocuments({ campaign, company, answer: 'video-ended' });
@@ -168,7 +165,6 @@ exports.getAllSurveyStats = async (req, res) => {
 
         // Get the number of users who have seen the video intro
         const videoIntroSeen = await Response.countDocuments({ company, answer: 'video-played' });
-        console.log(videoIntroSeen);
 
         // Get the number of users who have watched the whole video
         const videoWatched = await Response.countDocuments({ company, answer: 'video-ended' });
@@ -196,16 +192,15 @@ exports.checkUserResponsed = async (req, res) => {
     try {
         // Get id, company, campaign from data
         const id = req.query.id;
-
+        const campaign = req.query.campaign;
         // Check if the TargetUser exists
-        const targetUserData = await TargetUser.findOne({ _id: mongo.ObjectId(id) });
+        const targetUserData = await TargetUser.findOne({ _id: mongoose.Types.ObjectId(id) });
         if (!targetUserData) {
-            console.log(targetUserData);
             return res.status(404).json({ message: "Not found user with id " + id });
         }
 
         // Check if the TargetUser has already responded
-        const response = await Response.findOne({ targetUser: id });
+        const response = await Response.findOne({ targetUser: id, campaign });
         if (response) {
             return res.status(200).json({ responsed: true });
         } else {

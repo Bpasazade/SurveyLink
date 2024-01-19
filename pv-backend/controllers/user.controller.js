@@ -47,7 +47,6 @@ exports.adminBoard = (req, res) => {
 exports.createGroup = async (req, res) => {
   try {
     const { name, companyId } = req.body;
-    console.log(name, companyId);
     const newGroup = new Group({
       name,
       company: companyId,
@@ -126,6 +125,21 @@ exports.getGroupTargetList = async (req, res) => {
   }
 }
 
+// Get target user by id
+exports.getTargetUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const targetUser = await TargetUser.findById(userId);
+    if (!targetUser) {
+      return res.status(404).json({ message: 'Target user not found' });
+    }
+    return res.status(200).json(targetUser);
+  } catch (error) {
+    console.error('Error getting target user:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 // Update group
 exports.updateGroup = async (req, res) => {
   try {
@@ -185,9 +199,22 @@ exports.getCampaignByName = async (req, res) => {
   try {
     const campaignName = req.params.name;
     const company = req.query.company;
-    console.log(campaignName, company);
     let campaign = await Campaign.find({ company: company, name: campaignName });
     if (campaign.length == 0) {
+      res.status(404).send({ message: "Not found campaign with id " + id });
+    }
+    return res.status(200).json(campaign);
+  } catch (error) {
+    console.error('Error retrieving campaign:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+exports.getCampaignById = async (req, res) => {
+  try {
+    const campaignId = req.params.campaignId;
+    let campaign = await Campaign.findById(campaignId);
+    if (!campaign) {
       res.status(404).send({ message: "Not found campaign with id " + id });
     }
     return res.status(200).json(campaign);
@@ -202,7 +229,6 @@ exports.updateCampaign = async (req, res) => {
   try {
     const { campaignId } = req.params;
     const { name, description, companyId } = req.body;
-    console.log(campaignId, name, description, companyId);
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found' });
@@ -222,7 +248,6 @@ const moment = require('moment');
 exports.createSms = async (req, res) => {
   try {
     const { title, message, campaignId, groupId, date, companyId,  } = req.body;
-    console.log(message, date, companyId, groupId);
     const company = await Company.findById(companyId);
     if (!company) {
       return res.status(404).json({ message: 'Company not found' });
@@ -279,9 +304,7 @@ exports.updateSms = async (req, res) => {
 // Accounts
 exports.getUsersByCompanyId = async (req, res) => {
   try {
-    console.log(req.params.companyId);
     const users = await User.find({ company: req.params.companyId });
-    console.log(users);
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching users', error: error.message });

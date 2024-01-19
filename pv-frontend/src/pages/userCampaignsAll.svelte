@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     // Page Route
     localStorage.setItem('storedRoute', 'userCampaigns2');
 
@@ -219,6 +219,38 @@
     function uploadFile() {
         uploadExcelFile(excelFile, loggedInUser.company, selectedGroup);
     }
+
+    // Campaigns Template
+    const componentFiles = import.meta.glob('/public/*.svelte');
+    let components = [];
+    
+    onMount(async () => {
+        const importPromises = Object.entries(componentFiles).map(async ([path, importer]) => {
+            // default import is a promise for the component
+            // we want to await it so that we can use the component
+            // but Property 'default' does not exist on type '{}' error occurs
+            // so we need to add the type of the component
+            // how to do that?
+            // answer: https://stackoverflow.com/questions/65565852/property-default-does-not-exist-on-type-in-svelte
+            // this doesnt work: const { default: component }: { default: any } = await importer();
+            //const { default: component } = await importer();
+            const { default: component }: { default: any } = await importer() as any;
+            return { path, component };
+        });
+
+        components = await Promise.all(importPromises);
+        console.log('components', components);
+    });
+
+    let selectedTemplate = '';
+    var selectedTemplateComponent = null;
+    // pick selected template according to selectedTemplate (which is path)
+    $: if (selectedTemplate) {
+        selectedTemplateComponent = components.find(component => component.path === selectedTemplate);
+        console.log('selectedTemplateComponent', selectedTemplateComponent.component);
+        // selectedTemplateComponent.component();
+    }
+
 </script>
 
 <style>
@@ -577,10 +609,10 @@
                                         <div class="my-3">
                                             <div class="form-group mb-4">
                                                 <label for="campaingTemplate">Kampanya Şablonu Seçiniz</label>
-                                                <select class="form-select shadow-none" aria-label="Default select example">
-                                                    <option selected value="1">Kampanya Şablonu Seçiniz</option>
-                                                    <option value="2">Şablon 1</option>
-                                                    <option value="3">Şablon 2</option>
+                                                <select class="form-select shadow-none" aria-label="Default select example" bind:value={selectedTemplate}>
+                                                    {#each components as { path }}
+                                                        <option value={path}>{path.replace('/public/', '').replace('.svelte', '')}</option>
+                                                    {/each}
                                                 </select>
                                             </div>
                                             <div class="form-group mb-4">
@@ -787,10 +819,14 @@
                                 </div>
                             </div>
                             <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 
-                                style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
+                                style="width: 20%; position:absolute; top: 0; right: 0; margin-right: 2%;">
                                 <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
-                                    <img src="{phone}" class="" alt="phone" width="100%"/>
-
+                                    <img src="{phone}" class="" alt="phone" width="100%" height="auto"/>
+                                    {#if selectedTemplateComponent}
+                                    <div class="position-absolute" style="top: 0; left: 0; width: 100%; height: 100%;">
+                                        <svelte:component this={selectedTemplateComponent.component} />
+                                    </div>
+                                    {/if}
                                 </div>
                             </div>
                         </div>

@@ -1,11 +1,12 @@
 <script>
     import { onMount } from 'svelte';
-    import * as echarts from 'echarts';
+    import * as echarts from 'echarts/core';
 
     export let data = [];
     export let chartContainer;
 
     onMount(() => {
+        console.log(data);
         var dom = chartContainer;
         var myChart = echarts.init(dom, null, {
             renderer: 'canvas',

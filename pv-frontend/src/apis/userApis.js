@@ -181,6 +181,19 @@ export async function getCampaigns(companyId) {
   }
 }
 
+// Get campaign by id
+export async function getCampaignById(campaignId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/campaigns/campaign/${campaignId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Update campaign
 export async function updateCampaign(campaignId, name, description, companyId) {
   try {
@@ -251,6 +264,19 @@ export async function uploadExcelFile(file, companyId, groupId) {
   }
 }
 
+// Get Target User
+export async function getTargetUser(id) {
+  try {
+    const response = await axios.get(`http://localhost:3000/target-users/${id}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Get Survey Stats
 export async function getSurveyStats(company, campaign) {
   try {
@@ -268,19 +294,6 @@ export async function getSurveyStats(company, campaign) {
 export async function getAllSurveyStats(company) {
   try {
     const response = await axios.get(`http://localhost:3000/surveyAll?company=${company}`);
-    if (response.status !== 200) {
-      throw new Error(response.data.message);
-    }
-    return response.data;
-  } catch(error) {
-    throw error;
-  }
-}
-
-// Get Ejs File
-export async function getEjsFileAsString(fileName) {
-  try {
-    const response = await axios.get('http://localhost:3000/getEjsFile', { params: { fileName } });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
