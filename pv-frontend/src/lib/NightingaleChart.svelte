@@ -12,7 +12,7 @@
             renderer: 'canvas',
             useDirtyRect: false
         });
-
+ 
         var option = {
             tooltip: {
                 trigger: 'item',

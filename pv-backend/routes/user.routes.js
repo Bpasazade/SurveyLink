@@ -55,5 +55,7 @@ module.exports = function(app) {
 
   app.put("/sms/:smsId", controller.updateSms);
 
+  app.post("/send-sms", controller.sendSms);
+
   app.post('/uploadExcelFile', excelUploads.single('file'), controller.uploadExcelFile);
 };

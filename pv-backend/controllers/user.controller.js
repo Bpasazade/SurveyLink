@@ -311,6 +311,44 @@ exports.getUsersByCompanyId = async (req, res) => {
   }
 };
 
+
+// Send sms
+const apiKey = '1a62561bbfe542d17c420f134f2a5b318ccdf206';
+exports.sendSms = async (req, res) => {
+  try {
+    // const { campaignId, groupId, companyId } = req.body;
+    // const sms = await Sms.find({ campaignId: campaignId, groupId: groupId, companyId: companyId });
+    // if (!sms) {
+    //   return res.status(404).json({ message: 'Sms not found' });
+    // }
+    const smsData = {
+      user: {
+        hash: apiKey,
+      },
+      msgBaslik: 'RUBUPLUS', // Message title
+      tr: false, // Turkish character usage
+      start: Math.floor(Date.now() / 1000),
+      msgData: [
+        {
+          msg: "message",
+          tel: ["905342625806"]
+        }
+      ],
+    };
+    const jsonData = JSON.stringify(smsData);
+    const baseData = Buffer.from(jsonData).toString('base64');
+    const url = `https://api.mesajpaneli.com/json_api/${baseData}`;
+    const response = await fetch(url, { method: 'POST' });
+    
+    console.log(response.status);
+    return res.status(200).json({ message: 'Sms sent successfully!' });
+  } catch (error) {
+    console.error('Error sending sms:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
 // Excel file upload
 // exports.uploadExcelFile = async (req, res, file) => {
 //   try {

@@ -47,7 +47,7 @@
         videoSeen: 0,
     };
 
-    var data5, data6, data7;
+    var data1, data2, data3, data4, data5, data6, data7;
     async function getAllSurveyStatsFunc() {
         const response = await getAllSurveyStats(loggedInUser.company);
         if (response) {
@@ -68,6 +68,10 @@
                 videoSeen: videoIntroSeen + videoYesSeen + videoNoSeen,
             }
         }
+        let sended = 250;
+        data2 = [(surveyView * 100 / sended).toFixed(0), (100 - (surveyView * 100 / sended)).toFixed(0)];
+        data3 = [((videoIntroSeen + videoYesSeen + videoNoSeen) * 100 / surveyView).toFixed(0), ((100 - ((videoIntroSeen + videoYesSeen + videoNoSeen) * 100 / surveyView))).toFixed(0)];
+        data4 = [(((percentages.yes + percentages.no) * 100) / surveyView).toFixed(0), (100 - (((percentages.yes + percentages.no) * 100) / surveyView)).toFixed(0)];
         let videoSeen = videoIntroSeen + videoYesSeen + videoNoSeen;
         let videoWatched = videoIntroWatched + videoYesWatched + videoNoWatched;
         data5 = [
@@ -76,13 +80,13 @@
             { value: surveyView - videoSeen, name: 'İzlemeyen' }
         ];
         data6 = [
-            { value: percentages.yes, name: 'Evet' },
-            { value: percentages.no, name: 'Hayır' },
+            { value: yes, name: 'Evet' },
+            { value: no, name: 'Hayır' },
             { value: surveyView - (percentages.yes + percentages.no), name: 'Cevaplanmadı' },
         ];
         data7 = [
-            { value: percentages.videoSeen, name: 'İzlendi' },
-            { value: surveyView - percentages.videoSeen, name: 'İzlenmedi' },
+            { value: videoSeen, name: 'İzlendi' },
+            { value: surveyView - videoSeen, name: 'İzlenmedi' },
         ];
         
     }
@@ -163,7 +167,9 @@
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
+                                {#if data1}
                                 <DoughnutChart data={[80, 20]} colors={["#317CC0", "#4B9FE9"]} chartContainer={chart1} textColor="#317CC0" />
+                                {/if}
                             </div>
                     </div>
                     <div class="col-md d-flex bg-white justify-content-center rounded p-4 me-4 grid-box h-100">
@@ -175,7 +181,9 @@
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
-                                <DoughnutChart data={[80, 20]} colors={["#FF7A00", "#FFA654"]} chartContainer={chart2} textColor="#D96A04" />
+                                {#if data2}
+                                    <DoughnutChart data={data2} colors={["#FF7A00", "#FFA654"]} chartContainer={chart2} textColor="#D96A04" />
+                                {/if}
                             </div>
                     </div>
                     <div class="col-md d-flex justify-content-center bg-white rounded p-4 me-4 grid-box h-100">
@@ -187,7 +195,9 @@
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
-                                <DoughnutChart data={[80, 20]} colors={["#07B209", "#50FC52"]} chartContainer={chart3} textColor="#02A504" />
+                                {#if data3}
+                                <DoughnutChart data={data3} colors={["#07B209", "#50FC52"]} chartContainer={chart3} textColor="#02A504" />
+                                {/if}
                             </div>
                     </div>
                     <div class="col-md d-flex justify-content-center bg-white rounded p-4 grid-box h-100">
@@ -199,7 +209,9 @@
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
-                                <DoughnutChart data={[80, 20]} colors={["#FF2A2A", "#FA7676"]} chartContainer={chart4} textColor="#D60A0A" />
+                                {#if data4}
+                                <DoughnutChart data={data4} colors={["#FF2A2A", "#FA7676"]} chartContainer={chart4} textColor="#D60A0A" />
+                                {/if}
                             </div>
                     </div>
                 </div>

@@ -9,7 +9,6 @@
 
     user.subscribe(value => {
         loggedInUser = value;
-        console.log(loggedInUser);
     });
 
     // Sidebar
@@ -38,6 +37,16 @@
     }
 
     loadUsers();
+
+    // Get Company
+    import { getAllCompanies } from "../apis/adminApis";
+    let companies = [];
+
+    async function loadCompanies() {
+        companies = await getAllCompanies();
+    }
+
+    loadCompanies();
 </script>
 
 <style>
@@ -91,7 +100,7 @@
 
         <div class="col-md px-0" id="main-content-div">
             <SearchProfileBar/>
-            <div class="row d-flex flex-column px-4 pt-4 mx-0">
+            <div class="row d-flex flex-column px-3 pt-4 mx-0">
                 {#if loggedInUser.userType == "master"}
                     <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-end align-items-center grid-box">
                         <button class="btn px-3 py-2" type="button" style="border-radius: 8px; color: #697A8D; font-size: 14px; font-weight: 500; background-color: #F8F8F8;" data-bs-toggle="modal" data-bs-target="#newUserModal">
@@ -109,17 +118,21 @@
                             <th scope="col">Ad-Soyad</th>
                             <th scope="col">E-mail</th>
                             <th scope="col">Telefon</th>
+                            <th scope="col">Firma</th>
+                            <th scope="col">Unvan</th>
                             <th scope="col" style="width: 60px;"></th>
                           </tr>
                         </thead>
                         <tbody>
-                            {#if users.length !== 0}
+                            {#if users.length !== 0 && companies.length !== 0}
                                 {#each users as user, index}
                                     <tr>
                                         <th scope="row">{index + 1}</th>
                                         <td>{user.name}</td>
                                         <td>{user.email}</td>
                                         <td>{user.phoneNumber}</td>
+                                        <td>{companies.find(company => company._id === user.company).name}</td>
+                                        <td>{user.mainUserDegree}</td>
                                         <td>
                                             {#if loggedInUser._id !== user.id}
                                             <div class="d-flex justify-content-end">

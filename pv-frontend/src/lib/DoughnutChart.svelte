@@ -9,6 +9,8 @@
     export let chartContainer;
 
     onMount(() => {
+        console.log(data);
+        if (data.length != 0) {
         var dom = chartContainer;
         var myChart = echarts.init(dom, null, {
             renderer: 'canvas',
@@ -16,7 +18,7 @@
         });
         var option = {
             title: {
-                text: '80%',
+                text: data[0] + '%',
                 left: '49%',
                 top: '49%',
                 textAlign: 'center',
@@ -70,6 +72,7 @@
         return () => {
             window.removeEventListener('resize', () => { myChart.resize(); });
         };
+    }
     });
 </script>
 

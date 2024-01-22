@@ -239,7 +239,7 @@
     // pick selected template according to selectedTemplate (which is path)
     $: if (selectedTemplate) {
         selectedTemplateComponent = components.find(component => component.path === selectedTemplate);
-        console.log('selectedTemplateComponent', selectedTemplateComponent.component);
+        //console.log('selectedTemplateComponent', selectedTemplateComponent.component);
         // selectedTemplateComponent.component();
     }
 
