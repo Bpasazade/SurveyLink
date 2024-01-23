@@ -1,6 +1,6 @@
 <script lang="ts">
     // Page Route
-    localStorage.setItem('storedRoute', 'userCampaigns2');
+    localStorage.setItem('storedRoute', 'kampanyalar');
 
     // User
     import { user } from "../user.js";
@@ -42,7 +42,6 @@
     let isOpen = false;
     function handleContinue(accordionId) {
         return function () {
-            console.log('accordionId', accordionId);
             isOpen = !isOpen;
 
             // Find the button of the specified accordion and trigger a click event
@@ -64,7 +63,6 @@
         await createGroup(groupName, loggedInUser.company);
         getGroupsHandler();
         createdGroupList = [...createdGroupList, groupName];
-        console.log('createdGroupList', createdGroupList);
         groupName = '';
     }
 
@@ -126,6 +124,7 @@
     // Campaign
     import { createCampaign } from '../apis/userApis.js';
     import { updateCampaign } from '../apis/userApis.js';
+    let selectedTemplateName = '';
     let campaignName = '';
     let campaignDescription = '';
 
@@ -143,14 +142,12 @@
         }
 
         // Log the selected indexes (you can replace this with your desired logic)
-        console.log("Selected Indexes:", selectedIndexes);
         selectedGroupList = groupList.filter((group, index) => selectedIndexes.includes(index));
-        console.log('selectedGroupList', selectedGroupList);
     }
 
     async function createCampaignHandler(event) {
         selectedGroupList = groupList.filter((group, index) => selectedIndexes.includes(index));
-        const response = await createCampaign(campaignName, campaignDescription, loggedInUser.company, selectedGroupList);
+        const response = await createCampaign(selectedTemplateName, campaignName, campaignDescription, loggedInUser.company, selectedGroupList);
         uploadFile();
         if (response) {
             // refresh page
@@ -194,14 +191,13 @@
         const rowIndex = event.target.closest('tr').getAttribute('data-index');
         const selectedCampaign = campaignList[rowIndex];
         campaign.set(selectedCampaign);
-        navigate('/userCampaigns');
+        navigate('/kampanya-analizi');
     }
 
     // Campaigns Table Edit
     function editCampaignTable(event) {
         campaignSelection = event.target.closest('tr').firstElementChild.innerText;
         campaignSelection = (campaignList.filter(campaign => campaign._id !== campaignSelection))[0]._id;
-        console.log('campaignSelection', campaignSelection);
         toggle('edit-campaign-button');
     }
 
@@ -231,16 +227,19 @@
         });
 
         components = await Promise.all(importPromises);
-        console.log('components', components);
     });
 
     let selectedTemplate;
     var selectedTemplateComponent = null;
-    // pick selected template according to selectedTemplate (which is path)
     $: if (selectedTemplate) {
         selectedTemplateComponent = components.find(component => component.path === selectedTemplate);
-        //console.log('selectedTemplateComponent', selectedTemplateComponent.component);
-        // selectedTemplateComponent.component();
+        selectedTemplateName = selectedTemplate;
+    }
+
+    $: if (selectedCampaign) {
+        console.log(selectedCampaign);
+        selectedTemplateComponent = components.find(component => component.path === selectedCampaign.templateName);
+        selectedTemplateName = selectedCampaign.template;
     }
 
 </script>
@@ -853,6 +852,15 @@
                                                 <hr class="m-0 p-0 pt-3" style="color: #b8b5bf; height: 2px;"/>
                                                 <div class="my-3">
                                                     <div class="form-group mb-4">
+                                                        <label for="campaingTemplate">Kampanya Şablonu Seçiniz</label>
+                                                        <select class="form-select shadow-none" aria-label="" bind:value={selectedCampaign.templateName}>
+                                                            <option selected value="1">Şablon Seçiniz</option>
+                                                            {#each components as { path }}
+                                                                <option value={path}>{path.replace('/public/', '').replace('.svelte', '')} Şablonu</option>
+                                                            {/each}
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group mb-4">
                                                         <label for="campaingName">Kampanya Adı</label>
                                                         <input type="text" class="form-control shadow-none" id="editCampaingName" placeholder="Lütfen Kampanya Adını Giriniz" bind:value={selectedCampaign.name}>
                                                     </div>
@@ -1051,16 +1059,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                        <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 
-                                        style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
+                                    <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 
+                                        style="width: 20%; position:absolute; top: 0; right: 0; margin-right: 2%;">
                                         <div class="w-100 d-flex justify-content-center" style="height: fit-content; width:fit-content; position:relative;">
-                                            <img src="{phone}" class="" alt="phone" width="100%"/>
-                                            
+                                            <img src="{phone}" class="" alt="phone" width="100%" height="auto"/>
+                                            {#if selectedTemplateComponent}
+                                            <div class="position-absolute" style="top: 0; left: 0; width: 100%; height: 100%;">
+                                                <svelte:component this={selectedTemplateComponent.component} />
+                                            </div>
+                                            {/if}
                                         </div>
                                     </div>
+                                    </div>
                                 </div>
-                                
                             </div>
                         {:else}
                             <div class="d-flex justify-content-center align-items-center" style="width: 100%;">

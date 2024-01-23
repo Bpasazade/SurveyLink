@@ -9,7 +9,6 @@
     export let chartContainer;
 
     onMount(() => {
-        console.log(data);
         if (data.length != 0) {
         var dom = chartContainer;
         var myChart = echarts.init(dom, null, {

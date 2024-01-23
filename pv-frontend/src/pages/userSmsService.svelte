@@ -1,5 +1,5 @@
 <script>
-    localStorage.setItem('storedRoute', 'userSmsService');
+    localStorage.setItem('storedRoute', 'sms-servisi');
     // Logged in user
     import { user } from "../user.js";
     let loggedInUser;
@@ -145,6 +145,18 @@
     }
 
     getCompanyCampaignsHandler();
+
+    // Send Sms
+    import { sendSms } from '../apis/userApis.js';
+    import { getTargetGSMByGroupId } from "../apis/userApis.js";
+    async function sendSmsHandler(event) {
+        let index = event.target.closest('tr').dataset.index;
+        let smsGroup = smsList[index].groupId;
+        let gsmList = await getTargetGSMByGroupId(smsGroup);
+        let smsDate = smsList[index].date;
+        let epoch = new Date(smsDate).getTime();
+        await sendSms(smsList[index]._id, gsmList, epoch);
+    }
 </script>
 
 <style>
@@ -363,12 +375,15 @@
                                     <!-- date with month name space hour -->
                                     <td>{sms.date.slice(8, 10) + '.' + sms.date.slice(5, 7) + '.' + sms.date.slice(0, 4) + ' ' + sms.date.slice(11, 16)}</td>
                                     <td>
-                                        <button class="btn me-2 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable}>
+                                        <button class="btn me-1 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable}>
                                             <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
                                         </button>
 
-                                        <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
+                                        <button class="btn me-1 p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
                                             <i class='bx bxs-message-square-detail' style="font-size: 22px; color: #267BC0;"></i>
+                                        </button>
+                                        <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={sendSmsHandler}>
+                                            <i class='bx bxs-message-square-check' style="font-size: 22px; color: #267BC0;"></i>
                                         </button>
                                     </td>
                                 </tr>

@@ -1,13 +1,17 @@
 <script>
-    // Page Route
-    localStorage.setItem('storedRoute', 'adminCampaigns');
-
     // User
+    import { navigate } from "svelte-routing";
     import { user } from "../user.js";
     let loggedInUser;
-
-    user.subscribe((value) => {
+    user.subscribe(value => {
         loggedInUser = value;
+        if (!(loggedInUser.role.includes("ROLE_ADMIN"))) {
+            navigate("/dashboard");
+            return;
+        } else {
+            // Stored Route
+            localStorage.setItem('storedRoute', '/adminCampaigns');
+        }
     });
 
     // Sidebar

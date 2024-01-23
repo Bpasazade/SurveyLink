@@ -154,11 +154,24 @@ export async function updateGroup(groupId, name, companyId) {
   }
 }
 
+// Delete group
+export async function deleteGroup(groupId) {
+  try {
+    const response = await axios.delete(`http://localhost:3000/groups/${groupId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Campaign Apis
 // Create campaign
-export async function createCampaign(name, description, companyId, groups) {
+export async function createCampaign(templateName, name, description, companyId, groups) {
   try {
-    const response = await axios.post('http://localhost:3000/campaigns', { name, description, companyId, groups });
+    const response = await axios.post('http://localhost:3000/campaigns', { templateName, name, description, companyId, groups });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
@@ -277,6 +290,19 @@ export async function getTargetUser(id) {
   }
 }
 
+// Get Target Users By Group Id
+export async function getTargetGSMByGroupId(groupId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/getTargetGSMByGroup/${groupId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Get Survey Stats
 export async function getSurveyStats(company, campaign) {
   try {
@@ -299,6 +325,84 @@ export async function getAllSurveyStats(company) {
     }
     return response.data;
   } catch(error) {
+    throw error;
+  }
+}
+
+// Create Target User
+export async function createTargetUser(name, phoneNumber, location, group, company) {
+  try {
+    const response = await axios.post('http://localhost:3000/createTargetUser', { name, phoneNumber, location, group, company });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get Cities
+export async function getCities() {
+  try {
+    const response = await axios.get('http://localhost:3000/cities');
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get Districts
+export async function getDistricts(city) {
+  try {
+    const response = await axios.get(`http://localhost:3000/cities/${city}/districts`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get Neighborhoods
+export async function getNeighborhoods(city, district) {
+  try {
+    const response = await axios.get(`http://localhost:3000/cities/${city}/districts/${district}/neighborhoods`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Send Sms
+export async function sendSms(message, phoneNumbers, date) {
+  try {
+    const response = await axios.post('http://localhost:3000/send-sms', { message, phoneNumbers, date });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get Template
+export async function getTemplate(campaignId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/getTemplate/${campaignId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error){
     throw error;
   }
 }

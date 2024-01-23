@@ -1,4 +1,6 @@
 <script>
+    import { onMount } from "svelte";
+
 
     // Surveys
     import Kampanya2 from "../../public/Kampanya 2.svelte";
@@ -19,7 +21,6 @@
     import { getTargetUser } from "../apis/userApis";
     async function loadTargetUser() {
         targetUser = await getTargetUser(id);
-        console.log(targetUser);
     }
 
     let id, campaign, targetUser, userResponsed;
@@ -34,9 +35,12 @@
         loadTargetUser();
     }
 
-    checkUserResponsed(id, campaign).then((res) => {
-        userResponsed = res.responsed;
+    onMount(() => {
+        checkUserResponsed(id, campaign).then((res) => {
+            userResponsed = res.responsed;
+        });
     });
+    
 </script>
 
 {#if Object.keys(urlParams).length === 0 || campaign === undefined || targetUser === undefined}

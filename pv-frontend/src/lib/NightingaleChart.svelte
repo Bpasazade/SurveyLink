@@ -6,7 +6,6 @@
     export let chartContainer;
 
     onMount(() => {
-        console.log(data);
         var dom = chartContainer;
         var myChart = echarts.init(dom, null, {
             renderer: 'canvas',

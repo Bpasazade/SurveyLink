@@ -14,6 +14,7 @@ db.group = require("./group.model");
 db.campaign = require("./campaign.model");
 db.sms = require("./sms.model");
 db.response = require("./response.model");
+db.template = require("./template.model");
 
 db.ROLES = ["user", "admin"];
 db.USERTYPES = ["master", "slave"];

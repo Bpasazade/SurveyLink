@@ -2,17 +2,22 @@
     import { Route, Router, navigate, useLocation } from "svelte-routing";
     import { onMount } from "svelte";
     import Login from './pages/Login.svelte';
-    import AdminDashboard from './pages/adminDashboard.svelte';
+
+
+    import Dashboard from "./pages/dashboard.svelte";
+    import Hesaplar from "./pages/accounts.svelte";
+    
     import AdminCompanies from './pages/adminCompanies.svelte';
     import AdminCampaigns from "./pages/adminCampaigns.svelte";
     import AdminAccounts from './pages/adminAccounts.svelte';
-    import UserDashboard from './pages/userDashboard.svelte';
+    
     import UserAccounts from './pages/userAccounts.svelte';
     import UserCampaigns from './pages/userCampaignsAnalyze.svelte';
     import UserCampaigns2 from "./pages/userCampaignsAll.svelte";
     import UserSmsService from "./pages/userSmsService.svelte";
     import UserGroups from "./pages/userGroups.svelte";
     import UserProfile from "./pages/UserProfile.svelte";
+    import UserTemplates from "./pages/userTemplates.svelte";
     import { getUser } from './apis/userApis.js';
 
     import Survey from './lib/Survey.svelte';
@@ -79,20 +84,14 @@
         const storedRoute = localStorage.getItem('storedRoute');
         
         if (storedRoute) {
-            // Clear the stored route as it's no longer needed
+            // Clearing the stored route as it's no longer needed
             localStorage.removeItem('storedRoute');
             
             // Navigate to the stored route
             navigate(storedRoute);
         } else {
-            // No stored route, navigate based on user role
-            if (user_['role'] == 'admin') {
-                localStorage.setItem('storedRoute', '/adminDashboard');
-                navigate('/adminDashboard');
-            } else if (user_['role'] == 'user') {
-                localStorage.setItem('storedRoute', '/userDashboard');
-                navigate('/userDashboard');
-            }
+            localStorage.setItem('storedRoute', '/dashboard');
+            navigate('/dashboard');
         }
     });
 
@@ -106,16 +105,15 @@
 
 <Router>
     <Route path="/login" component={Login} />
-    <Route path="/adminDashboard" component={AdminDashboard} />
+    <Route path="/dashboard" component={Dashboard} />
     <Route path="/adminCompanies" component={AdminCompanies} />
     <Route path="/adminCampaigns" component={AdminCampaigns} />
-    <Route path="/adminAccounts" component={AdminAccounts} />
-    <Route path="/userDashboard" component={UserDashboard} />
-    <Route path="/userAccounts" component={UserAccounts} />
-    <Route path="/userCampaigns" component={UserCampaigns} />
-    <Route path="/userCampaigns2" component={UserCampaigns2} />
-    <Route path="/userSmsService" component={UserSmsService} />
-    <Route path="/userGroups" component={UserGroups} />
+    <Route path="/hesaplar" component={Hesaplar} />
+    <Route path="/userTemplates" component={UserTemplates} />
+    <Route path="/kampanyalar" component={UserCampaigns2} />
+    <Route path="/kampanya-analizi" component={UserCampaigns} />
+    <Route path="/sms-servisi" component={UserSmsService} />
+    <Route path="/gruplar" component={UserGroups} />
     <Route path="/userProfile" component={UserProfile} />
     <Route path="/survey" component={Survey} />
 </Router>

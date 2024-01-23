@@ -1,13 +1,22 @@
 <!-- src/MediaManagement.svelte -->
 <script>
-    localStorage.setItem('storedRoute', '/adminAccounts');
 
     // User
     import { user } from "../user.js";
     let loggedInUser;
-    user.subscribe(value => {
-        loggedInUser = value;
+    onMount( () => {
+        user.subscribe(value => {
+            loggedInUser = value;
+            if (!(loggedInUser.role.includes("ROLE_ADMIN"))) {
+                navigate("/dashboard");
+                return;
+            } else {
+                // Stored Route
+                localStorage.setItem('storedRoute', '/adminCompanies');
+            }
+        });
     });
+    
 
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
@@ -19,7 +28,7 @@
 
     // Lib
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
-
+    import { navigate } from "svelte-routing";
     import NewUserModal from "../lib/NewUserModal.svelte";
     import NewCompanyModal from "../lib/NewCompanyModal.svelte";
     import EditCompanyModal from "../lib/EditCompanyModal.svelte";
@@ -41,6 +50,7 @@
     loadCompanies();
 
     import jwt_decode from "jwt-decode";
+    import { onMount } from "svelte";
     var decoded = {
         id: null,
         ait: null,

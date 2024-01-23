@@ -29,9 +29,9 @@
         const accessToken = userData.accessToken;
         localStorage.setItem("accessToken", accessToken);
         if (userData.role.includes("ROLE_ADMIN")) {
-            navigate('/adminDashboard');
+            navigate('/dashboard');
         } else {
-            navigate('/userDashboard');
+            navigate('/dashboard');
         }
       } catch (error) {
         isInvalid = true;

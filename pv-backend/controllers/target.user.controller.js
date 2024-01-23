@@ -58,6 +58,22 @@ exports.getUser = (req, res) => {
     }
 };
 
+exports.getTargetGSMByGroup = async (req, res) => {
+    try {
+        const groupId = req.params.groupId;
+        console.log(groupId);
+        const targetUsers = await TargetUser.find({ group: groupId });
+        //console.log(targetUsers);
+        let targetGSM = [];
+        targetUsers.forEach(targetUser => {
+            targetGSM.push(targetUser.phoneNumber);
+        });
+        res.send(targetGSM);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
+
 exports.saveAnswer = async (req, res) => {
     try {
         // Get id, company, campaign, answer from data
@@ -199,6 +215,7 @@ exports.checkUserResponsed = async (req, res) => {
         // Get id, company, campaign from data
         const id = req.query.id;
         const campaign = req.query.campaign;
+        console.log(id, campaign);
         // Check if the TargetUser exists
         const targetUserData = await TargetUser.findOne({ _id: mongoose.Types.ObjectId(id) });
         if (!targetUserData) {

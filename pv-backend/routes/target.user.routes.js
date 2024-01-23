@@ -12,4 +12,6 @@ module.exports = function(app) {
     app.get('/surveyAll', controller.getAllSurveyStats);
 
     app.get('/checkUserResponsed', controller.checkUserResponsed);
+
+    app.get('/getTargetGSMByGroup/:groupId', controller.getTargetGSMByGroup);
 }

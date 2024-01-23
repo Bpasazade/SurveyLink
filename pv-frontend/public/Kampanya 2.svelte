@@ -23,7 +23,7 @@
 
     // Operations
     import { saveAnswer } from "../src/apis/target.user.apis";
-
+    
     function saveAnswerToDb(answer) {
         if (!id || !campaignId || !company) return;
         saveAnswer(id, company, campaignId, answer);
@@ -36,6 +36,18 @@
         currentSection.style.display = 'none';
         nextSection.style.display = 'block';
     }
+
+    let optionElements;
+
+    onMount(() => {
+        optionElements = Array.from(document.querySelectorAll('.option'));
+    });
+
+    function getOptionElements() {
+        return optionElements;
+    }
+
+    export { getOptionElements };
 </script>
 
 <main class="{mainHeight ? 'main' : ''}">
@@ -75,13 +87,13 @@
                 <h1 class="text text-title w-100 text-center {fontCondition ? 'font-condition' : ''}">TÜRKİYE İÇİN</h1>
                 <h1 class="text text-title w-100 text-center {fontCondition ? 'font-condition' : ''}">HIZ KESMEDEN</h1>
                 <h1 class="text text-title w-100 text-center mb-4 {fontCondition ? 'font-condition' : ''}">DEVAM</h1>
-                <button type="button" class="w-75 mb-2" id="next2-yes" 
+                <button type="button" class="w-75 mb-2 option" id="next2-yes" 
                 on:click={() => {
                     showNextSection('section3', 'section4');
-                    saveAnswerToDb('yes');}}>EVET</button>
-                <button type="button" class="w-75" id="next2-no" on:click={() => {
+                    saveAnswerToDb('Option 1');}}>EVET</button>
+                <button type="button" class="w-75 option" id="next2-no" on:click={() => {
                     showNextSection('section3', 'section5');
-                    saveAnswerToDb('no');}}>HAYIR</button>
+                    saveAnswerToDb('Option 2');}}>HAYIR</button>
             </div>
         </div>
         <!-- Section 4 -->

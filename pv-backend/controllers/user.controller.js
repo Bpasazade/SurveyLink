@@ -8,8 +8,9 @@ const xlsx = require('xlsx');
 const { v4: uuidv4 } = require("uuid");
 const TargetUser = require("../models/target.user.model");
 const mongoose = require('mongoose');
-const Response = require("../models/response.model");
+const Template = require("../models/template.model");
 const { mongo } = require("mongoose");
+const fs = require('fs');
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -55,6 +56,18 @@ exports.createGroup = async (req, res) => {
     return res.status(200).json(savedGroup);
   } catch (error) {
     console.error('Error creating group:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Delete group
+exports.deleteGroup = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const group = await Group.findByIdAndDelete(groupId);
+    return res.status(200).json(group);
+  } catch (error) {
+    console.error('Error deleting group:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 }
@@ -162,7 +175,7 @@ exports.updateGroup = async (req, res) => {
 // Create campaign
 exports.createCampaign = async (req, res) => {
   try {
-    const { name, description, companyId, groups } = req.body;
+    const { templateName, name, description, companyId, groups } = req.body;
     const company = await Company.findById(companyId);
     if (!company) {
       return res.status(404).json({ message: 'Company not found' });
@@ -170,6 +183,7 @@ exports.createCampaign = async (req, res) => {
     const status = 'pending';
     const newCampaign = new Campaign({
       name,
+      templateName,
       description,
       company: companyId,
       groups: groups,
@@ -316,22 +330,18 @@ exports.getUsersByCompanyId = async (req, res) => {
 const apiKey = '1a62561bbfe542d17c420f134f2a5b318ccdf206';
 exports.sendSms = async (req, res) => {
   try {
-    // const { campaignId, groupId, companyId } = req.body;
-    // const sms = await Sms.find({ campaignId: campaignId, groupId: groupId, companyId: companyId });
-    // if (!sms) {
-    //   return res.status(404).json({ message: 'Sms not found' });
-    // }
+    const { message, phoneNumbers, date } = req.body;
     const smsData = {
       user: {
         hash: apiKey,
       },
-      msgBaslik: 'RUBUPLUS', // Message title
-      tr: false, // Turkish character usage
-      start: Math.floor(Date.now() / 1000),
+      msgBaslik: 'RUBUPLUS',
+      tr: true,
+      start: date,
       msgData: [
         {
-          msg: "message",
-          tel: ["905342625806"]
+          msg: message,
+          tel: phoneNumbers,
         }
       ],
     };
@@ -395,6 +405,10 @@ exports.uploadExcelFile = async (req, res, file) => {
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
 
+        // console.log('workbook', workbook);
+        // console.log('sheetName', sheetName);
+        // console.log('worksheet', worksheet);
+
         const columnHeaders = ['name', 'phoneNumber', 'location'];
 
         const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: columnHeaders });
@@ -410,8 +424,8 @@ exports.uploadExcelFile = async (req, res, file) => {
         for (const batch of batches) {
             const enrichedData = batch.map((user) => ({
                 id: uuidv4(),
-                company: companyId,
-                group: groupId,
+                company: mongoose.Types.ObjectId(companyId),
+                group: mongoose.Types.ObjectId(groupId),
                 ...user,
             }));
 
@@ -424,3 +438,66 @@ exports.uploadExcelFile = async (req, res, file) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+exports.createTargetUser = async (req, res) => {
+  try {
+    const { name, phoneNumber, location, group, company } = req.body;
+    const newTargetUser = new TargetUser({
+      id: uuidv4(),
+      name,
+      phoneNumber,
+      location,
+      group,
+      company,
+    });
+    const savedTargetUser = await newTargetUser.save();
+    return res.status(200).json(savedTargetUser);
+  } catch (error) {
+    console.error('Error creating target user:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Create template
+exports.createTemplate = async (req, res) => {
+  try {
+    const { name, campaign, options } = req.body;
+    const newTemplate = new Template({
+      name,
+      campaign,
+      options,
+    });
+    const savedTemplate = await newTemplate.save();
+    return res.status(200).json(savedTemplate);
+  } catch (error) {
+    console.error('Error creating template:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Get template
+exports.getTemplate = async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+    console.log('campaignId', campaignId);
+    const template = await Template.findOne({ campaign: mongoose.Types.ObjectId(campaignId) });
+    if (!template) {
+      return res.status(404).json({ message: 'Template not found' });
+    }
+    return res.status(200).json(template);
+  } catch (error) {
+    console.error('Error getting template:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Get templates
+exports.getTemplates = async (req, res) => {
+  try {
+    const templates = await Template.find({});
+    return res.status(200).json(templates);
+  } catch (error) {
+    console.error('Error getting templates:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}

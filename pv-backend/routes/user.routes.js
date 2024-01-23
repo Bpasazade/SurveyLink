@@ -39,6 +39,8 @@ module.exports = function(app) {
 
   app.put("/groups/:groupId", controller.updateGroup);
 
+  app.delete("/groups/:groupId", controller.deleteGroup);
+
   app.post("/campaigns", controller.createCampaign);
 
   app.get("/campaigns/:companyId", controller.getCampaigns);
@@ -58,4 +60,12 @@ module.exports = function(app) {
   app.post("/send-sms", controller.sendSms);
 
   app.post('/uploadExcelFile', excelUploads.single('file'), controller.uploadExcelFile);
+
+  app.post('/createTargetUser', controller.createTargetUser);
+
+  app.post('/createTemplate', controller.createTemplate);
+
+  app.get('/getTemplate/:campaignId', controller.getTemplate);
+
+  app.get('/getTemplates', controller.getTemplates);
 };

@@ -24,7 +24,7 @@
     import dislike from '../assets/dislike.svg'
     import pieChart from '../assets/pie-chart.svg'
 
-    localStorage.setItem('storedRoute', '/userDashboard');
+    //localStorage.setItem('storedRoute', '/userDashboard');
     let rotated = false;
 
     import { onMount } from 'svelte';
@@ -70,7 +70,7 @@
         }
         let sended = 250;
         data2 = [(surveyView * 100 / sended).toFixed(0), (100 - (surveyView * 100 / sended)).toFixed(0)];
-        data3 = [((videoIntroSeen + videoYesSeen + videoNoSeen) * 100 / surveyView).toFixed(0), ((100 - ((videoIntroSeen + videoYesSeen + videoNoSeen) * 100 / surveyView))).toFixed(0)];
+        data3 = [((videoIntroSeen + videoYesSeen + videoNoSeen) * 100 / (surveyView * 3)).toFixed(0), ((100 - ((videoIntroSeen + videoYesSeen + videoNoSeen) * 100 / (surveyView * 3)))).toFixed(0)];
         data4 = [(((percentages.yes + percentages.no) * 100) / surveyView).toFixed(0), (100 - (((percentages.yes + percentages.no) * 100) / surveyView)).toFixed(0)];
         let videoSeen = videoIntroSeen + videoYesSeen + videoNoSeen;
         let videoWatched = videoIntroWatched + videoYesWatched + videoNoWatched;
@@ -217,12 +217,12 @@
                 </div>
                 <div class="container-fluid mx-0 px-3 mb-4">
                     <div class="d-flex justify-content-between g-2" style="height: 19vh;">
-                        <div id="userDbGrid1" class="col-md d-flex rounde grid-box p-3 rounded">
+                        <div id="userDbGrid1" class="col-md d-flex rounde grid-box px-3 py-4 rounded">
                             <div class="col-md d-flex flex-column justify-content-between align-items-center h-100">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{videoIntroSeen}</h1>
-                                <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
+
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
@@ -231,7 +231,6 @@
                                 <img src={like} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #75CCFF;">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
@@ -240,36 +239,32 @@
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
                         </div>
 
                         <hr style="width:0px; padding-left: 0.75rem; padding-right: 0.75rem; border: 0;">
 
-                        <div id="userDbGrid2" class="col-md d-flex rounde grid-box p-3 rounded">
+                        <div id="userDbGrid2" class="col-md d-flex rounde grid-box px-3 py-4  rounded">
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video Tam İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ videoIntroWatched }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
-                            <hr style="width:1px; border: 1px solid #269CD6;">
+                            <hr style="width:1px; border: 1px solid #1DD71F;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
-                            <hr style="width:1px; border: 1px solid #269CD6;">
+                            <hr class="m-0" style="width:1px; border: 1px solid #1DD71F;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
                         </div>
                     </div>

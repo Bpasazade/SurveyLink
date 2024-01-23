@@ -1,6 +1,10 @@
 <script>
-    localStorage.setItem('storedRoute', 'userGroups');
+    localStorage.setItem('storedRoute', 'gruplar');
     
+    // Images
+    import subLeft from '../assets/sub_left.svg';
+    import done from '../assets/done.svg';
+
     // User
     import { user } from "../user.js";
     let loggedInUser;
@@ -33,6 +37,23 @@
     let updatedGroupName = '';
     async function updateGroupHandler() {
         let groupId = groupSelection;
+
+        if(activeSwitch == 'left') {
+            if(updatedGroupName == selectedGroup.name) {
+                uploadExcelFile(excelFile, loggedInUser.company, selectedGroup._id);
+            } else {
+                await updateGroup(groupId, updatedGroupName, loggedInUser.company);
+                uploadExcelFile(excelFile, loggedInUser.company, selectedGroup._id);
+            }
+        } else {
+            if(updatedGroupName == selectedGroup.name) {
+                createTargetUserHandler();
+            } else {
+                await updateGroup(groupId, updatedGroupName, loggedInUser.company);
+                createTargetUserHandler();
+            }
+        }
+        
         await updateGroup(groupId, updatedGroupName, loggedInUser.company);
         getGroupsHandler();
     }
@@ -70,31 +91,84 @@
 
     // Switch button
     let activeSwitchStyle = { left: '0%' };
+    let activeSwitch = 'left';
 
     function switchLeft() {
         activeSwitchStyle = { left: '0%' };
         document.getElementById('left-switch-span').style.display = 'block';
         document.getElementById('right-switch-span').style.display = 'none';
+        activeSwitch = 'left';
     }
 
     function switchRight() {
         activeSwitchStyle = { left: '50%' };
         document.getElementById('left-switch-span').style.display = 'none';
         document.getElementById('right-switch-span').style.display = 'block';
+        activeSwitch = 'right';
     }
 
     // Excel File Upload
     import { uploadExcelFile } from "../apis/userApis";
-    import { navigate } from "svelte-routing";
-
     let excelFile = null;
     
     function handleFileUpload(event) {
         excelFile = event.target.files[0];
     }
 
-    function uploadFile() {
-        uploadExcelFile(excelFile, loggedInUser.company, selectedGroup);
+    // Individual Target User
+    // Name & Surname & Phone Number
+    let personName = '';
+    let personSurname = '';
+    let personPhone = '';
+
+    // City, District, Neighborhood
+    import data from "../apis/data.json";
+
+    let cityList = [];
+    let districtList = [];
+    let neighborhoodList = [];
+    let selectedCity = '';
+    let selectedDistrict = '';
+    let selectedNeighborhood = '';
+
+    function getCities() {
+        cityList = data.map(city => city.name);
+    }
+    getCities();
+
+    $: if (selectedCity !== '') {
+        getDistricts(selectedCity);
+    }
+
+    function getDistricts(cityName) {
+        districtList = (data.filter((item) => item.name === cityName)[0].towns).map((item) => item.name);
+    }
+
+    $: if (selectedDistrict !== '') {
+        getNeighborhoods(selectedCity, selectedDistrict);
+    }
+
+    function getNeighborhoods(cityName, districtName) {
+        neighborhoodList = (data.filter((item) => item.name === cityName)[0].towns.filter((item) => item.name === districtName)[0].districts).map((item) => item.name);
+    }
+
+    // Create Individual User
+    import { createTargetUser } from '../apis/userApis.js';
+
+    async function createTargetUserHandler() {
+        let name = personName + ' ' + personSurname;
+        let location = selectedCity + '/' + selectedDistrict + '/' + selectedNeighborhood;
+        await createTargetUser(name, personPhone, location, selectedGroup, loggedInUser.company);
+        getCompanyTargetListHandler();
+    }
+
+    // Delete Group
+    import { deleteGroup } from '../apis/userApis.js';
+
+    async function deleteGroupHandler() {
+        let groupId = groupSelection;
+        await deleteGroup(groupId);
+        getGroupsHandler();
     }
 </script>
 
@@ -210,6 +284,23 @@
         height: 50px !important;
         background-color: white !important;
     }
+    #cancel-button {
+        height: 45px;
+        border-color: rgba(0, 0, 0, 0.3);
+        border-radius: 11px; 
+        font-weight: 500;
+        font-size: 16px;
+        opacity: 30%;
+        width: max-content;
+    }
+    #save-button {
+        height: 45px; 
+        background-color: #04A3DA; 
+        border-radius: 11px; 
+        font-weight: 500; 
+        font-size: 16px; 
+        width: max-content;
+    }
 </style>
 
 <main class="m-0 p-0">
@@ -280,42 +371,51 @@
                                             <div class="d-flex">
                                                 <div class="form-group mb-4 col me-2">
                                                     <label for="personName" style="color: #697A8D;">Adı</label>
-                                                    <input type="text" class="form-control shadow-none" id="personName" placeholder="Lütfen Kişi Adı Giriniz">
+                                                    <input type="text" class="form-control shadow-none" id="personName" placeholder="Lütfen Kişi Adı Giriniz" bind:value={personName}>
                                                 </div>
                                                 <div class="form-group mb-4 col ms-2">
                                                     <label for="personSurname" style="color: #697A8D;">Soyadı</label>
-                                                    <input type="text" class="form-control shadow-none" id="personSurname" placeholder="Lütfen Kişi Soyadı Giriniz">
+                                                    <input type="text" class="form-control shadow-none" id="personSurname" placeholder="Lütfen Kişi Soyadı Giriniz" bind:value={personSurname}>
                                                 </div>
                                             </div>
                                             <div class="d-flex">
                                                 <div class="form-group mb-4 col">
                                                     <label for="personPhone" style="color: #697A8D;">Telefonu</label>
-                                                    <input type="text" class="form-control shadow-none" id="personPhone" placeholder="Lütfen Kişi Telefonu Giriniz">
+                                                    <input type="text" class="form-control shadow-none" id="personPhone" placeholder="Lütfen Kişi Telefonu Giriniz" bind:value={personPhone}>
                                                 </div>
                                             </div>
                                             <div class="d-flex">
                                                 <div class="form-group mb-4 col">
                                                     <label for="personEmail" style="color: #697A8D;">Şehir</label>
-                                                    <select class="form-select shadow-none" aria-label="Default select example">
-                                                        <option selected value="1">Lütfen Şehir Seçiniz</option>
-                                                        <option value="2">Ankara</option>
-                                                        <option value="3">İstanbul</option>
+                                                    <select class="form-select shadow-none" aria-label="Default select example" bind:value={selectedCity}>
+                                                        <option selected value="">Lütfen Şehir Seçiniz</option>
+                                                        {#if cityList.length != 0}
+                                                            {#each cityList as city}
+                                                                <option value={city}>{city}</option>
+                                                            {/each}
+                                                        {/if}
                                                     </select>
                                                 </div>
                                                 <div class="form-group mb-4 col ms-2">
                                                     <label for="personEmail" style="color: #697A8D;">İlçe</label>
-                                                    <select class="form-select shadow-none" aria-label="Default select example">
-                                                        <option selected value="1">Lütfe İlçe Seçiniz</option>
-                                                        <option value="2">Çankaya</option>
-                                                        <option value="3">Keçiören</option>
+                                                    <select class="form-select shadow-none" aria-label="Default select example" bind:value={selectedDistrict}>
+                                                        <option selected value="">Lütfe İlçe Seçiniz</option>
+                                                        {#if districtList.length != 0}
+                                                            {#each districtList as district}
+                                                                <option value={district}>{district}</option>
+                                                            {/each}
+                                                        {/if}
                                                     </select>
                                                 </div>
                                                 <div class="form-group mb-4 col ms-2">
                                                     <label for="personEmail" style="color: #697A8D;">Mahalle</label>
-                                                    <select class="form-select shadow-none" aria-label="Default select example">
-                                                        <option selected value="1">Lütfen Mahalle Seçiniz</option>
-                                                        <option value="2">Ayrancı</option>
-                                                        <option value="3">Bahçelievler</option>
+                                                    <select class="form-select shadow-none" aria-label="Default select example" bind:value={selectedNeighborhood}>
+                                                        <option selected value="">Lütfen Mahalle Seçiniz</option>
+                                                        {#if neighborhoodList.length != 0}
+                                                            {#each neighborhoodList as neighborhood}
+                                                                <option value={neighborhood}>{neighborhood}</option>
+                                                            {/each}
+                                                        {/if}
                                                     </select>
                                                 </div>
                                             </div>
@@ -323,11 +423,22 @@
                                     </div>
                                     <div class="modal-footer d-flex justify-content-between">
                                         <div>
-                                            <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Grubu Sil</button>
+                                            <button type="button" class="btn btn-outline-danger px-3" data-bs-dismiss="modal" on:click={deleteGroupHandler}
+                                            >Grubu Sil</button>
                                         </div>
                                         <div>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
-                                            <button type="submit" class="btn" data-bs-dismiss="modal" style="background-color: #04A3DA; color: white;" on:click={updateGroupHandler}>Kaydet</button>
+                                            <button id="cancel-button" type="submit" class="btn border-2 me-2 px-3" data-bs-dismiss="modal">
+                                                <span class="d-flex align-items-center">
+                                                    İptal Et
+                                                    <img src="{ subLeft }" alt="Trash Can" class="">
+                                                </span>
+                                            </button>
+                                            <button id="save-button" type="submit" class="btn btn-primary border-0 px-3" data-bs-dismiss="modal" on:click={updateGroupHandler}>
+                                                <span class="d-flex align-items-center">
+                                                    Kaydet
+                                                    <img src="{ done }" alt="Trash Can" class="">
+                                                </span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -367,9 +478,9 @@
                                 </thead>
                                 <tbody>
                                     {#if selectedTargetList.length > 0}
-                                        {#each selectedTargetList as targetUser}
+                                        {#each selectedTargetList as targetUser, index}
                                             <tr>
-                                                <td>{targetUser._id}</td>
+                                                <td>#{index + 1}</td>
                                                 <td>{targetUser.name}</td>
                                                 <td>{targetUser.phoneNumber}</td>
                                                 <td>{targetUser.location}</td>

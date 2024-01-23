@@ -1,5 +1,5 @@
 <script>
-    localStorage.setItem('storedRoute', '/userCampaigns');
+    localStorage.setItem('storedRoute', '/kampanya-analizi');
     
     // User
     import { user } from '../user.js';
@@ -34,7 +34,7 @@
 
         // get initial campaign selection
         if (campaignList.length > 0) {
-            selectedCampaign = campaignList[0];
+            selectedCampaign = campaignList[1];
             selectedCampaignId = selectedCampaign._id;
             getSurveyStatsHandler();
         }
@@ -70,7 +70,6 @@
                 chartData[hour] += 1;
             }
         });
-        console.log(chartData);
     }
     
 
@@ -110,10 +109,23 @@
         selectedCampaign = campaignList.find(c => c._id === selectedCampaignId);
         getGroupTargetListHandler(selectedCampaign.groups);
         getSurveyStatsHandler();
+
+        // get campaign template
+        if (selectedCampaign.templateName) {        
+            let campaignTemplate = selectedCampaign.templateName.replace('/public/', '').replace('.svelte', '')
+            getCampaignTemplate();
+        }
     }
 
-    let dateAnswers = [];
+    // Selected Campaign Template
+    let campaignTemplate = null;
+    import { getTemplate } from '../apis/userApis.js';
+    async function getCampaignTemplate() {
+        campaignTemplate = await getTemplate(selectedCampaign._id);
+    }
 
+
+    let dateAnswers = [];
     // Selected Campaign Groups TargetList
     import { getGroupTargetList } from '../apis/userApis.js';
     async function getGroupTargetListHandler(groups) {
@@ -436,11 +448,17 @@
                                                     <td style="color: #CD0000">İzlenmedi</td>
                                                 {/if}
 
-                                                {#if target.answer && target.answer[0] && target.answer[0][5]}
-                                                    {#if target.answers[5].answer == "yes"}
-                                                        <td>Evet</td>
-                                                    {:else if target.answers[5].answer == "no"}
-                                                        <td>Hayır</td>
+                                                {#if target.answers[5]}
+                                                    {#if target.answers[5].answer == "Option 1"}
+                                                        <td>{campaignTemplate.options[0]}</td>
+                                                    {:else if target.answers[5].answer == "Option 2"}
+                                                        <td>{campaignTemplate.options[1]}</td>
+                                                    {:else if target.answers[5].answer == "Option 3"}
+                                                        <td>{campaignTemplate.options[2]}</td>
+                                                    {:else if target.answers[5].answer == "Option 4"}
+                                                        <td>{campaignTemplate.options[3]}</td>
+                                                    {:else if target.answers[5].answer == "Option 5"}
+                                                        <td>{campaignTemplate.options[4]}</td>
                                                     {/if}
                                                 {:else}
                                                     <td>Hayır</td>
