@@ -120,8 +120,9 @@
     } 
 
     async function updateSmsHandler() {
-        const response = await updateSms(smsSelection, smsMessage, smsDate);
+        const response = await updateSms(smsSelection, smsMessage, selectedSms.groupId, selectedSms.date, loggedInUser.company);
         smsList = response;
+        window.location.reload();
     }
 
     function updateHandleText(event) {
@@ -201,6 +202,11 @@
         border-radius: 10px !important;
         font-size: 17px !important;
         font-weight: 600 !important;
+    }
+    input[type="text"] {
+        height: 50px !important;
+        padding-left: 17px !important;
+        padding-top: 10px !important;
     }
     ::placeholder {
         color: #9fabb9 !important;

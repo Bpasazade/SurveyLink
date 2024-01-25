@@ -299,14 +299,16 @@ exports.getSms = async (req, res) => {
 exports.updateSms = async (req, res) => {
   try {
     const { smsId } = req.params;
-    const { message, date, companyId } = req.body;
+    const { message, group, date, companyId } = req.body;
     const sms = await Sms.findById(smsId);
     if (!sms) {
       return res.status(404).json({ message: 'Sms not found' });
     }
+    console.log(message, group, date, companyId);
     sms.message = message;
+    sms.groupId = group;
     sms.date = date;
-    sms.company = companyId;
+    sms.companyId = companyId;
     const savedSms = await sms.save();
     return res.status(200).json(savedSms);
   } catch (error) {
@@ -331,6 +333,7 @@ const apiKey = '1a62561bbfe542d17c420f134f2a5b318ccdf206';
 exports.sendSms = async (req, res) => {
   try {
     const { message, phoneNumbers, date } = req.body;
+    console.log(message, phoneNumbers, date);
     const smsData = {
       user: {
         hash: apiKey,

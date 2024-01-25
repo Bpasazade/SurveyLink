@@ -39,18 +39,22 @@
         let groupId = groupSelection;
 
         if(activeSwitch == 'left') {
-            if(updatedGroupName == selectedGroup.name) {
+            if(updatedGroupName == selectedGroup.name && excelFile != null) {
                 uploadExcelFile(excelFile, loggedInUser.company, selectedGroup._id);
-            } else {
+            } else if(updatedGroupName != selectedGroup.name && excelFile != null) {
                 await updateGroup(groupId, updatedGroupName, loggedInUser.company);
                 uploadExcelFile(excelFile, loggedInUser.company, selectedGroup._id);
+            } else if(updatedGroupName != selectedGroup.name && excelFile == null) {
+                await updateGroup(groupId, updatedGroupName, loggedInUser.company);
             }
         } else {
-            if(updatedGroupName == selectedGroup.name) {
+            if(updatedGroupName == selectedGroup.name && personName != '' && personSurname != '' && personPhone != '' && selectedCity != '' && selectedDistrict != '' && selectedNeighborhood != '') {
                 createTargetUserHandler();
-            } else {
+            } else if(updatedGroupName != selectedGroup.name && personName != '' && personSurname != '' && personPhone != '' && selectedCity != '' && selectedDistrict != '' && selectedNeighborhood != '') {
                 await updateGroup(groupId, updatedGroupName, loggedInUser.company);
                 createTargetUserHandler();
+            } else if(updatedGroupName != selectedGroup.name && (personName == '' || personSurname == '' || personPhone == '' || selectedCity == '' || selectedDistrict == '' || selectedNeighborhood == '')) {
+                await updateGroup(groupId, updatedGroupName, loggedInUser.company);
             }
         }
         
@@ -213,13 +217,19 @@
     th, td {
         padding: 25px 40px !important;
     }
-    tr:first-child th:first-child {
+    tr:first-child {
         border-top-left-radius: 6px !important;
         border-bottom-left-radius: 6px !important;
     }
-    tr:first-child th:last-child {
+    th:first-child {
+        border-top-left-radius: 6px !important;
+    }
+    tr:first-child {
         border-top-right-radius: 6px !important;
         border-bottom-right-radius: 6px !important;
+    }
+    th:last-child {
+        border-top-right-radius: 6px !important;
     }
     tr:last-child td:first-child {
         border-bottom-left-radius: 6px !important;

@@ -296,12 +296,10 @@
     .accordion-button > img {
         width: 24px;
     }
-    /* initially set all accordion buttons to collapsed */
     .accordion-button::after {
         background-image: url("../assets/plus-accordion.svg") !important;
         transform: none;
     }
-    /* set the accordion button to expanded when the accordion is open */
     .accordion-button:not(.collapsed)::after {
         background-image: url("../assets/minus-accordion.svg") !important;
         transform: rotate(90deg);
@@ -352,10 +350,10 @@
     .form-select option {
         color: black;
     }
-    #campaign-form-group::-webkit-scrollbar {
+    .campaign-form-group::-webkit-scrollbar {
         display: none;  /* Safari and Chrome */
     }
-    #campaign-form-group {
+    .campaign-form-group {
         -ms-overflow-style: none;  /* IE and Edge */
         scrollbar-width: none;  /* Firefox */
         overflow-y: scroll;
@@ -579,7 +577,7 @@
                     </table>
                 {:else if selection === 'new-campaigns'}
                     <div class="row d-flex justify-content-between align-items-center g-0" style="position:relative;">
-                        <div id="campaign-form-group" class="d-flex flex-column justify-content-start me-3" style="width: 75%; height: 72.5vh;">
+                        <div class="d-flex flex-column justify-content-start campaign-form-group me-3" style="width: 75%; height: 72.5vh;">
 
                             <!-- Parent Accordion -->
                             <div class="accordion rounded" id="campaign-information-panel-top">
@@ -834,7 +832,7 @@
                         
                         {#if campaignSelection !== ''}
                             <div class="row d-flex justify-content-between align-items-center g-0" style="position:relative;">
-                                <div id="campaign-form-group" class="d-flex flex-column justify-content-start me-3" style="width: 75%;">
+                                <div class="d-flex flex-column justify-content-start campaign-form-group me-3" style="width: 75%; height: 64vh;">
                                     <!-- Parent Accordion -->
                                     <div class="accordion rounded" id="campaign-information-panel-top">
         

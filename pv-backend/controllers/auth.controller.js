@@ -9,6 +9,7 @@ var bcrypt = require("bcryptjs");
 const { mongo } = require("mongoose");
 
 exports.signup = (req, res) => {
+  console.log(req.body.company);
   const user = new User({
     name: req.body.name,
     lastname: req.body.lastname,

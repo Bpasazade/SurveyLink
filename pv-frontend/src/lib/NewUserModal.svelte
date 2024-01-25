@@ -27,7 +27,9 @@
     
 
     async function handleRegisterUser(event) {
-      console.log(user);
+      if(loggedInUser.userType != "admin") {
+        user.company = loggedInUser.company;
+      }
       await registerUser(user);
     }
 

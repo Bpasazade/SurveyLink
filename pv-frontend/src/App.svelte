@@ -19,7 +19,6 @@
     import UserProfile from "./pages/UserProfile.svelte";
     import UserTemplates from "./pages/userTemplates.svelte";
     import { getUser } from './apis/userApis.js';
-
     import Survey from './lib/Survey.svelte';
 
     // Lib
@@ -116,12 +115,13 @@
     <Route path="/gruplar" component={UserGroups} />
     <Route path="/userProfile" component={UserProfile} />
     <Route path="/survey" component={Survey} />
+    <Route path="/Kampanya2" component={Kampanya2} />
 </Router>
 
 <style>
     @font-face {
         font-family: 'Gilroy-Black';
-        src: url('./assets/Fonts/Gilroy-BlackItalic.otf') format('opentype');
+        src: url('./assets/Fonts/Gilroy-Black.otf') format('opentype');
     }
     @font-face {
         font-family: 'Gilroy-Bold';
