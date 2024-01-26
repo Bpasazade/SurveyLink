@@ -92,7 +92,7 @@
                 <span class="input-group-addon bg-white align-items-center d-flex" id="companyAddon">
                   <img src="{ briefcase }" alt="User Logo" width="24" />
                 </span>
-                <input type="text" id="company-name" class="form-control ps-0" placeholder="Firma / Kurum Adı" bind:value={companyName}>
+                <input type="text" id="new-company-name" class="form-control ps-0" placeholder="Firma / Kurum Adı" bind:value={companyName}>
               </div>
   
               <!-- Company Address -->
@@ -100,7 +100,7 @@
                 <span class="input-group-addon bg-white align-items-center d-flex" id="companyAddressAddon">
                   <img src="{ directUp }" alt="User Logo" width="24" />
                 </span>
-                <input type="text" id="company-address" class="form-control ps-0" placeholder="Firma / Kurum Adresi" bind:value={companyAddress}>
+                <input type="text" id="new-company-address" class="form-control ps-0" placeholder="Firma / Kurum Adresi" bind:value={companyAddress}>
               </div>
 
             </div>

@@ -25,7 +25,6 @@
                         selectElement.selectedIndex = selectedIndex;
                     });
                     getSurveyStatsHandler();
-                    console.log(selectedCampaign);
                 } else {
                     console.warn("Selected campaign not found in the campaignList.");
                 }
@@ -136,7 +135,6 @@
                 answers: target.answers[0].filter(answer => answer.campaign === selectedCampaignId),
             };
         });
-        console.log(groupTargetList);
         dateAnswers = groupTargetList.map(target => {
             // save every targets answers' second element (date) to a new array
             return target.answers[1] ? target.answers[1].answer : null;
@@ -206,10 +204,6 @@
     }
     tr:first-child th:last-child {
         border-top-right-radius: 6px;
-    }
-    #barChart {
-        width: 100% !important;
-        height: 32vh !important;
     }
     #userDbGrid1 {
         background: url("../assets/user-dashboard/blue-bg.png") no-repeat center center;

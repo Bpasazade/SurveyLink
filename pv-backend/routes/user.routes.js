@@ -39,7 +39,7 @@ module.exports = function(app) {
 
   app.put("/groups/:groupId", controller.updateGroup);
 
-  app.delete("/groups/:groupId", controller.deleteGroup);
+  app.delete("/groups/:groupId/:panelGroupID", controller.deleteGroup);
 
   app.post("/campaigns", controller.createCampaign);
 
@@ -61,7 +61,11 @@ module.exports = function(app) {
 
   app.post('/uploadExcelFile', excelUploads.single('file'), controller.uploadExcelFile);
 
-  app.post('/createTargetUser', controller.createTargetUser);
+  app.post('/target-user', controller.createTargetUser);
+
+  app.delete('/target-user', controller.deleteTargetUser);
+
+  app.put('/target-user/:targetUserId', controller.updateTargetUser);
 
   app.post('/createTemplate', controller.createTemplate);
 

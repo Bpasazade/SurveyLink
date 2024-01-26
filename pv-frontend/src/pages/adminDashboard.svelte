@@ -5,31 +5,15 @@
     import Sidebar from "../lib/Sidebar.svelte";
 
     // Lib
-    import { Link } from "svelte-routing";
-    import { signOut } from "../apis/userApis";
-    import { navigate } from 'svelte-routing';
     import { getUser } from "../apis/userApis";
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
-    import jwt_decode from "jwt-decode";
-    var decoded = {
-        id: null,
-        ait: null,
-        exp: null
-    }
-    decoded = jwt_decode(localStorage.getItem("accessToken"));
-    
-    var user = {
-        name: "",
-        email: "",
-        phoneNumber: "",
-        mainUserDegree: "",
-        companyName: "",
-    }
-    async function getTheUser() {
-        user = await getUser(decoded.id);
-    }
-    getTheUser();
+    // User
+    import { user } from "../user.js";
+    let loggedInUser;
+    user.subscribe(value => (loggedInUser = value));
+    console.log(loggedInUser);
+
 
     let rotated = false;
 

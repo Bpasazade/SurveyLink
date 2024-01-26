@@ -8,6 +8,7 @@ const Group = mongoose.model(
             type: mongoose.Schema.Types.ObjectId,
             ref: "Company"
         },
+        panelGroupID: String,
     })
 );
 

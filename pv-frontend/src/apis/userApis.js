@@ -155,9 +155,9 @@ export async function updateGroup(groupId, name, companyId) {
 }
 
 // Delete group
-export async function deleteGroup(groupId) {
+export async function deleteGroup(panelGroupID, groupId) {
   try {
-    const response = await axios.delete(`http://localhost:3000/groups/${groupId}`);
+    const response = await axios.delete(`http://localhost:3000/groups/${groupId}/${panelGroupID}`);
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
@@ -261,12 +261,13 @@ export async function updateSms(smsId, message, group, date, companyId) {
 }
 
 // Excel File Upload Api
-export async function uploadExcelFile(file, companyId, groupId) {
+export async function uploadExcelFile(file, companyId, groupId, panelGroupID) {
   try {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('companyId', companyId);
     formData.append('groupId', groupId);
+    formData.append('panelGroupID', panelGroupID);
     const response = await axios.post('http://localhost:3000/uploadExcelFile', formData);
     if (response.status !== 200) {
       throw new Error(response.data.message);
@@ -303,6 +304,46 @@ export async function getTargetGSMByGroupId(groupId) {
   }
 }
 
+// Create Target User
+export async function createTargetUser(name, phoneNumber, location, group, company, panelGroupID) {
+  try {
+    const response = await axios.post('http://localhost:3000/target-user', { name, phoneNumber, location, group, company, panelGroupID });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Delete Target User
+export async function deleteTargetUser(targetUserId, groupId, panelGroupID, phoneNumber) {
+  try {
+    console.log(targetUserId, groupId);
+    const response = await axios.delete('http://localhost:3000/target-user', { data: { targetUserId, groupId, panelGroupID, phoneNumber } });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Update Target User
+export async function updateTargetUser(targetUserId, editedUser) {
+  try {
+    const response = await axios.put(`http://localhost:3000/target-user/${targetUserId}`, { editedUser });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Get Survey Stats
 export async function getSurveyStats(company, campaign) {
   try {
@@ -329,18 +370,7 @@ export async function getAllSurveyStats(company) {
   }
 }
 
-// Create Target User
-export async function createTargetUser(name, phoneNumber, location, group, company) {
-  try {
-    const response = await axios.post('http://localhost:3000/createTargetUser', { name, phoneNumber, location, group, company });
-    if (response.status !== 200) {
-      throw new Error(response.data.message);
-    }
-    return response.data;
-  } catch(error) {
-    throw error;
-  }
-}
+
 
 // Get Cities
 export async function getCities() {

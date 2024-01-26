@@ -14,9 +14,11 @@
       address: '',
     };
 
+    let flag = false;
     $: {
-      if (company) {
+      if (company && !flag) {
         editCompany = { ...company };
+        flag = true;
       }
     }
 
@@ -29,7 +31,8 @@
         editCompany = { ...company };
     }
 
-    function editCompanyC(event) {
+    function editCompanyC() {
+      console.log(editCompany);
       updateCompany(editCompany._id, editCompany);
     }
 </script>

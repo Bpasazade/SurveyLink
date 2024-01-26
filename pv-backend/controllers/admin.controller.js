@@ -59,9 +59,11 @@ exports.getCompanyByName = async (req, res) => {
 
 exports.updateCompany = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { companyName, companyAddress } = req.body;
-        const company = await Company.findByIdAndUpdate(id, { companyName, companyAddress }, { new: true });
+        const { _id } = req.params;
+        const { editedCompany } = req.body;
+        console.log(_id);
+        console.log(editedCompany);
+        const company = await Company.findByIdAndUpdate(_id, { name: editedCompany.name, address: editedCompany.address }, { new: true });
         return res.status(200).json(company);
     } catch (error) {
         console.error('Error updating company:', error);

@@ -72,7 +72,6 @@
     tr:nth-child(even) {
         background-color: #f2f2f2;
     }
-    /* required css to make rounded table (below) */
     tr:first-child th:first-child {
         border-top-left-radius: 6px;
     }
@@ -134,16 +133,16 @@
                                         <td>{companies.find(company => company._id === user.company).name}</td>
                                         <td>{user.mainUserDegree}</td>
                                         <td>
-                                            {#if loggedInUser._id !== user.id}
-                                            <div class="d-flex justify-content-end">
-                                                <button class="btn p-0" type="button" data-bs-target="#editCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                                    <img src={edit} alt="arrow" width="24">
-                                                </button>
-                                                <div class="vr mx-3" style="width: 2px; color: #DDDDDD;"></div>
-                                                <button class="btn p-0" type="button" data-bs-target="#deleteCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
-                                                    <img src={trashCan} alt="arrow" width="24">
-                                                </button>
-                                            </div>
+                                            {#if loggedInUser._id !== user._id}
+                                                <div class="d-flex justify-content-end">
+                                                    <button class="btn p-0" type="button" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                        <img src={edit} alt="arrow" width="24">
+                                                    </button>
+                                                    <div class="vr mx-3" style="width: 2px; color: #DDDDDD;"></div>
+                                                    <button class="btn p-0" type="button" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                        <img src={trashCan} alt="arrow" width="24">
+                                                    </button>
+                                                </div>
                                             {/if}
                                         </td>
                                     </tr>

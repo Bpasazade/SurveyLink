@@ -11,6 +11,8 @@ const mongoose = require('mongoose');
 const Template = require("../models/template.model");
 const { mongo } = require("mongoose");
 const fs = require('fs');
+const apiConfig = require("../config/api.config");
+const key = apiConfig.SMS_API_KEY;  
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -48,27 +50,105 @@ exports.adminBoard = (req, res) => {
 exports.createGroup = async (req, res) => {
   try {
     const { name, companyId } = req.body;
+    let smsApiResponse = await createGroupSmsApi(name);
+    console.log('smsApiResponse', smsApiResponse);
+    smsApiResponse = JSON.parse(smsApiResponse);
+    console.log('smsApiResponse', smsApiResponse);
     const newGroup = new Group({
       name,
       company: companyId,
+      panelGroupID: smsApiResponse.groupID,
     });
     const savedGroup = await newGroup.save();
-    return res.status(200).json(savedGroup);
+    return res.status(200).json({ savedGroup, smsApiResponse });
   } catch (error) {
     console.error('Error creating group:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 }
 
+// Create group in Mesaj API
+const axios = require('axios');
+const qs = require('qs');
+async function createGroupSmsApi(name) {
+  try {
+    const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/group/createGroup';
+    console.log('key', key);
+    // Prepare the data for the Mesaj API request
+    var postData = {
+      user: {
+        hash: key,
+      },
+      groupName: name,  
+    };
+
+    // Encode the data variable
+    var jsonData = JSON.stringify(postData);
+    var baseData = btoa(jsonData);
+
+    // Make the Mesaj API request
+    const response = await axios.post(mesajApiUrl, qs.stringify({ data: baseData }), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    // Return the Mesaj API response
+    console.log('Mesaj API response:', response.data);
+    decodedData = Buffer.from(response.data, 'base64').toString('ascii');
+    console.log('decodedData', decodedData);
+    return decodedData;
+  } catch (error) {
+    console.error('Error saving group to Mesaj API:', error);
+    throw error;
+  }
+}
+
 // Delete group
 exports.deleteGroup = async (req, res) => {
   try {
-    const { groupId } = req.params;
+    const { panelGroupID, groupId } = req.params;
     const group = await Group.findByIdAndDelete(groupId);
-    return res.status(200).json(group);
+    const smsApiResponse = await deleteGroupSmsApi(panelGroupID);
+    return res.status(200).json({ group, smsApiResponse });
   } catch (error) {
     console.error('Error deleting group:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Delete group in Mesaj API
+async function deleteGroupSmsApi(panelGroupID) {
+  try {
+    console.log('groupID', panelGroupID);
+    const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/group/deleteGroup';
+    // Prepare the data for the Mesaj API request
+    var postData = {
+      user: {
+        hash: key,
+      },
+      groupID: panelGroupID,
+    };
+
+    // Encode the data variable
+    var jsonData = JSON.stringify(postData);
+    var baseData = btoa(jsonData);
+
+    // Make the Mesaj API request
+    const response = await axios.post(mesajApiUrl, qs.stringify({ data: baseData }), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    // Return the Mesaj API response
+    console.log('Mesaj API response:', response.data);
+    decodedData = Buffer.from(response.data, 'base64').toString('ascii');
+    console.log('decodedData', decodedData);
+    return decodedData;
+  } catch (error) {
+    console.error('Error saving group to Mesaj API:', error);
+    throw error; // Propagate the error back to the calling function
   }
 }
 
@@ -329,77 +409,45 @@ exports.getUsersByCompanyId = async (req, res) => {
 
 
 // Send sms
-const apiKey = '1a62561bbfe542d17c420f134f2a5b318ccdf206';
 exports.sendSms = async (req, res) => {
   try {
     const { message, phoneNumbers, date } = req.body;
+    const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/';
     console.log(message, phoneNumbers, date);
     const smsData = {
       user: {
-        hash: apiKey,
+        hash: key,
       },
       msgBaslik: 'RUBUPLUS',
       tr: true,
       start: date,
-      msgData: [
-        {
-          msg: message,
-          tel: phoneNumbers,
-        }
-      ],
+      msgData: message,
     };
     const jsonData = JSON.stringify(smsData);
     const baseData = Buffer.from(jsonData).toString('base64');
-    const url = `https://api.mesajpaneli.com/json_api/${baseData}`;
-    const response = await fetch(url, { method: 'POST' });
-    
-    console.log(response.status);
-    return res.status(200).json({ message: 'Sms sent successfully!' });
+
+    const response = await axios.post(mesajApiUrl, qs.stringify({ data: baseData }), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    // Return the Mesaj API response
+    console.log('Mesaj API response:', response.data);
+    decodedData = Buffer.from(response.data, 'base64').toString('ascii');
+    console.log('decodedData', decodedData);
+    return decodedData;
   } catch (error) {
     console.error('Error sending sms:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
-
-// Excel file upload
-// exports.uploadExcelFile = async (req, res, file) => {
-//   try {
-//       const { companyId, groupId } = req.body;
-//       if (file == undefined) {
-//           return res.status(400).send("Please upload an excel file!");
-//       }
-//       const workbook = xlsx.readFile(req.file.path);
-//       const sheetName = workbook.SheetNames[0];
-//       const worksheet = workbook.Sheets[sheetName];
-
-//       // Get column headers dynamically
-//       const columnHeaders = ['name', 'phoneNumber', 'location'];
-
-//       // Process each row
-//       const jsonData = xlsx.utils.sheet_to_json(worksheet, { header: columnHeaders });
-
-//       const enrichedData = jsonData.map((user) => ({
-//           id: uuidv4(),
-//           company: companyId,
-//           group: groupId,
-//           ...user,
-//       }));
-
-//       // Save the data in the database
-//       await TargetUser.insertMany(enrichedData);
-//       return res.status(200).json({ message: 'File uploaded successfully!' });
-//   } catch (error) {
-//       console.error('Error uploading excel file:', error);
-//       return res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// }
-
 const batchSize = 100;
 
 exports.uploadExcelFile = async (req, res, file) => {
     try {
-        const { companyId, groupId } = req.body;
+        const { companyId, groupId, panelGroupID } = req.body;
         if (file == undefined) {
             return res.status(400).send("Please upload an excel file!");
         }
@@ -407,10 +455,6 @@ exports.uploadExcelFile = async (req, res, file) => {
         const workbook = xlsx.readFile(req.file.path);
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-
-        // console.log('workbook', workbook);
-        // console.log('sheetName', sheetName);
-        // console.log('worksheet', worksheet);
 
         const columnHeaders = ['name', 'phoneNumber', 'location'];
 
@@ -433,6 +477,12 @@ exports.uploadExcelFile = async (req, res, file) => {
             }));
 
             await TargetUser.insertMany(enrichedData);
+
+            // Add target users to Sms API
+            for (const user of enrichedData) {
+              console.log('user', user);
+              await addTargetUserSmsApi(user.name, user.phoneNumber, user.location, panelGroupID);
+            }
         }
 
         return res.status(200).json({ message: 'File uploaded successfully!' });
@@ -442,9 +492,52 @@ exports.uploadExcelFile = async (req, res, file) => {
     }
 };
 
+// Add target user to Sms API
+async function addTargetUserSmsApi(name, phoneNumber, location, panelGroupID) {
+  try {
+    console.log(name + ' ' + phoneNumber + ' ' + location + ' ' + panelGroupID);
+    const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/group/addContact';
+    // Prepare the data for the Mesaj API request
+    var postData = {
+      user: {
+        hash: key,
+      },
+      groupID: panelGroupID,
+      rows: [
+        {
+          numara: phoneNumber,
+          ad: name.split(' ')[0],
+          soyad: name.split(' ')[1],
+          sehir: location,
+        }
+      ],
+    };
+
+    // Encode the data variable
+    var jsonData = JSON.stringify(postData);
+    var baseData = Buffer.from(jsonData).toString('base64');
+
+    // Make the Mesaj API request
+    const response = await axios.post(mesajApiUrl, qs.stringify({ data: baseData }), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    // Return the Mesaj API response
+    console.log('Mesaj API response:', response.data);
+    decodedData = Buffer.from(response.data, 'base64').toString('ascii');
+    console.log('decodedData', decodedData);
+    return decodedData;
+  } catch (error) {
+    console.error('Error saving group to Mesaj API:', error);
+    throw error;
+  }
+}
+
 exports.createTargetUser = async (req, res) => {
   try {
-    const { name, phoneNumber, location, group, company } = req.body;
+    const { name, phoneNumber, location, group, company, panelGroupID } = req.body;
     const newTargetUser = new TargetUser({
       id: uuidv4(),
       name,
@@ -452,12 +545,127 @@ exports.createTargetUser = async (req, res) => {
       location,
       group,
       company,
+      panelGroupID,
     });
     const savedTargetUser = await newTargetUser.save();
-    return res.status(200).json(savedTargetUser);
+    const smsApiResponse = await addTargetUserSmsApi(name, phoneNumber, location, panelGroupID);
+    return res.status(200).json({ savedTargetUser, smsApiResponse });
   } catch (error) {
     console.error('Error creating target user:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Delete target user
+exports.deleteTargetUser = async (req, res) => {
+  try {
+    const targetUser = await TargetUser.deleteOne({ _id: req.body.targetUserId, group: req.body.groupId }); 
+    const smsApiResponse = await deleteTargetUserSmsApi(req.body.panelGroupID, req.body.phoneNumber);
+    return res.status(200).json({ smsApiResponse });
+  } catch (error) {
+    console.error('Error deleting target user:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Delete target user in Mesaj API
+async function deleteTargetUserSmsApi(panelGroupID, phoneNumber) {
+  try {
+    const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/group/removeContact';
+    var postData = {
+      user: {
+        hash: key,
+      },
+      groupID: panelGroupID,
+      numara: [
+        phoneNumber
+      ],
+    };
+
+    // Encode the data variable
+    var jsonData = JSON.stringify(postData);
+    var baseData = Buffer.from(jsonData).toString('base64');
+
+    // Make the Mesaj API request
+    const response = await axios.post(mesajApiUrl, qs.stringify({ data: baseData }), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    // Return the Mesaj API response
+    console.log('Mesaj API response:', response.data);
+    decodedData = Buffer.from(response.data, 'base64').toString('ascii');
+    console.log('decodedData', decodedData);
+    return decodedData;
+  } catch (error) {
+    console.error('Error saving group to Mesaj API:', error);
+    throw error; // Propagate the error back to the calling function
+  }
+}
+
+// Edit target user
+exports.updateTargetUser = async (req, res) => {
+  try {
+    const { targetUserId } = req.params;
+    const { editedUser } = req.body;
+    console.log('targetUserId', targetUserId);
+    console.log('editedUser', editedUser.name);
+    const targetUser = await TargetUser.findById(targetUserId);
+    if (!targetUser) {
+      return res.status(404).json({ message: 'Target user not found' });
+    }
+    targetUser.name = editedUser.name;
+    targetUser.phoneNumber = editedUser.phoneNumber;
+    targetUser.location = editedUser.location;
+    targetUser.group = editedUser.group;
+    targetUser.company = editedUser.company;
+    const savedTargetUser = await targetUser.save();
+    const smsApiResponse = await updateTargetUserSmsApi(targetUser);
+    return res.status(200).json({ savedTargetUser, smsApiResponse });
+  } catch (error) {
+    console.error('Error editing target user:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Update Target User in Mesaj API
+async function updateTargetUserSmsApi(targetUser) {
+  console.log('targetUser', targetUser);
+  try {
+    const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/group/editContactByNumber';
+    var postData = {
+      user: {
+        hash: key,
+      },
+      groupID: targetUser.panelGroupID,
+      search: targetUser.phoneNumber,
+      changes: {
+        ad: targetUser.name.split(' ')[0],
+        soyad: targetUser.name.split(' ')[1],
+        sehir: targetUser.location,
+      },
+    };
+
+    // Encode the data variable
+    var jsonData = JSON.stringify(postData);
+    var baseData = Buffer.from(jsonData).toString('base64');
+
+    // Make the Mesaj API request
+    const response = await axios.post(mesajApiUrl, qs.stringify({ data: baseData }), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    // Return the Mesaj API response
+    console.log('Mesaj API response:', response.data);
+    decodedData = Buffer.from(response.data, 'base64').toString('ascii');
+    console.log('decodedData', decodedData);
+    return decodedData;
+  } catch (error) {
+    console.error('Error deleting target user:', error);
+    throw error; 
   }
 }
 

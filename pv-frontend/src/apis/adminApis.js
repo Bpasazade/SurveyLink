@@ -100,7 +100,8 @@ export async function getCompanyByName(companyName) {
 
 export async function updateCompany(_id, editedCompany) {
   try {
-    const response = await axios.put(`http://localhost:3000/companies/${_id}`, editedCompany);
+    console.log(editedCompany);
+    const response = await axios.put(`http://localhost:3000/companies/${_id}`, { editedCompany });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

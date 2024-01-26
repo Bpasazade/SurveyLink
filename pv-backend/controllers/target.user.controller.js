@@ -66,7 +66,10 @@ exports.getTargetGSMByGroup = async (req, res) => {
         //console.log(targetUsers);
         let targetGSM = [];
         targetUsers.forEach(targetUser => {
-            targetGSM.push(targetUser.phoneNumber);
+            let object = {};
+            object['id'] = targetUser._id;
+            object['phoneNumber'] = targetUser.phoneNumber;
+            targetGSM.push(object);
         });
         res.send(targetGSM);
     } catch (err) {

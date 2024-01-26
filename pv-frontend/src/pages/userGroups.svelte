@@ -4,6 +4,8 @@
     // Images
     import subLeft from '../assets/sub_left.svg';
     import done from '../assets/done.svg';
+    import trashCan from "../assets/trash-can.svg";
+    import edit from "../assets/message-edit.svg";
 
     // User
     import { user } from "../user.js";
@@ -17,7 +19,7 @@
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
     // Group
-    import { createGroup } from '../apis/userApis.js';
+    import { createGroup} from '../apis/userApis.js';
     import { getGroups } from '../apis/userApis.js';
     import { updateGroup } from '../apis/userApis.js';
     import { onMount } from "svelte";
@@ -40,10 +42,10 @@
 
         if(activeSwitch == 'left') {
             if(updatedGroupName == selectedGroup.name && excelFile != null) {
-                uploadExcelFile(excelFile, loggedInUser.company, selectedGroup._id);
+                uploadExcelFile(excelFile, loggedInUser.company, selectedGroup._id, selectedGroup.panelGroupID);
             } else if(updatedGroupName != selectedGroup.name && excelFile != null) {
                 await updateGroup(groupId, updatedGroupName, loggedInUser.company);
-                uploadExcelFile(excelFile, loggedInUser.company, selectedGroup._id);
+                uploadExcelFile(excelFile, loggedInUser.company, selectedGroup._id, selectedGroup.panelGroupID);
             } else if(updatedGroupName != selectedGroup.name && excelFile == null) {
                 await updateGroup(groupId, updatedGroupName, loggedInUser.company);
             }
@@ -162,7 +164,7 @@
     async function createTargetUserHandler() {
         let name = personName + ' ' + personSurname;
         let location = selectedCity + '/' + selectedDistrict + '/' + selectedNeighborhood;
-        await createTargetUser(name, personPhone, location, selectedGroup, loggedInUser.company);
+        await createTargetUser(name, personPhone, location, selectedGroup, loggedInUser.company, selectedGroup.panelGroupID);
         getCompanyTargetListHandler();
     }
 
@@ -171,9 +173,15 @@
 
     async function deleteGroupHandler() {
         let groupId = groupSelection;
-        await deleteGroup(groupId);
+        await deleteGroup(selectedGroup.panelGroupID, groupId);
         getGroupsHandler();
     }
+
+    // Target User Operations
+    let selectedUser = null;
+    import DeleteTargetUserModal from '../lib/DeleteTargetUserModal.svelte';
+    import EditTargetUserModal from '../lib/EditTargetUserModal.svelte';
+    
 </script>
 
 <style>
@@ -312,6 +320,12 @@
         width: max-content;
     }
 </style>
+
+<!-- Delete Target User Modal -->
+<DeleteTargetUserModal user = {selectedUser} />
+
+<!-- Edit Target User Modal -->
+<EditTargetUserModal user = {selectedUser} />
 
 <main class="m-0 p-0">
     <div class="d-flex m-0 p-0" style="height: 100vh;">
@@ -484,25 +498,37 @@
                                         <th scope="col">İsim</th>
                                         <th scope="col">Telefon Numarası</th>
                                         <th scope="col">Lokasyon</th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {#if selectedTargetList.length > 0}
                                         {#each selectedTargetList as targetUser, index}
                                             <tr>
-                                                <td>#{index + 1}</td>
+                                                <th scope="row">{index + 1}</th>
                                                 <td>{targetUser.name}</td>
                                                 <td>{targetUser.phoneNumber}</td>
                                                 <td>{targetUser.location}</td>
+                                                <td>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button class="btn p-0" type="button" data-bs-target="#editTargetUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = targetUser)}>
+                                                            <img src={edit} alt="arrow" width="24">
+                                                        </button>
+                                                        <div class="vr mx-3" style="width: 2px; color: #DDDDDD;"></div>
+                                                        <button class="btn p-0" type="button" data-bs-target="#deleteTargetUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = targetUser)}>
+                                                            <img src={trashCan} alt="arrow" width="24">
+                                                        </button>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         {/each}
                                     {:else if groupSelection == ''}
                                         <tr>
-                                            <td colspan="4" class="text-center">Lütfen bir grup seçiniz.</td>
+                                            <td colspan="5" class="text-center">Lütfen bir grup seçiniz.</td>
                                         </tr>
                                     {:else if selectedTargetList.length == 0}
                                         <tr>
-                                            <td colspan="4" class="text-center">Bu gruba ait kişi listesi bulunmamaktadır.</td>
+                                            <td colspan="5" class="text-center">Bu gruba ait kişi listesi bulunmamaktadır.</td>
                                         </tr>
                                     {/if}
                                 </tbody>

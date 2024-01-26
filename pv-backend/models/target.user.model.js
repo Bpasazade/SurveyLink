@@ -14,6 +14,7 @@ const TargetUser = mongoose.model(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'
         },
+        panelGroupID: String,
         timestamp: {
             type: Date,
             default: Date.now

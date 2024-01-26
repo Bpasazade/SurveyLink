@@ -98,8 +98,11 @@
     let date = '';
     async function createSmsHandler() {
         console.log(loggedInUser.company);
+        date = new Date(date).toISOString();
+        console.log(date);
         const response = await createSms(title, text, campaignId, groupId, date, loggedInUser.company);
         smsList = response;
+        window.location.reload();
     }
 
     // Edit Sms
@@ -149,14 +152,30 @@
 
     // Send Sms
     import { sendSms } from '../apis/userApis.js';
+    import { updateCampaign } from '../apis/userApis.js';
     import { getTargetGSMByGroupId } from "../apis/userApis.js";
     async function sendSmsHandler(event) {
         let index = event.target.closest('tr').dataset.index;
         let smsGroup = smsList[index].groupId;
-        let gsmList = await getTargetGSMByGroupId(smsGroup);
+        let targetUserList = await getTargetGSMByGroupId(smsGroup);
         let smsDate = smsList[index].date;
         let epoch = new Date(smsDate).getTime();
-        await sendSms(smsList[index]._id, gsmList, epoch);
+        let messageData = [];
+        let gsms = [];
+        for (let i = 0; i < targetUserList.length; i++) {
+            messageData.push({
+                "msg": smsList[index].message + " " + "www.pvm.com/survey?" + smsList[index].campaignId + "/" + targetUserList[i].id,
+                "tel": targetUserList[i].phoneNumber
+            });
+            gsms.push(targetUserList[i].phoneNumber);
+        }
+        await sendSms(messageData, gsms, epoch);
+
+        // cange campaign status to sent
+        let campaignId = smsList[index].campaignId;
+        let campaign = campaignList.find(campaign => campaign._id === campaignId);
+        campaign.status = "sent";
+        await updateCampaign(campaignId, campaign);
     }
 </script>
 
@@ -372,6 +391,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {#if smsList.length === 0}
+                                <tr>
+                                    <td colspan="6" class="text-center">Sms Bulunamadı</td>
+                                </tr>
+                            {:else}
                             {#each smsList as sms, index}
                                 <tr data-index={index}>
                                     <th scope="row">{index + 1}</th>
@@ -394,6 +418,7 @@
                                     </td>
                                 </tr>
                             {/each}
+                            {/if}
                         </tbody>
                     </table>
                 {:else if selection === 'new-sms'}

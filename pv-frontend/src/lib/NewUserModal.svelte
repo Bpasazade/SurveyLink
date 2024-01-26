@@ -177,7 +177,7 @@
             <hr class="my-3" style="color: #25324B14; border: solid 1px #25324B14">
 
             <!-- Company Name -->
-            {#if loggedInUser.userType == "admin"}
+            {#if loggedInUser.role.includes("ROLE_ADMIN")}
             <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group">
               <select class="form-select" aria-label="Default select example" bind:value={user.company}>
                 {#each companies as company}
@@ -198,7 +198,7 @@
                 </div>
               </div>
 
-              {#if loggedInUser.userType == "admin"}
+              {#if loggedInUser.role.includes("ROLE_ADMIN")}
               <div class="col">
                 <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group" role="group" aria-label="Basic example">
                   <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.userType} required>

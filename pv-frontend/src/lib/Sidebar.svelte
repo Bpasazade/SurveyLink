@@ -167,7 +167,7 @@
             </li>
             <li>
                 <Link to="/adminCompanies" style="text-decoration: none;">
-                    <button class="btn sidebar-button mt-3 text-start d-flex align-items-center" type="button" style="{ companiesButtonStyle }">
+                    <button class="btn sidebar-button mt-3 text-start d-flex align-items-center { page === 'adminCompanies' ? 'active-button' : '' }" type="button" style="{ companiesButtonStyle }">
                         <svg id="companies-icon" xmlns="http://www.w3.org/2000/svg" class="me-2" width="22" height="22" viewBox="0 0 22 22" fill="none" style="{ companiesImageStyle }">
                             <path d="M19.25 18.2417V9.80834C19.25 9.44167 19.0667 9.07501 18.7 8.98334L12.8334 6.41668V18.3333H11V2.47501C11 2.38334 11 2.38334 11 2.29167C10.9084 2.01667 10.6334 1.92501 10.3584 2.01667L3.30002 5.22501C2.93335 5.40834 2.75002 5.68334 2.75002 6.05001V18.2417H0.916687V20.075H21.0834V18.2417H19.25Z" fill="#697A8D"/>
                         </svg>
@@ -290,7 +290,7 @@
                     </button>
                 </Link>
             </li>
-            <li>
+            <!-- <li>
                 <Link to="/userTemplates" style="text-decoration: none;">
                     <button class="btn sidebar-button mt-3 text-start d-flex align-items-center { page === 'userTemplates' ? 'active-button' : '' }" type="button" style="{ templatesButtonStyle }">
                         <svg id="templates-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none" style="{ templatesImageStyle }">
@@ -302,7 +302,7 @@
                         <h1 class="text text-sidebar m-0" style="{ sidebarTextStyle }">Şablonlar</h1>
                     </button>
                 </Link>
-            </li>
+            </li> -->
         {/if}
     </ul>
 </div>
