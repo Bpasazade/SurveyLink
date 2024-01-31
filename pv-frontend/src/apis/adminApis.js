@@ -53,12 +53,16 @@ export async function updateUser(_id, editedUser) {
 export async function registerCompany(companyName, companyAddress) {
   try {
     const response = await axios.post('http://localhost:3000/companies', { companyName, companyAddress });
-    if (response.status !== 200) {
-      throw new Error(response.data.message);
-    }
+    window.location.reload();
     return response.data;
   } catch (error) {
-    throw error;
+    if (error.response) {
+      if (error.response.status === 400) {
+        alert('Bu şirket zaten kayıtlı!');
+      }
+    }
+
+    throw error; // rethrow the error to propagate it to the caller
   }
 }
 

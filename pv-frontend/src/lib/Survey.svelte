@@ -1,9 +1,23 @@
-<script>
+<script lang="ts">
     import { onMount } from "svelte";
 
+    // surveys
+    const componentFiles = import.meta.glob('/public/*.svelte');
+    let components = [];
+    
+    onMount(async () => {
+        const importPromises = Object.entries(componentFiles).map(async ([path, importer]) => {
+            const { default: component }: { default: any } = await importer() as any;
+            return { path, component };
+        });
 
-    // Surveys
-    import Kampanya2 from "../../public/Kampanya 2.svelte";
+        components = await Promise.all(importPromises);
+
+        // filter components by name. Filter is companyId
+        components = components.filter(component => component.path.includes(campaign.name));
+        console.log(components);
+    });
+
 
     // Stored Route
     localStorage.setItem('storedRoute', '/survey');
@@ -51,6 +65,10 @@
     <div>
         <h1 class="text-center">Katılımınız için teşekkür ederiz.</h1>
     </div>
-{:else if campaign.name === "Kampanya 2" && targetUser != null && !userResponsed}
-    <Kampanya2 id={id} campaignId={campaign._id} name={targetUser.name} company={targetUser.company} />
+{:else if targetUser != null && !userResponsed && campaign != null && components.length > 0}
+    <svelte:component this={components[0].component} 
+        id={id} 
+        campaignId={campaign._id} 
+        name={targetUser.name} 
+        company={targetUser.company} />
 {/if}

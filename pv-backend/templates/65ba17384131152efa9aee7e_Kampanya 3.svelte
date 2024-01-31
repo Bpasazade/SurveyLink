@@ -2,8 +2,6 @@
     localStorage.setItem('storedRoute', '/Kampanya2');
     import { onMount } from "svelte";
 
-    import kapak from "./Kampanya 2/kapak.png";
-
     export let id;
     export let campaignId;
     export let name;
@@ -11,9 +9,9 @@
 
     onMount(() => {
         if (!id || !campaignId || !name || !company) {
-            //fontCondition = true;
-            //mainHeight = true;
-            //videoContainerWidth = true;
+            fontCondition = true;
+            mainHeight = true;
+            videoContainerWidth = true;
             name = 'RUBUPLUS';
         }
     });
@@ -154,7 +152,7 @@
             on:ended={() => { 
                 showNextSection('section2', 'section3');
                 saveAnswerToDb('video-ended');}}>
-                <source src="./Kampanya 2/video.mp4" type="video/mp4">
+                <source src="./media/video.mp4" type="video/mp4">
             </video>
         </div>
         <!-- Section 3 -->
@@ -201,7 +199,7 @@
             on:ended={() => {
                 showNextSection('section4', 'section6');
                 saveAnswerToDb('video-yes-ended');}}>
-                <source src="./Kampanya 2/video.mp4" type="video/mp4">
+                <source src="./media/video.mp4" type="video/mp4">
             </video>
         </div>
         <!-- Section 5 -->
@@ -211,7 +209,7 @@
             on:ended={() => {
                 showNextSection('section5', 'section6');
                 saveAnswerToDb('video-no-ended');}}>
-                <source src="./Kampanya 2/video.mp4" type="video/mp4">
+                <source src="./media/video.mp4" type="video/mp4">
             </video>
         </div>
         <!-- Section 6 -->
@@ -226,13 +224,11 @@
                         background-color: red;
                         border-radius: 50%;
                         outline: 1px solid red;
-                        font-size: 6vw;
-                        "></i>
+                        font-size: 6vw;"></i>
                     </button>
                 </div>
                 {/if}
             </div>
-                
         </div>  
     </form>
 </main>

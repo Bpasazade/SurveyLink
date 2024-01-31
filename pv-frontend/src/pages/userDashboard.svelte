@@ -47,7 +47,18 @@
         videoSeen: 0,
     };
 
-    var data1, data2, data3, data4, data5, data6, data7;
+    var data1;
+    var smsSent = 0;
+    import { getSentSms } from '../apis/userApis.js';
+    // number of sent messages
+    async function getSentSmsHandler() {
+        const response = await getSentSms(loggedInUser.company);
+        smsSent = response[0];
+        data1 = [(smsSent * 100 / smsSent).toFixed(0), (100 - (smsSent * 100 / smsSent)).toFixed(0)];
+    }
+
+    // Get All Survey Stats
+    var data2, data3, data4, data5, data6, data7;
     async function getAllSurveyStatsFunc() {
         const response = await getAllSurveyStats(loggedInUser.company);
         if (response) {
@@ -68,8 +79,7 @@
                 videoSeen: videoIntroSeen + videoYesSeen + videoNoSeen,
             }
         }
-        let sended = 250;
-        data2 = [(surveyView * 100 / sended).toFixed(0), (100 - (surveyView * 100 / sended)).toFixed(0)];
+        data2 = [(surveyView * 100 / smsSent).toFixed(0), (100 - (surveyView * 100 / smsSent)).toFixed(0)];
         data3 = [((videoIntroSeen + videoYesSeen + videoNoSeen) * 100 / (surveyView * 3)).toFixed(0), ((100 - ((videoIntroSeen + videoYesSeen + videoNoSeen) * 100 / (surveyView * 3)))).toFixed(0)];
         data4 = [(((percentages.yes + percentages.no) * 100) / surveyView).toFixed(0), (100 - (((percentages.yes + percentages.no) * 100) / surveyView)).toFixed(0)];
         let videoSeen = videoIntroSeen + videoYesSeen + videoNoSeen;
@@ -100,7 +110,9 @@
     let chart5, chart6, chart7;
 
     onMount(async () => {
+        await getSentSmsHandler();
         await getAllSurveyStatsFunc();
+        
     });
 
 </script>
@@ -140,14 +152,6 @@
         background: url("../assets/user-dashboard/green-bg.png") no-repeat center center;
         background-size: cover;
     }
-    #chart1, #chart2, #chart3, #chart4 {
-        max-width: 93%;
-        max-height: 113%;
-    }
-    #chart5, #chart6, #chart7 {
-        max-width: 100%;
-        max-height: 100%;
-    }
 </style>
   
 <main class="m-0 p-0" style="max-width: 100vw !important;">      
@@ -163,12 +167,12 @@
                                 <img src={messages} alt="layers" class="img-responsive mb-2" width="42">
                                 <span>
                                     <h6 class="grid-box-text mb-2 fs-5">SMS Gönderilen</h6>
-                                    <h1 class="grid-box-number fs-2">0</h1>
+                                    <h1 class="grid-box-number fs-2">{ smsSent }</h1>
                                 </span>    
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
                                 {#if data1}
-                                <DoughnutChart data={[80, 20]} colors={["#317CC0", "#4B9FE9"]} chartContainer={chart1} textColor="#317CC0" />
+                                <DoughnutChart data={data1} colors={["#317CC0", "#4B9FE9"]} chartContainer={chart1} textColor="#317CC0" />
                                 {/if}
                             </div>
                     </div>
@@ -196,7 +200,7 @@
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
                                 {#if data3}
-                                <DoughnutChart data={data3} colors={["#07B209", "#50FC52"]} chartContainer={chart3} textColor="#02A504" />
+                                    <DoughnutChart data={data3} colors={["#07B209", "#50FC52"]} chartContainer={chart3} textColor="#02A504" />
                                 {/if}
                             </div>
                     </div>
@@ -210,7 +214,7 @@
                             </div>
                             <div class="w-50 d-flex justify-content-center align-items-center p-2 ps-3">
                                 {#if data4}
-                                <DoughnutChart data={data4} colors={["#FF2A2A", "#FA7676"]} chartContainer={chart4} textColor="#D60A0A" />
+                                    <DoughnutChart data={data4} colors={["#FF2A2A", "#FA7676"]} chartContainer={chart4} textColor="#D60A0A" />
                                 {/if}
                             </div>
                     </div>
@@ -222,10 +226,9 @@
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{videoIntroSeen}</h1>
-
                             </div>
 
-                            <hr style="width:1px; border: 1px solid #269CD6;">
+                            <hr class="m-0" style="width:1px; border: 1px solid #269CD6;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">
@@ -233,7 +236,7 @@
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
                             </div>
 
-                            <hr style="width:1px; border: 1px solid #269CD6;">
+                            <hr class="m-0" style="width:1px; border: 1px solid #269CD6;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
@@ -244,14 +247,14 @@
 
                         <hr style="width:0px; padding-left: 0.75rem; padding-right: 0.75rem; border: 0;">
 
-                        <div id="userDbGrid2" class="col-md d-flex rounde grid-box px-3 py-4  rounded">
+                        <div id="userDbGrid2" class="col-md d-flex rounde grid-box px-3 py-4 rounded">
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video Tam İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ videoIntroWatched }</h1>
                             </div>
 
-                            <hr style="width:1px; border: 1px solid #1DD71F;">
+                            <hr class="m-0" style="width:1px; border: 1px solid #1DD71F;">
 
                             <div class="col-md d-flex flex-column justify-content-between align-items-center">
                                 <img src={like} alt="layers" class="mb-3" width="42">

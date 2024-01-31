@@ -1,4 +1,18 @@
 const controller = require("../controllers/admin.controller");
+const { verifyCompany } = require("../middlewares");
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'templates')
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+
+const upload = multer({ storage: storage })
 
 module.exports = function(app) {
     app.use(function(req, res, next) {
@@ -11,7 +25,9 @@ module.exports = function(app) {
 
     app.get('/companies', controller.getAllCompanies);
 
-    app.post('/companies', controller.registerCompany);
+    app.post('/companies',
+        [verifyCompany.checkCompanyExisted],
+        controller.registerCompany);
 
     app.get('/companies/:id', controller.getCompany);
 
@@ -22,4 +38,6 @@ module.exports = function(app) {
     app.delete('/companies/:id', controller.deleteCompany);
 
     app.get('/campaigns', controller.getAllCampaigns);
+
+    app.post('/templates', controller.checkToken, upload.single('template'), controller.uploadTemplate);
 }

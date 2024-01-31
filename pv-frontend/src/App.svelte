@@ -1,24 +1,18 @@
 <script>
     import { Route, Router, navigate, useLocation } from "svelte-routing";
     import { onMount } from "svelte";
-    import Login from './pages/Login.svelte';
-
-
+    import { getUser } from './apis/userApis.js';
+    import Login from './pages/login.svelte';
     import Dashboard from "./pages/dashboard.svelte";
     import Hesaplar from "./pages/accounts.svelte";
-    
     import AdminCompanies from './pages/adminCompanies.svelte';
-    import AdminCampaigns from "./pages/adminCampaigns.svelte";
-    import AdminAccounts from './pages/adminAccounts.svelte';
-    
-    import UserAccounts from './pages/userAccounts.svelte';
+    import AdminCampaigns from "./pages/adminCampaigns.svelte";    
     import UserCampaigns from './pages/userCampaignsAnalyze.svelte';
     import UserCampaigns2 from "./pages/userCampaignsAll.svelte";
     import UserSmsService from "./pages/userSmsService.svelte";
     import UserGroups from "./pages/userGroups.svelte";
     import UserProfile from "./pages/UserProfile.svelte";
     import UserTemplates from "./pages/userTemplates.svelte";
-    import { getUser } from './apis/userApis.js';
     import Survey from './lib/Survey.svelte';
 
     // Lib
@@ -95,7 +89,7 @@
     });
 
     // Surveys
-    import Kampanya2 from "../public/Kampanya 2.svelte";
+    import Kampanya2 from "../public/657045d7b1f7fa8f0a0e4c7c_Kampanya 2.svelte";
 </script>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">

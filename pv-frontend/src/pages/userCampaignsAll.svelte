@@ -124,6 +124,7 @@
     // Campaign
     import { createCampaign } from '../apis/userApis.js';
     import { updateCampaign } from '../apis/userApis.js';
+    import { deleteCampaign } from "../apis/userApis.js";
     let selectedTemplateName = '';
     let campaignName = '';
     let campaignDescription = '';
@@ -148,9 +149,11 @@
     async function createCampaignHandler(event) {
         selectedGroupList = groupList.filter((group, index) => selectedIndexes.includes(index));
         const response = await createCampaign(selectedTemplateName, campaignName, campaignDescription, loggedInUser.company, selectedGroupList);
-        uploadFile();
+        // check if any file is uploaded
+        if (excelFile) {
+            uploadFile();
+        }
         if (response) {
-            // refresh page
             window.location.reload();
         }
     }
@@ -196,10 +199,13 @@
 
     // Campaigns Table Edit
     function editCampaignTable(event) {
-        campaignSelection = event.target.closest('tr').firstElementChild.innerText;
-        campaignSelection = (campaignList.filter(campaign => campaign._id !== campaignSelection))[0]._id;
+        const index = event.target.closest('tr').getAttribute('data-index');
+        campaignSelection = campaignList[index]._id;
         toggle('edit-campaign-button');
     }
+
+    // Campaigns Delete
+    import DeleteCampaignModal from "../lib/DeleteCampaignModal.svelte";
 
     // Excel File Upload
     import { uploadExcelFile } from "../apis/userApis";
@@ -227,6 +233,10 @@
         });
 
         components = await Promise.all(importPromises);
+
+        // filter components by name. Filter is companyId
+        components = components.filter(component => component.path.includes(loggedInUser.company));
+        getCampaignSentSmsHandler();
     });
 
     let selectedTemplate;
@@ -242,6 +252,14 @@
         selectedTemplateName = selectedCampaign.template;
     }
 
+    // Get Campaign Sent Sms
+    import { getCampaignSentSms } from '../apis/userApis.js';
+    async function getCampaignSentSmsHandler() {
+        for (let i = 0; i < campaignList.length; i++) {
+            const response = await getCampaignSentSms(campaignList[i]._id);
+            campaignList[i].sentSms = response;
+        }
+    }
 </script>
 
 <style>
@@ -271,6 +289,9 @@
     }
     tr:first-child th:last-child {
         border-top-right-radius: 6px;
+    }
+    td {
+        vertical-align: middle !important;
     }
     .userCampaignsDiv1 {
         border-radius: 8px; 
@@ -489,6 +510,8 @@
     }
 </style>
 
+<DeleteCampaignModal campaign={selectedCampaign} />
+
 <main class="m-0 p-0">
     <div class="d-flex m-0 p-0" style="height: 100vh;">
         <Sidebar page="userCampaigns2" rotated={rotated} />
@@ -502,8 +525,7 @@
                             class="btn align-items-center me-2 px-3 userCampaignsDiv1 {newCampaignButton ? 'active-button' : ''}"
                             type="button"
                             style="display: inline-flex;"
-                            on:click={() => toggle("new-campaign-button")}
-                            >
+                            on:click={() => toggle("new-campaign-button")}>
                             <i class='bx bxs-collection me-2' style="font-size: 22px;"></i>
                             Yeni Kampanya Ekle
                         </button>
@@ -530,16 +552,21 @@
                                 <th scope="col">Tarih</th>
                                 <th scope="col">Gönderilen Kişi Sayısı</th>
                                 <th scope="col">Durumu</th>
-                                <th scope="col">Detaylar</th>
+                                <th scope="col">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {#if campaignList.length === 0}
+                                <tr>
+                                    <td colspan="6" class="text-center">Henüz kampanya oluşturulmamış.</td>
+                                </tr>
+                            {:else}
                             {#each campaignList as campaign, index}
                                 <tr data-index={index}>
                                     <th scope="row">{index + 1}</th>
                                     <td>{campaign.name}</td>
-                                    <td>{campaign.date}</td>
-                                    <td>{campaign.sentPersonCount}</td>
+                                    <td>{campaign.date.split('-').reverse().join('.')}</td>
+                                    <td>{campaign.sentSms}</td>
                                     {#if campaign.status === 'pending'}
                                     <td>
                                         <span class="badge badge-pending">Beklemede</span>
@@ -566,13 +593,10 @@
                                         <button class="btn me-2 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editCampaignTable}>
                                             <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
                                         </button>
-
-                                        <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
-                                            <i class='bx bxs-message-square-detail' style="font-size: 22px; color: #267BC0;"></i>
-                                        </button>
                                     </td>
                                 </tr>
                             {/each}
+                            {/if}
                         </tbody>
                     </table>
                 {:else if selection === 'new-campaigns'}
@@ -600,7 +624,9 @@
                                                 <select class="form-select shadow-none" aria-label="" bind:value={selectedTemplate}>
                                                     <option selected value="1">Şablon Seçiniz</option>
                                                     {#each components as { path }}
-                                                        <option value={path}>{path.replace('/public/', '').replace('.svelte', '')} Şablonu</option>
+                                                        {#if path.includes('_')}
+                                                            <option value={path}>{path.split('_')[1].split('.')[0]} Şablonu</option>
+                                                        {/if}
                                                     {/each}
                                                 </select>
                                             </div>
@@ -866,7 +892,10 @@
                                                         <label for="campaingDescription">Kampanya Açıklaması</label>
                                                         <textarea class="form-control shadow-none" placeholder="Lütfen Kampanya Açıklamasını Girin" id="editCampaingDescription" style="height: 100px; resize: none;" bind:value={selectedCampaign.description}></textarea>
                                                     </div>
-                                                    <div class="d-flex justify-content-end w-100">
+                                                    <div class="d-flex justify-content-between w-100">
+                                                        <button class="btn btn-outline-danger d-flex align-items-center" type="button" data-bs-toggle="modal" data-bs-target="#deleteCampaignModal">
+                                                            <span class="me-2">Kampanyayı Sil</span>
+                                                        </button>
                                                         <button class="btn btn-accordion d-flex align-items-center" type="button" style="background-color: #04A3DA; color: white;" on:click={handleContinue('group-information-panel-button')}>
                                                             <span class="me-2">Devam Et</span>
                                                             <i class='bx bx-chevron-down mb-0' style="font-size: 24px;"></i>

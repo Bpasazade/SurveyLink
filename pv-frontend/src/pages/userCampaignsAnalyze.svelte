@@ -33,7 +33,7 @@
 
         // get initial campaign selection
         if (campaignList.length > 0) {
-            selectedCampaign = campaignList[1];
+            selectedCampaign = campaignList[0];
             selectedCampaignId = selectedCampaign._id;
             getSurveyStatsHandler();
         }
@@ -205,6 +205,9 @@
     tr:first-child th:last-child {
         border-top-right-radius: 6px;
     }
+    td {
+        vertical-align: middle !important;
+    }
     #userDbGrid1 {
         background: url("../assets/user-dashboard/blue-bg.png") no-repeat center center;
         background-size: cover;
@@ -218,12 +221,10 @@
         border: 0px solid #697A8D;
         background-color: #697A8D !important;
     }
-
     .btn-selected svg path,
     .btn-selected:hover svg path{
         fill: white;
     }
-
     .btn-selected span,
     .btn-selected:hover span {
         color: #FFFFFF;
@@ -236,7 +237,7 @@
 
         <div class="col-md px-0" id="main-content-div">
             <SearchProfileBar/>
-            <div class="row d-flex flex-column px-3 pt-1 mx-0 pe-4">
+            <div class="d-flex flex-column px-3 pt-1 mx-0 pe-4">
                 <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box d-flex justify-content-between align-items-center">
                     <div>
                         <select class="form-select shadow-none border-0 py-2" aria-label="Default select example" style="border-radius: 8px; color: #697A8D !important; font-size: 14px; font-weight: 500; background-color: #F8F8F8;"
@@ -262,7 +263,6 @@
                             <span>Kişiler</span> 
                         </button>
                     </div>
-                    
                 </div>
 
                 {#if selectedTab == "stats"}
@@ -322,7 +322,6 @@
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{videoIntroSeen}</h1>
-                                <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
@@ -331,7 +330,6 @@
                                 <img src={like} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #75CCFF;">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
@@ -340,7 +338,6 @@
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #75CCFF">%81,95</h6>
                             </div>
                         </div>
 
@@ -351,7 +348,6 @@
                                 <img src={play} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1">Giriş Video Tam İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ videoIntroWatched }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
@@ -360,7 +356,6 @@
                                 <img src={like} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"EVET"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ yes }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
 
                             <hr style="width:1px; border: 1px solid #269CD6;">
@@ -369,16 +364,15 @@
                                 <img src={dislike} alt="layers" class="mb-3" width="42">
                                 <h6 class="dashboard-grid-text text-white text-center mb-1"><span style="font-weight: 700;">"HAYIR"</span> Video İzlenme Sayısı</h6>
                                 <h1 class="dashboard-grid-number text-white mb-1" style="color: #696CFF; font-size: 28px; font-family: 'Gilroy-ExtraBold">{ no }</h1>
-                                <h6 class="dashboard-grid-text" style="color: #58FF5A">%81,95</h6>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {:else if selectedTab == "users"}
-                <div class="bg-white rounded mb-4 grid-box px-0" style="height: 43vh;">
-                    <table class="table table-hover">
-                        <thead>
+                <div class=" bg-white rounded mb-4 grid-box px-0" style="height: 60vh; scroll-x: auto;">
+                    <table class="col-md-5 table table-hover" style="max-width: min-content; display: block;">
+                        <thead style="overflow-x: hidden;">
                           <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Ad-Soyad</th>
@@ -388,9 +382,9 @@
                             <th scope="col">Giriş Videosu Soru</th>
                             <th scope="col">Giriş Videosu Görüntüleme</th>
                             <th scope="col">Giriş Videosu İzlenme</th>
-                            <th scope="col">Soru 1 Cevap</th>
-                            <th scope="col">Soru 1 Video Görüntüleme</th>
-                            <th scope="col">Soru 1 Video İzlenme</th>
+                            <th scope="col">Cevap</th>
+                            <th scope="col">Cevap 1 Video Görüntüleme</th>
+                            <th scope="col">Cevap 2 Video İzlenme</th>
                           </tr>
                         </thead>
                         <tbody>

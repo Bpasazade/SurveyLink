@@ -6,10 +6,19 @@ const UserType = db.usertypes;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
-const { mongo } = require("mongoose");
+
+const authConfig = require("../config/auth.config");
+const secret_key = authConfig.secret;
 
 exports.signup = (req, res) => {
-  console.log(req.body.company);
+  
+  const isAdminSignup = req.body.role && req.body.role.includes("admin"); 
+
+  // If it's an admin signup, verify the secret key
+  if (isAdminSignup && req.body.secretKey !== secret_key) {
+    return res.status(403).send({ message: "Invalid secret key for admin signup." });
+  }
+
   const user = new User({
     name: req.body.name,
     lastname: req.body.lastname,

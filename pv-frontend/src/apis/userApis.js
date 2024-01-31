@@ -97,6 +97,11 @@ export async function createGroup(name, companyId) {
     }
     return response.data;
   } catch (error) {
+    if (error.response) {
+      if (error.response.status === 400) {
+        alert("Bu grup ismi zaten kullanılmaktadır. Lütfen başka bir grup ismi giriniz.");
+      }
+    }
     throw error;
   }
 }
@@ -177,6 +182,11 @@ export async function createCampaign(templateName, name, description, companyId,
     }
     return response.data;
   } catch (error) {
+    if (error.response) {
+      if (error.response.status === 400) {
+        alert("Bu kampanya ismi zaten kullanılmaktadır. Lütfen başka bir kampanya ismi giriniz.");
+      }
+    }
     throw error;
   }
 }
@@ -220,11 +230,37 @@ export async function updateCampaign(campaignId, name, description, companyId) {
   }
 }
 
+// Update campaign status
+export async function updateCampaignStatus(campaignId, status) {
+  try {
+    const response = await axios.put(`http://localhost:3000/campaigns/status/${campaignId}`, { status });
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Delete campaign
+export async function deleteCampaign(campaignId) {
+  try {
+    const response = await axios.delete(`http://localhost:3000/campaigns/${campaignId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
 // Sms Apis
 // Create sms
-export async function createSms(title, message, campaignId, groupId, date, companyId) {
+export async function createSms(title, message, campaignId, groupId, companyId) {
   try {
-    const response = await axios.post('http://localhost:3000/sms', { title, message, campaignId, groupId, date, companyId });
+    const response = await axios.post('http://localhost:3000/sms', { title, message, campaignId, groupId, companyId });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
@@ -248,14 +284,54 @@ export async function getSms(companyId) {
 }
 
 // Update sms
-export async function updateSms(smsId, message, group, date, companyId) {
+export async function updateSms(smsId, message, group, companyId, campaignId) {
   try {
-    const response = await axios.put(`http://localhost:3000/sms/${smsId}`, { message, group, date, companyId });
+    console.log(campaignId);
+    const response = await axios.put(`http://localhost:3000/sms/${smsId}`, { message, group, companyId, campaignId });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }
     return response.data;
   } catch (error) {
+    throw error;
+  }
+}
+
+// Delete sms
+export async function deleteSms(smsId) {
+  try {
+    const response = await axios.delete(`http://localhost:3000/sms/${smsId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get Sent Sms
+export async function getSentSms(companyId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/sms/sent/${companyId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get Campaign Sent Sms
+export async function getCampaignSentSms(campaignId) {
+  try {
+    const response = await axios.get(`http://localhost:3000/sms/campaign/${campaignId}`);
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error){
     throw error;
   }
 }
@@ -412,9 +488,9 @@ export async function getNeighborhoods(city, district) {
 }
 
 // Send Sms
-export async function sendSms(message, phoneNumbers, date) {
+export async function sendSms(message, phoneNumbers, date, sms) {
   try {
-    const response = await axios.post('http://localhost:3000/send-sms', { message, phoneNumbers, date });
+    const response = await axios.post('http://localhost:3000/send-sms', { message, phoneNumbers, date, sms });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

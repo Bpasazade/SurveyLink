@@ -10,9 +10,10 @@ const TargetUser = require("../models/target.user.model");
 const mongoose = require('mongoose');
 const Template = require("../models/template.model");
 const { mongo } = require("mongoose");
-const fs = require('fs');
+const Response = require("../models/response.model");
 const apiConfig = require("../config/api.config");
-const key = apiConfig.SMS_API_KEY;  
+const key = apiConfig.SMS_API_KEY;
+const fs = require('fs');
 
 exports.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -73,7 +74,6 @@ const qs = require('qs');
 async function createGroupSmsApi(name) {
   try {
     const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/group/createGroup';
-    console.log('key', key);
     // Prepare the data for the Mesaj API request
     var postData = {
       user: {
@@ -109,8 +109,9 @@ exports.deleteGroup = async (req, res) => {
   try {
     const { panelGroupID, groupId } = req.params;
     const group = await Group.findByIdAndDelete(groupId);
+    const targetUser = await TargetUser.deleteMany({ group: groupId });
     const smsApiResponse = await deleteGroupSmsApi(panelGroupID);
-    return res.status(200).json({ group, smsApiResponse });
+    return res.status(200).json({ group, smsApiResponse, targetUser });
   } catch (error) {
     console.error('Error deleting group:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
@@ -120,7 +121,6 @@ exports.deleteGroup = async (req, res) => {
 // Delete group in Mesaj API
 async function deleteGroupSmsApi(panelGroupID) {
   try {
-    console.log('groupID', panelGroupID);
     const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/group/deleteGroup';
     // Prepare the data for the Mesaj API request
     var postData = {
@@ -263,6 +263,7 @@ exports.createCampaign = async (req, res) => {
     const status = 'pending';
     const newCampaign = new Campaign({
       name,
+      date: new Date().toISOString().slice(0, 10),
       templateName,
       description,
       company: companyId,
@@ -337,23 +338,55 @@ exports.updateCampaign = async (req, res) => {
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+
+// Update campaign status
+exports.updateCampaignStatus = async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+    const { status } = req.body;
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' });
+    }
+    campaign.status = status;
+    const savedCampaign = await campaign.save();
+    console.log('savedCampaign', savedCampaign);
+    return res.status(200).json(savedCampaign);
+  } catch (error) {
+    console.error('Error updating campaign status:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Delete campaign
+exports.deleteCampaign = async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+    const campaign = await Campaign.findByIdAndDelete(campaignId);
+    const responses = await Response.deleteMany({ campaign: campaignId });
+    return res.status(200).json(campaign);
+  } catch (error) {
+    console.error('Error deleting campaign:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 const moment = require('moment');
 // Create sms
 exports.createSms = async (req, res) => {
   try {
-    const { title, message, campaignId, groupId, date, companyId,  } = req.body;
+    const { title, message, campaignId, groupId, companyId,  } = req.body;
     const company = await Company.findById(companyId);
     if (!company) {
       return res.status(404).json({ message: 'Company not found' });
     }
-    const formattedDate = moment(date).format('YYYY-MM-DDTHH:mm');
     const newSms = new Sms({
       title,
       message,
-      date: formattedDate,
       campaignId,
       groupId: groupId,
       companyId: companyId,
+      sent: false,
     });
     const savedSms = await newSms.save();
     return res.status(200).json(savedSms);
@@ -379,20 +412,31 @@ exports.getSms = async (req, res) => {
 exports.updateSms = async (req, res) => {
   try {
     const { smsId } = req.params;
-    const { message, group, date, companyId } = req.body;
+    const { message, group, companyId, campaignId } = req.body;
     const sms = await Sms.findById(smsId);
     if (!sms) {
       return res.status(404).json({ message: 'Sms not found' });
     }
-    console.log(message, group, date, companyId);
     sms.message = message;
     sms.groupId = group;
-    sms.date = date;
     sms.companyId = companyId;
+    sms.campaignId = campaignId;
     const savedSms = await sms.save();
     return res.status(200).json(savedSms);
   } catch (error) {
     console.error('Error updating sms:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+// Delete sms
+exports.deleteSms = async (req, res) => {
+  try {
+    const { smsId } = req.params;
+    const sms = await Sms.findByIdAndDelete(smsId);
+    return res.status(200).json(sms);
+  } catch (error) {
+    console.error('Error deleting sms:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 }
@@ -411,9 +455,10 @@ exports.getUsersByCompanyId = async (req, res) => {
 // Send sms
 exports.sendSms = async (req, res) => {
   try {
-    const { message, phoneNumbers, date } = req.body;
+    const { message, phoneNumbers, date, sms } = req.body;
+
+    // Mesaj Paneli API
     const mesajApiUrl = 'https://api.mesajpaneli.com/json_api/';
-    console.log(message, phoneNumbers, date);
     const smsData = {
       user: {
         hash: key,
@@ -436,15 +481,54 @@ exports.sendSms = async (req, res) => {
     console.log('Mesaj API response:', response.data);
     decodedData = Buffer.from(response.data, 'base64').toString('ascii');
     console.log('decodedData', decodedData);
-    return decodedData;
+
+    // Update sms status
+    const smsF = await Sms.findById(sms._id);
+    smsF.sent = true;
+    const savedSms = await smsF.save();
+
+    return res.status(200).json({ savedSms, decodedData });
   } catch (error) {
     console.error('Error sending sms:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
-const batchSize = 100;
+// Get sent sms by company id
+exports.getSentSms = async (req, res) => {
+  try {
+    const { companyId } = req.params;
+    const campaigns = await Campaign.find({ status: 'sent', company: companyId });
+    // put ids in a list
+    const campaignIds = campaigns.map(campaign => campaign._id);
+    // get all sms with those company ids
+    const sms = await Sms.find({ campaignId: { $in: campaignIds } });
+    // map group ids in sms to a list
+    const groupIds = sms.map(sms => sms.groupId);
+    // get all target users with those group ids
+    const targetUsers = await TargetUser.find({ group: { $in: groupIds } });
+    // return number of sms
+    return res.status(200).json([targetUsers.length, campaigns.length]);
+  } catch (error) {
+    console.error('Error getting sent sms:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
 
+exports.getCampaignSentSms = async (req, res) => {
+  try {
+    const { campaignId } = req.params;
+    const sms = await Sms.find({ campaignId: campaignId, status: 'sent' });
+    const groupIds = sms.map(sms => sms.groupId);
+    const targetUsers = await TargetUser.find({ group: { $in: groupIds } });
+    return res.status(200).json(targetUsers.length);
+  } catch (error) {
+    console.error('Error getting sent sms:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+const batchSize = 100;
 exports.uploadExcelFile = async (req, res, file) => {
     try {
         const { companyId, groupId, panelGroupID } = req.body;
@@ -484,6 +568,9 @@ exports.uploadExcelFile = async (req, res, file) => {
               await addTargetUserSmsApi(user.name, user.phoneNumber, user.location, panelGroupID);
             }
         }
+
+        // delete uploaded file from server
+        fs.unlinkSync(req.file.path);
 
         return res.status(200).json({ message: 'File uploaded successfully!' });
     } catch (error) {

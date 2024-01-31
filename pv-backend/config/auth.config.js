@@ -1,3 +1,3 @@
 module.exports = {
-  secret: "pv-portal-secret-key"
+  secret: "sHSevThS9uXrrkCt2jDs8GibHDXCadAO"
 };

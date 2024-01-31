@@ -1,4 +1,6 @@
 const { authJwt } = require("../middlewares");
+const { verifyCampaign } = require("../middlewares");
+const { verifyGroup } = require("../middlewares");
 const controller = require("../controllers/user.controller");
 const multer = require('multer');
 
@@ -27,7 +29,9 @@ module.exports = function(app) {
 
   app.get("/test/admin", [authJwt.verifyToken, authJwt.isAdmin], controller.adminBoard);
 
-  app.post("/groups", controller.createGroup);
+  app.post("/groups",
+    [verifyGroup.checkGroupExisted],
+    controller.createGroup);
 
   app.get("/groups/:companyId", controller.getGroups);
 
@@ -41,15 +45,21 @@ module.exports = function(app) {
 
   app.delete("/groups/:groupId/:panelGroupID", controller.deleteGroup);
 
-  app.post("/campaigns", controller.createCampaign);
+  app.post("/campaigns", 
+    [verifyCampaign.checkCampaignExisted],
+    controller.createCampaign);
 
   app.get("/campaigns/:companyId", controller.getCampaigns);
 
   app.put("/campaigns/:campaignId", controller.updateCampaign);
 
+  app.put("/campaigns/status/:campaignId", controller.updateCampaignStatus);
+
   app.get("/campaigns/campaign/:campaignId", controller.getCampaignById);
 
   app.get("/campaignsbyname/:name", controller.getCampaignByName);
+
+  app.delete("/campaigns/:campaignId", controller.deleteCampaign);
 
   app.post("/sms", controller.createSms);
 
@@ -57,7 +67,13 @@ module.exports = function(app) {
 
   app.put("/sms/:smsId", controller.updateSms);
 
+  app.delete("/sms/:smsId", controller.deleteSms);
+
   app.post("/send-sms", controller.sendSms);
+
+  app.get("/sms/campaign/:campaignId", controller.getCampaignSentSms);
+
+  app.get("/sms/sent/:companyId", controller.getSentSms);
 
   app.post('/uploadExcelFile', excelUploads.single('file'), controller.uploadExcelFile);
 

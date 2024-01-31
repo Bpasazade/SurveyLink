@@ -189,10 +189,10 @@ exports.getAllSurveyStats = async (req, res) => {
         const videoWatched = await Response.countDocuments({ company, answer: 'video-ended' });
 
         // Get the number of users who have answered yes to the question
-        const yes = await Response.countDocuments({ company, answer: 'yes' });
+        const yes = await Response.countDocuments({ company, answer: 'option1' });
 
         // Get the number of users who have answered no to the question
-        const no = await Response.countDocuments({ company, answer: 'no' });
+        const no = await Response.countDocuments({ company, answer: 'option2' });
 
         // Get the number of users who have have seen video yes
         const videoYesSeen = await Response.countDocuments({ company, answer: 'video-yes-started' });
@@ -218,16 +218,18 @@ exports.checkUserResponsed = async (req, res) => {
         // Get id, company, campaign from data
         const id = req.query.id;
         const campaign = req.query.campaign;
-        console.log(id, campaign);
+        let response;
         // Check if the TargetUser exists
-        const targetUserData = await TargetUser.findOne({ _id: mongoose.Types.ObjectId(id) });
-        if (!targetUserData) {
-            return res.status(404).json({ message: "Not found user with id " + id });
+        if (id !== 'undefined') {
+            const targetUserData = await TargetUser.findOne({ _id: mongoose.Types.ObjectId(id) });
+            if (!targetUserData) {
+                return res.status(404).json({ message: "Not found user with id " + id });
+            }
+            // Check if the TargetUser has already responded
+            response = await Response.findOne({ targetUser: id, campaign });
         }
-
-        // Check if the TargetUser has already responded
-        const response = await Response.findOne({ targetUser: id, campaign });
-        if (response) {
+        
+        if (response !== null) {
             return res.status(200).json({ responsed: true });
         } else {
             return res.status(200).json({ responsed: false });

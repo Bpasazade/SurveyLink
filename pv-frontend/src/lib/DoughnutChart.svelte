@@ -4,6 +4,9 @@
     import * as echarts from 'echarts';
 
     export let data = [];
+    if(data[0] == "NaN"){
+        data = [0, 100];
+    }
     export let colors = [];
     export let textColor = '';
     export let chartContainer;

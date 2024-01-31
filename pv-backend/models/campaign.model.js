@@ -4,6 +4,7 @@ const Campaign = mongoose.model(
     "Campaign",
     new mongoose.Schema({
         name: String,
+        date: String,
         templateName: String,
         description: String,
         company: {

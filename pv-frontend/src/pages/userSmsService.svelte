@@ -95,12 +95,8 @@
 
     let groupId = '';
     let campaignId = '';
-    let date = '';
     async function createSmsHandler() {
-        console.log(loggedInUser.company);
-        date = new Date(date).toISOString();
-        console.log(date);
-        const response = await createSms(title, text, campaignId, groupId, date, loggedInUser.company);
+        const response = await createSms(title, text, campaignId, groupId, loggedInUser.company);
         smsList = response;
         window.location.reload();
     }
@@ -110,20 +106,16 @@
     
     let smsMessage = '';
     let smsGroupId = '';
-    let smsDate = 'sms-table';
-
     let smsSelection = '';
     let selectedSms;
     $: if (smsSelection) {
         selectedSms = smsList.find(sms => sms._id === smsSelection);
         smsMessage = selectedSms.message;
         smsGroupId = selectedSms.groupId;
-        smsDate = selectedSms.date;
-        console.log(smsDate);
     } 
 
     async function updateSmsHandler() {
-        const response = await updateSms(smsSelection, smsMessage, selectedSms.groupId, selectedSms.date, loggedInUser.company);
+        const response = await updateSms(smsSelection, smsMessage, selectedSms.groupId, loggedInUser.company, selectedSms.campaignId);
         smsList = response;
         window.location.reload();
     }
@@ -152,14 +144,13 @@
 
     // Send Sms
     import { sendSms } from '../apis/userApis.js';
-    import { updateCampaign } from '../apis/userApis.js';
+    import { updateCampaignStatus } from '../apis/userApis.js';
     import { getTargetGSMByGroupId } from "../apis/userApis.js";
     async function sendSmsHandler(event) {
         let index = event.target.closest('tr').dataset.index;
         let smsGroup = smsList[index].groupId;
         let targetUserList = await getTargetGSMByGroupId(smsGroup);
-        let smsDate = smsList[index].date;
-        let epoch = new Date(smsDate).getTime();
+        let epoch = new Date().getTime();
         let messageData = [];
         let gsms = [];
         for (let i = 0; i < targetUserList.length; i++) {
@@ -169,14 +160,16 @@
             });
             gsms.push(targetUserList[i].phoneNumber);
         }
-        await sendSms(messageData, gsms, epoch);
+        await sendSms(messageData, gsms, epoch, smsList[index]);
 
-        // cange campaign status to sent
         let campaignId = smsList[index].campaignId;
-        let campaign = campaignList.find(campaign => campaign._id === campaignId);
-        campaign.status = "sent";
-        await updateCampaign(campaignId, campaign);
+        await updateCampaignStatus(campaignId, "sent");
+
+        window.location.reload();
     }
+
+    // Delete Sms
+    import DeleteSmsModal from "../lib/DeleteSmsModal.svelte";
 </script>
 
 <style>
@@ -206,6 +199,9 @@
     }
     tr:first-child th:last-child {
         border-top-right-radius: 6px;
+    }
+    td {
+        vertical-align: middle !important;
     }
     .userCampaignsDiv1 {
         border-radius: 8px; 
@@ -261,15 +257,6 @@
     .form-select option {
         color: black;
     }
-    input[type=datetime-local] {
-        border: 1px solid #EBE9F1 !important;
-        border-radius: 10px !important;
-        font-size: 17px !important;
-        font-weight: 600 !important;
-        height: 50px !important;
-        background: url({calendar}) !important;
-        padding-left: 16px !important;
-    }
     .form-group {
         position: relative;
     }
@@ -324,9 +311,7 @@
         bottom: 16.5%;
         right: 8.5%;
         text-align: left;
-
         color: #2E3138;
-
         font-style: normal;
         font-weight: 500;
         line-height: 22px; /* 145.455% */
@@ -345,6 +330,8 @@
     }
 </style>
 
+<DeleteSmsModal sms={selectedSms}/>
+
 <main class="m-0 p-0">
     <div class="d-flex m-0 p-0" style="height: 100vh;">
         <Sidebar page="userSmsService" rotated={rotated} />
@@ -358,8 +345,7 @@
                             class="btn align-items-center me-2 px-3 userCampaignsDiv1 {newSmsButton ? 'active-button' : ''}"
                             type="button"
                             style="display: inline-flex;"
-                            on:click={() => toggle("new-sms-button")}
-                            >
+                            on:click={() => toggle("new-sms-button")}>
                             <i class='bx bxs-collection me-2' style="font-size: 22px;"></i>
                             Yeni SMS Ekle
                         </button>
@@ -367,8 +353,7 @@
                         <button
                             class="btn align-items-center me-2 px-3 userCampaignsDiv1 {editSmsButton ? 'active-button' : ''}"
                             type="button"
-                            on:click={() => toggle("edit-sms-button")}
-                            >
+                            on:click={() => toggle("edit-sms-button")}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
                                 <path d="M12.8752 1.00024H3.2921C2.02546 1.00024 1.00049 2.02522 1.00049 3.29186V16.2082C1.00049 17.4749 2.02546 18.4998 3.2921 18.4998H9.44195L9.62528 17.4749C9.70862 17.0082 9.92528 16.5915 10.2586 16.2499L15.1668 11.35V3.29186C15.1668 2.02522 14.1418 1.00024 12.8752 1.00024ZM4.33374 4.3335H7.667C8.12532 4.3335 8.50031 4.70849 8.50031 5.16681C8.50031 5.62513 8.12532 6.00013 7.667 6.00013H4.33374C3.87542 6.00013 3.50043 5.62513 3.50043 5.16681C3.50043 4.70849 3.87542 4.3335 4.33374 4.3335ZM8.50031 12.6666H4.33374C3.87542 12.6666 3.50043 12.2916 3.50043 11.8333C3.50043 11.375 3.87542 11 4.33374 11H8.50031C8.95863 11 9.33362 11.375 9.33362 11.8333C9.33362 12.2916 8.95863 12.6666 8.50031 12.6666ZM11.8336 9.33338H4.33374C3.87542 9.33338 3.50043 8.95839 3.50043 8.50007C3.50043 8.04174 3.87542 7.66675 4.33374 7.66675H11.8336C12.2919 7.66675 12.6669 8.04174 12.6669 8.50007C12.6669 8.95839 12.2919 9.33338 11.8336 9.33338Z" fill="#697A8D"/>
                                 <path d="M11.4401 20.9997C11.2759 20.9997 11.1159 20.9347 10.9984 20.8164C10.8543 20.6723 10.7893 20.4673 10.8251 20.2656L11.2668 17.7615C11.2884 17.6357 11.3501 17.519 11.4401 17.4282L17.6274 11.2416C18.3874 10.48 19.1341 10.6858 19.5424 11.0941L20.5732 12.125C21.1424 12.6933 21.1424 13.6183 20.5732 14.1874L14.3859 20.3748C14.2959 20.4656 14.1792 20.5264 14.0525 20.5481L11.5484 20.9897C11.5126 20.9964 11.4759 20.9997 11.4401 20.9997Z" fill="#697A8D"/>
@@ -385,39 +370,49 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Sms Başlığı</th>
                                 <th scope="col">Sms Metni</th>
+                                <th scope="col">Kampanya</th>
                                 <th scope="col">Grup</th>
-                                <th scope="col">Tarih</th>
-                                <th scope="col">Detaylar</th>
+                                <th scope="col">Gönderim Durumu</th>
+                                <th scope="col">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody>
                             {#if smsList.length === 0}
                                 <tr>
-                                    <td colspan="6" class="text-center">Sms Bulunamadı</td>
+                                    <td colspan="7" class="text-center">Henüz sms taslağı oluşturulmamış.</td>
                                 </tr>
                             {:else}
-                            {#each smsList as sms, index}
-                                <tr data-index={index}>
-                                    <th scope="row">{index + 1}</th>
-                                    <td>{sms.title}</td>
-                                    <td class="ellipsis">{sms.message}</td>
-                                    <td>{groupList.find(group => group._id === sms.groupId).name}</td>
-                                    <!-- date with month name space hour -->
-                                    <td>{sms.date.slice(8, 10) + '.' + sms.date.slice(5, 7) + '.' + sms.date.slice(0, 4) + ' ' + sms.date.slice(11, 16)}</td>
-                                    <td>
-                                        <button class="btn me-1 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable}>
-                                            <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
-                                        </button>
-
-                                        <button class="btn me-1 p-0 align-items-center" type="button" style="display: inline-flex; border: none;">
-                                            <i class='bx bxs-message-square-detail' style="font-size: 22px; color: #267BC0;"></i>
-                                        </button>
-                                        <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={sendSmsHandler}>
-                                            <i class='bx bxs-message-square-check' style="font-size: 22px; color: #267BC0;"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            {/each}
+                                {#each smsList as sms, index}
+                                    <tr data-index={index}>
+                                        <th scope="row">{index + 1}</th>
+                                        <td>{sms.title}</td>
+                                        <td class="ellipsis">{sms.message}</td>
+                                        {#if campaignList.find(campaign => campaign._id === sms.campaignId) === undefined}
+                                            <td>-</td>
+                                        {:else}
+                                            <td>{campaignList.find(campaign => campaign._id === sms.campaignId).name}</td>
+                                        {/if}
+                                        {#if groupList.find(group => group._id === sms.groupId) === undefined}
+                                            <td>-</td>
+                                        {:else}
+                                            <td>{groupList.find(group => group._id === sms.groupId).name}</td>
+                                        {/if}
+                                        <td>
+                                            <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={sendSmsHandler} disabled={sms.sent === true}>
+                                                <span class="badge" style="background-color: #05AF07; color: white; padding: 0.7rem;">{sms.sent === true ? 'Gönderildi' : 'Gönder'}</span>
+                                            </button>
+                                        </td>
+                                        {#if sms.sent === false}
+                                        <td>
+                                            <button class="btn me-1 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable}>
+                                                <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
+                                            </button>
+                                        </td>
+                                        {:else}
+                                        <td></td>
+                                        {/if}
+                                    </tr>
+                                {/each}
                             {/if}
                         </tbody>
                     </table>
@@ -453,17 +448,11 @@
                                     {/each}
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="smsDate" style="color: #697A8D;">SMS Gönderim Tarihi Seçiniz</label>
-                                <input type="datetime-local" class="form-control shadow-none mb-3" id="smsDate" placeholder="Kampanya Adı" bind:value={date}>
-                            </div>
                             <div class="d-flex justify-content-end">
-                                <span class="col-md-2">
-                                    <button class="btn btn-accordion d-flex align-items-center w-100 h-100 py-0" type="button" style="background-color: #04A3DA; color: white;" on:click={createSmsHandler}>
-                                        İşlemi Kaydet
-                                        <i class='bx bx-check-double mb-0' style="font-size: 24px;"></i>
-                                    </button>
-                                </span>
+                                <button class="btn btn-accordion d-flex align-items-center py-0" type="button" style="background-color: #04A3DA; color: white;" on:click={createSmsHandler}>
+                                    İşlemi Kaydet
+                                    <i class='bx bx-check-double mb-0' style="font-size: 24px;"></i>
+                                </button>
                             </div>
                             <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 
                                 style="width: 25% height: fit-content; position:absolute; top: 0; right: 0; margin-right: 3%;">
@@ -518,17 +507,14 @@
                                             {/each}
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="smsDate" style="color: #697A8D;">SMS Gönderim Tarihi Seçiniz</label>
-                                        <input type="datetime-local" class="form-control shadow-none mb-3" id="smsDate" placeholder="Kampanya Adı" bind:value={selectedSms.date}>
-                                    </div>
-                                    <div class="d-flex justify-content-end">
-                                        <span class="col-md-2">
-                                            <button class="btn btn-accordion d-flex align-items-center w-100 h-100 py-0" type="button" style="background-color: #04A3DA; color: white;" on:click={updateSmsHandler}>
-                                                İşlemi Kaydet
-                                                <i class='bx bx-check-double mb-0' style="font-size: 24px;"></i>
-                                            </button>
-                                        </span>
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-outline-danger d-flex align-items-center" type="button" data-bs-toggle="modal" data-bs-target="#deleteSmsModal">
+                                            <span class="me-2">Sms Sil</span>
+                                        </button>
+                                        <button class="btn btn-accordion d-flex align-items-center" type="button" style="background-color: #04A3DA; color: white;" on:click={updateSmsHandler}>
+                                            <span class="me-2">Kaydet</span>
+                                            <i class='bx bx-check-double mb-0' style="font-size: 24px;"></i>
+                                        </button>
                                     </div>  
                                 </div>
                                 <div class="bg-white grid-box d-flex flex-column justify-content-between align-items-center rounded-phone mt-3" 

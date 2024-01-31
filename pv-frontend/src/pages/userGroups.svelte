@@ -62,6 +62,7 @@
         
         await updateGroup(groupId, updatedGroupName, loggedInUser.company);
         getGroupsHandler();
+        window.location.reload();
     }
 
     // Group List
@@ -174,7 +175,7 @@
     async function deleteGroupHandler() {
         let groupId = groupSelection;
         await deleteGroup(selectedGroup.panelGroupID, groupId);
-        getGroupsHandler();
+        window.location.reload();
     }
 
     // Target User Operations
@@ -244,6 +245,9 @@
     }
     tr:last-child td:last-child {
         border-bottom-right-radius: 6px !important;
+    }
+    td {
+        vertical-align: middle !important;
     }
     .switch-button {
         width: 325px;

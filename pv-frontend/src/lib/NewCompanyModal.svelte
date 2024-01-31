@@ -10,12 +10,7 @@
     let companyAddress = "";
 
     async function handleRegisterCompany(event) {
-        event.preventDefault();
-        try {
-          const companyData = await registerCompany(companyName, companyAddress);
-        } catch (error) {
-            // Handle error
-        }
+        const response = await registerCompany(companyName, companyAddress);
     }
 </script>
 

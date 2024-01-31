@@ -1,5 +1,7 @@
 <!-- src/lib/NewUserModal.svelte -->
 <script>
+    localStorage.setItem("storedRoute", window.location.pathname);
+
     import { registerUser } from "../apis/adminApis.js";
     import { getAllCompanies } from "../apis/adminApis.js";
     import userLogo from '../assets/user.svg';
@@ -22,10 +24,9 @@
       mainUserDegree: "",
       numberOfScreens: "",
       role: "user",
-      userType: "user",
+      userType: "",
     };
     
-
     async function handleRegisterUser(event) {
       if(loggedInUser.userType != "admin") {
         user.company = loggedInUser.company;
@@ -179,7 +180,8 @@
             <!-- Company Name -->
             {#if loggedInUser.role.includes("ROLE_ADMIN")}
             <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group">
-              <select class="form-select" aria-label="Default select example" bind:value={user.company}>
+              <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.company}>
+                <option value="">Şirket Seçiniz</option>
                 {#each companies as company}
                   <option value="{company._id}" class="ps-5">{company.name}</option>
                 {/each}
@@ -203,9 +205,8 @@
                 <div class="btn-group input-group mb-3" style="font-size: 14px; font-weight:500" id="company-name-group" role="group" aria-label="Basic example">
                   <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.userType} required>
                     <option value="">Kullanıcı Tipi</option>
-                    
-                      <option value="master" class="ps-5">master</option>
-                      <option value="slave" class="ps-5">slave</option>
+                    <option value="master" class="ps-5">master</option>
+                    <option value="slave" class="ps-5">slave</option>
                 </div>
               </div>
               {/if}

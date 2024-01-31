@@ -9,6 +9,7 @@
 
     user.subscribe(value => {
         loggedInUser = value;
+        console.log(loggedInUser);
     });
 
     // Sidebar
@@ -133,7 +134,7 @@
                                         <td>{companies.find(company => company._id === user.company).name}</td>
                                         <td>{user.mainUserDegree}</td>
                                         <td>
-                                            {#if loggedInUser._id !== user._id}
+                                            {#if (loggedInUser.userType == "master") && (loggedInUser.id !== user._id)}
                                                 <div class="d-flex justify-content-end">
                                                     <button class="btn p-0" type="button" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
                                                         <img src={edit} alt="arrow" width="24">

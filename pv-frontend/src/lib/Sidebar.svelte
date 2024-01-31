@@ -73,7 +73,7 @@
         ${rotated ? 'width: fit-content;' : 'width: 100%;'}`;
 
     $: accountsImageStyle = `
-        ${page === 'adminAccounts' || page === 'userAccounts' ? 'color: white; font-size: 23px !important;' : ''}
+        ${page === 'adminAccounts' || page === 'userAccounts' ? 'color: white; font-size: 22px !important;' : ''}
         ${rotated ? 'margin-right: 0rem' : 'margin-right: 0.5rem'}`;
 
     $: templatesButtonStyle = `
@@ -111,6 +111,9 @@
         color: white !important;
     }
     .sidebar-button:hover > svg > path {
+        fill: white;
+    }
+    .sidebar-button:hover > svg > g > path {
         fill: white;
     }
     .active-button > svg > path {

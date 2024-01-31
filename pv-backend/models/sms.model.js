@@ -5,10 +5,10 @@ const Sms = mongoose.model(
     new mongoose.Schema({
         title: String,
         message: String,
-        date: String,
         campaignId: String,
         groupId: String,
         companyId: String,
+        sent: Boolean,
     })
 );
 
