@@ -146,6 +146,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">Firma Adı</th>
                                 <th scope="col">Firma Adresi</th>
+                                <th scope="col">Firma ID</th>
                                 <th scope="col" style="width: 60px;"></th>
                               </tr>
                             </thead>
@@ -156,6 +157,7 @@
                                             <th scope="row">{index + 1}</th>
                                             <td>{company.name}</td>
                                             <td>{company.address}</td>
+                                            <td>{company._id}</td>
                                             <td>
                                                 <div class="d-flex justify-content-end">
                                                     <button class="btn p-0" type="button" data-bs-target="#editCompanyModal" data-bs-toggle="modal" on:click={() => (selectedCompany = company)}>

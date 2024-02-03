@@ -13,7 +13,8 @@
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
     // Main content
-    import phone from "../assets/campaigns2/phone_sms.png";    
+    import phone from "../assets/campaigns2/phone_sms.png";
+    import trashCan from "../assets/trash-can.svg"; 
  
     let rotated = false;
 
@@ -402,15 +403,14 @@
                                                 <span class="badge" style="background-color: #05AF07; color: white; padding: 0.7rem;">{sms.sent === true ? 'Gönderildi' : 'Gönder'}</span>
                                             </button>
                                         </td>
-                                        {#if sms.sent === false}
                                         <td>
-                                            <button class="btn me-1 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable}>
-                                                <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
+                                            <button class="btn me-1 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable} disabled={sms.sent === true}>
+                                                <i class='bx bxs-message-square-edit' style="font-size: 24px; color: #267BC0; height: 22px;"></i>
+                                            </button>
+                                            <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;" data-bs-toggle="modal" data-bs-target="#deleteSmsModal" on:click={() => (selectedSms = sms)} disabled={sms.sent === true}>
+                                                <img src="{ trashCan }" alt="trashCan" width="22" />
                                             </button>
                                         </td>
-                                        {:else}
-                                        <td></td>
-                                        {/if}
                                     </tr>
                                 {/each}
                             {/if}
@@ -470,7 +470,9 @@
                             <select class="form-select shadow-none col-md-3 mb-4" aria-label="Default select example" bind:value={smsSelection}>
                                 <option selected value="">Lütfen SMS Seçiniz</option>
                                 {#each smsList as sms}
-                                    <option value={sms._id}>{sms.title}</option>
+                                    {#if sms.sent === false}
+                                        <option value={sms._id}>{sms.title}</option>
+                                    {/if}
                                 {/each}
                             </select>
                         </div>
@@ -507,10 +509,7 @@
                                             {/each}
                                         </select>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <button class="btn btn-outline-danger d-flex align-items-center" type="button" data-bs-toggle="modal" data-bs-target="#deleteSmsModal">
-                                            <span class="me-2">Sms Sil</span>
-                                        </button>
+                                    <div class="d-flex justify-content-end">
                                         <button class="btn btn-accordion d-flex align-items-center" type="button" style="background-color: #04A3DA; color: white;" on:click={updateSmsHandler}>
                                             <span class="me-2">Kaydet</span>
                                             <i class='bx bx-check-double mb-0' style="font-size: 24px;"></i>

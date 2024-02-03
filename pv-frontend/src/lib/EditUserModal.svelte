@@ -1,6 +1,7 @@
 <!-- src/lib/EditUserModal.svelte -->
 <script>
     export let user;
+    export let company;
 
     import { onMount } from 'svelte';
     import { updateUser } from '../apis/adminApis';
@@ -10,7 +11,6 @@
     import lock from '../assets/lock.svg';
     import briefcase from '../assets/briefcase.svg';
     import directUp from '../assets/direct-up.svg';
-    import television from '../assets/television.svg';
     import subLeft from '../assets/sub_left.svg';
     import done from '../assets/done.svg';
 
@@ -25,13 +25,17 @@
       numberOfScreens: "",
     };
 
-    // $: {
-    //   if (user) {
-    //     editedUser = { ...user };
-    //   }
-    // }
+    let flag = false;
+    $: {
+      if (user && !flag) {
+        editedUser = { ...user };
+        editedUser.password = "";
+        editedUser.companyName = company.name;
+        editedUser.companyAddress = company.address;
+        flag = true;
+      }
+    }
 
-    // Call the resetModal function when the modal is opened
     onMount(() => {
       resetModal();
     });
@@ -169,18 +173,18 @@
   
               <!-- Company Name -->
               <div class="input-group mb-3" id="company-name-group">
-                <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
+                <span class="input-group-addon align-items-center d-flex" style="background-color: #E9ECEF;"  id="emailAddon">
                   <img src="{ briefcase }" alt="User Logo" width="24" />
                 </span>
-                <input type="text" id="edit-company-name" class="form-control ps-0" placeholder="Şirket İsmi" bind:value={editedUser.companyName}>
+                <input disabled type="text" id="edit-company-name" class="form-control ps-0" placeholder="Şirket İsmi" bind:value={editedUser.companyName}>
               </div>
   
               <!-- Company Address -->
               <div class="input-group mb-3" id="company-address-group">
-                <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
+                <span class="input-group-addon align-items-center d-flex" style="background-color: #E9ECEF;" id="emailAddon">
                   <img src="{ directUp }" alt="User Logo" width="24" />
                 </span>
-                <input type="text" id="edit-company-address" class="form-control ps-0" placeholder="Şirket Adresi" bind:value={editedUser.companyAddress}>
+                <input disabled type="text" id="edit-company-address" class="form-control ps-0" placeholder="Şirket Adresi" bind:value={editedUser.companyAddress}>
               </div>
   
               <div class="row">
@@ -191,15 +195,6 @@
                       <img src="{ userLogo }" alt="User Logo" width="24" />
                     </span>
                     <input type="text" id="edit-degree" class="form-control ps-0" placeholder="Unvan" bind:value={editedUser.mainUserDegree}>
-                  </div>
-                </div>
-                <div class="col">
-                  <!-- Number of Screens -->
-                  <div class="input-group mb-3" id="num-screens-group">
-                    <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
-                      <img src="{ television }" alt="User Logo" width="24" />
-                    </span>
-                    <input type="number" id="edit-num-screens" class="form-control ps-0" placeholder="Ekran Sayısı" bind:value={editedUser.numberOfScreens}>
                   </div>
                 </div>
               </div>

@@ -10,7 +10,13 @@ export async function registerUser(user) {
 
         return response.data;
     } catch (error) {
-        throw error;
+      if (error.response) {
+        if (error.response.status === 400) {
+          alert("Bu email zaten kayıtlı!");
+        } else if (error.response.status === 401) {
+          alert("Bu numara zaten kayıtlı!");
+        }
+      }
     }
 }
 

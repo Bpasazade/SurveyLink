@@ -21,7 +21,6 @@
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
     import NewUserModal from "../lib/NewUserModal.svelte";
-    import NewCompanyModal from "../lib/NewCompanyModal.svelte";
     import EditUserModal from "../lib/EditUserModal.svelte";
     import DeleteUserModal from "../lib/DeleteUserModal.svelte";
     import { fetchUsers } from "../apis/adminApis";
@@ -124,17 +123,15 @@
                                             <td>{user.email}</td>
                                             <td>{user.phoneNumber}</td>
                                             <td>
-                                                
                                                 <div class="d-flex justify-content-end">
-                                                    <button class="btn p-0" type="button" data-bs-target="#editCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                    <button class="btn p-0" type="button" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
                                                         <img src={edit} alt="arrow" width="24">
                                                     </button>
                                                     <div class="vr mx-3" style="width: 2px; color: #DDDDDD;"></div>
-                                                    <button class="btn p-0" type="button" data-bs-target="#deleteCompanyModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                    <button class="btn p-0" type="button" data-bs-target="#deleteUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
                                                         <img src={trashCan} alt="arrow" width="24">
                                                     </button>
-                                                </div>
-                                                
+                                                </div>                                                
                                             </td>
                                         </tr>
                                         {/if}

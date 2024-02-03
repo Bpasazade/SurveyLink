@@ -218,9 +218,9 @@ export async function getCampaignById(campaignId) {
 }
 
 // Update campaign
-export async function updateCampaign(campaignId, name, description, companyId) {
+export async function updateCampaign(campaignId, name, description, companyId, groups) {
   try {
-    const response = await axios.put(`http://localhost:3000/campaigns/${campaignId}`, { name, description, companyId });
+    const response = await axios.put(`http://localhost:3000/campaigns/${campaignId}`, { name, description, companyId, groups });
     if (response.status !== 200) {
       throw new Error(response.data.message);
     }

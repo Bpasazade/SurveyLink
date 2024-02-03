@@ -43,11 +43,14 @@
     import { getAllCompanies } from "../apis/adminApis";
     let companies = [];
 
+    let accountCompany;
     async function loadCompanies() {
         companies = await getAllCompanies();
+        accountCompany = companies.find(company => company._id === loggedInUser.company);
     }
 
     loadCompanies();
+    
 </script>
 
 <style>
@@ -85,14 +88,10 @@
 <NewUserModal loggedInUser={loggedInUser} />
 
 <!-- Edit User Modal -->
-{#if selectedUser !== null}
-    <EditUserModal user = {selectedUser} />
-{/if}
+<EditUserModal user = {selectedUser} company = {accountCompany} />
 
 <!-- Edit User Modal -->
-{#if selectedUser !== null}
-    <DeleteUserModal user = {selectedUser} />
-{/if}
+<DeleteUserModal user = {selectedUser} />
 
 <main class="m-0 p-0">
     <div class="d-flex m-0 p-0" style="height: 92vh;">        

@@ -323,7 +323,7 @@ exports.getCampaignById = async (req, res) => {
 exports.updateCampaign = async (req, res) => {
   try {
     const { campaignId } = req.params;
-    const { name, description, companyId } = req.body;
+    const { name, description, companyId, groups } = req.body;
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found' });
@@ -331,6 +331,7 @@ exports.updateCampaign = async (req, res) => {
     campaign.name = name;
     campaign.description = description;
     campaign.company = companyId;
+    campaign.groups = groups;
     const savedCampaign = await campaign.save();
     return res.status(200).json(savedCampaign);
   } catch (error) {
@@ -536,7 +537,9 @@ exports.uploadExcelFile = async (req, res, file) => {
             return res.status(400).send("Please upload an excel file!");
         }
 
-        const workbook = xlsx.readFile(req.file.path);
+        let path = "excelUploads/" + req.file.filename;
+
+        const workbook = xlsx.readFile(path);
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
 

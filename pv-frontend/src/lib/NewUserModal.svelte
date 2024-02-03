@@ -32,6 +32,7 @@
         user.company = loggedInUser.company;
       }
       await registerUser(user);
+      window.location.reload();
     }
 
     let companies = [];
@@ -183,7 +184,7 @@
               <select class="form-select py-3 input-group border-0" aria-label="Default select example" bind:value={user.company}>
                 <option value="">Şirket Seçiniz</option>
                 {#each companies as company}
-                  <option value="{company._id}" class="ps-5">{company.name}</option>
+                  <option value="{company._id}" class="ps-5">{company._id}</option>
                 {/each}
               </select>
             </div>

@@ -22,6 +22,7 @@
     import plusCircle from "../assets/plus-circle-outline.svg";
     import person from "../assets/person.svg";
     import phone from "../assets/campaigns2/phone.png";
+    import trashCan from "../assets/trash-can.svg"; 
     
     // Switch button
     let activeSwitchStyle = { left: '0%' };
@@ -138,12 +139,12 @@
         // Update the selectedIndexes array based on the checkbox state
         if (isChecked) {
             selectedIndexes = selectedIndexes.filter(i => i !== index);
+            selectedGroupList = selectedGroupList.filter((group, i) => i !== index);
         } else {
             selectedIndexes = [...selectedIndexes, index];
+            selectedGroupList.push(groupList.filter((group, index) => selectedIndexes.includes(index)));
+            console.log(selectedGroupList);            
         }
-
-        // Log the selected indexes (you can replace this with your desired logic)
-        selectedGroupList = groupList.filter((group, index) => selectedIndexes.includes(index));
     }
 
     async function createCampaignHandler(event) {
@@ -162,10 +163,11 @@
     let editedCampaignName = '';
     let editedCampaignDescription = '';
     async function updateCampaignHandler() {
-        const response = await updateCampaign(campaignId, editedCampaignName, editedCampaignDescription, loggedInUser.company);
+        console.log(selectedGroupList);
+        const response = await updateCampaign(campaignId, editedCampaignName, editedCampaignDescription, loggedInUser.company, selectedGroupList);
         if (response) {
             // refresh page
-            window.location.reload();
+            //window.location.reload();
         }
     }
 
@@ -246,14 +248,18 @@
         selectedTemplateName = selectedTemplate;
     }
 
+    let checkedGroups = new Array(groupList.length)
+
     $: if (selectedCampaign) {
         console.log(selectedCampaign);
         selectedTemplateComponent = components.find(component => component.path === selectedCampaign.templateName);
         selectedTemplateName = selectedCampaign.template;
+        selectedGroupList = selectedCampaign.groups;        
     }
 
     // Get Campaign Sent Sms
     import { getCampaignSentSms } from '../apis/userApis.js';
+    import { getAllCampaigns } from "../apis/adminApis.js";
     async function getCampaignSentSmsHandler() {
         for (let i = 0; i < campaignList.length; i++) {
             const response = await getCampaignSentSms(campaignList[i]._id);
@@ -586,12 +592,16 @@
                                     </td>
                                     {/if}
                                     <td>
-                                        <button class="btn me-2 p-0" type="button" style="border: none;" on:click={inspectCampaign}>
-                                            <img src={preview} alt="edit" width="22"/>
+                                        <button class="btn me-1 p-0" type="button" style="border: none;" on:click={inspectCampaign}>
+                                            <img src={preview} alt="edit" width="24"/>
                                         </button>
 
-                                        <button class="btn me-2 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editCampaignTable}>
-                                            <i class='bx bxs-message-square-edit' style="font-size: 22px; color: #267BC0;"></i>
+                                        <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editCampaignTable}>
+                                            <i class='bx bxs-message-square-edit' style="font-size: 24px; color: #267BC0;"></i>
+                                        </button>
+
+                                        <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;" data-bs-toggle="modal" data-bs-target="#deleteCampaignModal" on:click={() => campaignSelection = campaign._id}>
+                                            <img src="{ trashCan }" alt="trashCan" width="24" />
                                         </button>
                                     </td>
                                 </tr>
@@ -892,10 +902,7 @@
                                                         <label for="campaingDescription">Kampanya Açıklaması</label>
                                                         <textarea class="form-control shadow-none" placeholder="Lütfen Kampanya Açıklamasını Girin" id="editCampaingDescription" style="height: 100px; resize: none;" bind:value={selectedCampaign.description}></textarea>
                                                     </div>
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <button class="btn btn-outline-danger d-flex align-items-center" type="button" data-bs-toggle="modal" data-bs-target="#deleteCampaignModal">
-                                                            <span class="me-2">Kampanyayı Sil</span>
-                                                        </button>
+                                                    <div class="d-flex justify-content-end w-100">
                                                         <button class="btn btn-accordion d-flex align-items-center" type="button" style="background-color: #04A3DA; color: white;" on:click={handleContinue('group-information-panel-button')}>
                                                             <span class="me-2">Devam Et</span>
                                                             <i class='bx bx-chevron-down mb-0' style="font-size: 24px;"></i>
@@ -964,7 +971,11 @@
                                                                 <td>11 Ara 2023, 10:58</td>
                                                                 <td>{targetUserList.filter(user => user.group === group._id).length}</td>
                                                                 <td class="">
-                                                                    <input type="checkbox" class="form-check-input shadow-none" style="width: 20px; height: 20px;" on:change={() => handleCheckboxChange(index)}/>
+                                                                    {#if selectedCampaign.groups.includes(group._id)}
+                                                                        <input type="checkbox" class="form-check-input shadow-none" style="width: 20px; height: 20px;" checked on:change={() => handleCheckboxChange(index)}/>
+                                                                    {:else}
+                                                                        <input type="checkbox" class="form-check-input shadow-none" style="width: 20px; height: 20px;" on:change={() => handleCheckboxChange(index)}/>
+                                                                    {/if}
                                                                 </td>
                                                             </tr>
                                                             {/each}

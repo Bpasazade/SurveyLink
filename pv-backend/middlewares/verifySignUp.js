@@ -20,6 +20,24 @@ checkDuplicateEmail = (req, res, next) => {
     });
 };
 
+checkDuplicatePhoneNumber = (req, res, next) => {
+  User.findOne({
+    phoneNumber: req.body.phoneNumber
+  }).exec((err, user) => {
+    if (err) {
+      res.status(500).send({ message: err });
+      return;
+    }
+    
+    if (user) {
+      res.status(401).send({ message: "Failed! Phone number is already in use!" });
+      return;
+    }
+
+    next();
+  });
+}
+
 checkRolesExisted = (req, res, next) => {
   if (req.body.roles) {
     for (let i = 0; i < req.body.roles.length; i++) {
@@ -37,6 +55,7 @@ checkRolesExisted = (req, res, next) => {
 
 const verifySignUp = {
   checkDuplicateEmail,
+  checkDuplicatePhoneNumber,
   checkRolesExisted
 };
 

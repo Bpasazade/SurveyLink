@@ -1,6 +1,6 @@
 <!-- src/adminHome.svelte -->
 <script>
-    localStorage.setItem('storedRoute', '/adminDashboard');
+
     // Sidebar
     import Sidebar from "../lib/Sidebar.svelte";
 
