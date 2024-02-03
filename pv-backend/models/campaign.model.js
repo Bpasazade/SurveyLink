@@ -17,6 +17,7 @@ const Campaign = mongoose.model(
                 ref: "Group"
             }
         ],
+        sentSms: Number,
         status: String,
     })
 );

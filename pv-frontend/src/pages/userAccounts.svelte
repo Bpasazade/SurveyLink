@@ -88,7 +88,7 @@
 <NewUserModal loggedInUser={loggedInUser} />
 
 <!-- Edit User Modal -->
-<EditUserModal user = {selectedUser} company = {accountCompany} />
+<EditUserModal user = {selectedUser} company = {accountCompany} userType="user" />
 
 <!-- Edit User Modal -->
 <DeleteUserModal user = {selectedUser} />

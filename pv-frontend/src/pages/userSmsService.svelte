@@ -156,7 +156,7 @@
         let gsms = [];
         for (let i = 0; i < targetUserList.length; i++) {
             messageData.push({
-                "msg": smsList[index].message + " " + "www.pvm.com/survey?" + smsList[index].campaignId + "/" + targetUserList[i].id,
+                "msg": "Sayın " + targetUserList[i].name + ",\n" + smsList[index].message + " " + "\nwww.pvm.com/survey?" + smsList[index].campaignId + "/" + targetUserList[i].id,
                 "tel": targetUserList[i].phoneNumber
             });
             gsms.push(targetUserList[i].phoneNumber);
@@ -164,7 +164,7 @@
         await sendSms(messageData, gsms, epoch, smsList[index]);
 
         let campaignId = smsList[index].campaignId;
-        await updateCampaignStatus(campaignId, "sent");
+        await updateCampaignStatus(campaignId, "sent", messageData.length);
 
         window.location.reload();
     }
@@ -407,7 +407,7 @@
                                             <button class="btn me-1 p-0 align-items-center" type="button" style="display: inline-flex; border: none;" on:click={editSmsTable} disabled={sms.sent === true}>
                                                 <i class='bx bxs-message-square-edit' style="font-size: 24px; color: #267BC0; height: 22px;"></i>
                                             </button>
-                                            <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;" data-bs-toggle="modal" data-bs-target="#deleteSmsModal" on:click={() => (selectedSms = sms)} disabled={sms.sent === true}>
+                                            <button class="btn p-0 align-items-center" type="button" style="display: inline-flex; border: none;" data-bs-toggle="modal" data-bs-target="#deleteSmsModal" on:click={() => (selectedSms = sms)}>
                                                 <img src="{ trashCan }" alt="trashCan" width="22" />
                                             </button>
                                         </td>

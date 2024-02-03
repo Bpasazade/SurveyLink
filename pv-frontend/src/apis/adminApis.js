@@ -145,3 +145,55 @@ export async function getAllCampaigns() {
     throw error;
   }
 }
+
+// Get Actions
+export async function getActions() {
+  try {
+    const response = await axios.get('http://localhost:3000/actions');
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get All sentSms
+export async function getSentSms() {
+  try {
+    const response = await axios.get('http://localhost:3000/sentAllSms');
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get All video watched
+export async function getAllVideoWatched() {
+  try {
+    const response = await axios.get('http://localhost:3000/getAllVideoSeen');
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}
+
+// Get All answer count
+export async function getAllAnswerCount() {
+  try {
+    const response = await axios.get('http://localhost:3000/getAllAnswerCount');
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+    return response.data;
+  } catch(error) {
+    throw error;
+  }
+}

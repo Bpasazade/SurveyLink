@@ -40,4 +40,12 @@ module.exports = function(app) {
     app.get('/campaigns', controller.getAllCampaigns);
 
     app.post('/templates', controller.checkToken, upload.single('template'), controller.uploadTemplate);
+
+    app.get('/actions', controller.getActions);
+
+    app.get('/sentAllSms', controller.getAllSentSms);
+
+    app.get('/getAllVideoSeen', controller.getAllVideoWatched);
+
+    app.get('/getAllAnswerCount', controller.getAllAnswerCount);
 }

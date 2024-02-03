@@ -5,16 +5,12 @@
     import Sidebar from "../lib/Sidebar.svelte";
 
     // Lib
-    import { getUser } from "../apis/userApis";
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
     // User
     import { user } from "../user.js";
     let loggedInUser;
     user.subscribe(value => (loggedInUser = value));
-    console.log(loggedInUser);
-
-
     let rotated = false;
 
     import layers from '../assets/dashboard-layers.svg'
@@ -28,7 +24,8 @@
     // Bar Chart
     import BarChart from "../lib/BarChart.svelte";
     let canvas;
-    // let chartData = Array.from({length: 24}, () => 0);
+    let chartData = Array.from({length: 24}, () => 0);
+
     // function prepareData() {
     //     // get the hour from the date string
     //     dateAnswers.forEach(date => {
@@ -41,19 +38,44 @@
     //     console.log(chartData);
     // }
 
+    import { getSentSms } from "../apis/adminApis.js";
+    let sentSms = 0;
+    onMount(async () => {
+        sentSms = await getSentSms();
+    });
+
+    import { getAllVideoWatched } from "../apis/adminApis.js";
+    let videoWatched = 0;
+    onMount(async () => {
+        videoWatched = await getAllVideoWatched();
+    });
+
+    import { getAllAnswerCount } from "../apis/adminApis.js";
+    let answerCount = 0;
+    onMount(async () => {
+        answerCount = await getAllAnswerCount();
+    });
+
     // Company Campaigns
     import { getAllCampaigns } from "../apis/adminApis.js";
     import { getAllCompanies } from "../apis/adminApis.js"; 
     let campaignList = [];
     let companyList = [];
     let campaignCompanies = [];
-    
     onMount(async () => {
         campaignList = await getAllCampaigns();
         companyList = await getAllCompanies();
         for (let i = 0; i < campaignList.length; i++) {
             campaignCompanies.push(companyList.find(company => company._id === campaignList[i].company));
         }
+    });
+
+    // Actions
+    import { getActions } from "../apis/adminApis.js";
+    let actions = [];
+    onMount(async () => {
+        actions = await getActions();
+        actions = actions.slice(-4);
     });
 </script>
 
@@ -83,16 +105,11 @@
         border-radius: 6px !important;
         box-shadow: 0px 2px 6px 0px rgba(67, 89, 113, 0.12);
     }
-
-    /* Timeline */
-    /* The actual timeline (the vertical ruler) */
     .timeline {
         position: relative;
         margin-left: 40px;
         
     }
-
-    /* The actual timeline (the vertical ruler) */
     .timeline::after {
         content: '';
         position: absolute;
@@ -104,15 +121,11 @@
         margin-bottom: -27px;
         height: 100%;
     }
-
-    /* Container around content */
     .container-timeline {
         padding: 10px 20px;
         position: relative;
         background-color: inherit;
     }
-
-    /* The circles on the timeline */
     .container-timeline::after {
         content: '';
         position: absolute;
@@ -125,8 +138,6 @@
         border-radius: 50%;
         z-index: 1;
     }
-
-    /* Add arrows to the right container (pointing left) */
     .right::before {
         content: " ";
         height: 0;
@@ -139,29 +150,21 @@
         border-width: 10px 10px 10px 0;
         border-color: transparent white transparent transparent;
     }
-
-    /* Fix the circle for containers on the right side */
     .right::after {
         left: -16px;
     }
-
-    /* The actual content */
     .content {
         background-color: white;
         position: relative;
         border-radius: 6px;
     }
-
-    /* Media queries - Responsive timeline on screens less than 600px wide */
     @media screen and (max-width: 600px) {
-        
         /* Full-width containers */
         .container {
             width: 100%;
             padding-left: 70px;
             padding-right: 25px;
         }
-        
         /* Make sure that all arrows are pointing leftwards */
         .container::before {
             left: 60px;
@@ -169,13 +172,11 @@
             border-width: 10px 10px 10px 0;
             border-color: transparent white transparent transparent;
         }
-        
         /* Make all right containers behave like the left ones */
         .right {
             left: 0%;
         }
     }
-
     .timeline-date {
         color: #016C90;
         font-size: 13px;
@@ -184,7 +185,6 @@
         line-height: 20px; /* 153.846% */
         letter-spacing: -0.26px;
     }
-
     .timeline-p {
         color: #404040;
         font-size: 15px;
@@ -194,7 +194,6 @@
         letter-spacing: -0.3px;
         margin-bottom: 0px !important;
     }
-
     .timeline-pd {
         color: #838383;
         font-size: 15px;
@@ -242,9 +241,9 @@
                                 <h1 class="text m-0" style="color: #414141; font-size: 16px; font-weight: 700;">Saatlik Veri Analizi</h1>
                                 <button class="btn btn-sm shadow-0 px-2 py-1" style="background-color: #F5F5F9; color: #414141; font-size: 11px; font-weight: 500; border-radius: 7px; color: #809FB8;">Tümü</button>
                             </div>
-                            <!-- {#if chartData.some(data => data !== 0)}
+                            {#if chartData.some(data => data !== 0)}
                                 <BarChart data={chartData} />
-                            {/if} -->
+                            {/if}
                         </div>
                         <div class="container px-0 mx-0" style="width: 33%; height: 42vh;">
                             <div class="row h-100 g-4">
@@ -252,28 +251,28 @@
                                 <div class="px-4 pt-4 pb-2 bg-white rounded grid-box d-flex flex-column justify-content-between h-100">
                                     <img src={layers} alt="layers" class="mb-4" width="42">
                                     <h6 class="dashboard-grid-text mb-2">Toplam Kampanya Sayısı</h6>
-                                    <h1 class="dashboard-grid-number" style="color: #696CFF;">0</h1>
+                                    <h1 class="dashboard-grid-number" style="color: #696CFF;">{campaignList.length}</h1>
                                 </div>
                               </div>
                               <div class="col-6" style="height: 47%;">
                                 <div class="px-4 pt-4 pb-2 bg-white rounded grid-box d-flex flex-column justify-content-between h-100">
                                     <img src={messages} alt="messages" class="mb-4" width="42">
                                     <h6 class="dashboard-grid-text mb-2">Toplam SMS Gönderim Sayısı</h6>
-                                    <h1 class="dashboard-grid-number" style="color: #04A3DA;">0</h1>
+                                    <h1 class="dashboard-grid-number" style="color: #04A3DA;">{sentSms}</h1>
                                 </div>
                               </div>
                               <div class="col-6" style="height: 47%;">
                                 <div class="px-4 pt-4 pb-2 bg-white rounded grid-box d-flex flex-column justify-content-between h-100">
                                     <img src={videos} alt="videos" class="mb-4" width="42">
                                     <h6 class="dashboard-grid-text mb-2">Toplam PVM İzlenme Sayısı</h6>
-                                    <h1 class="dashboard-grid-number" style="color: #05AF07;">0</h1>
+                                    <h1 class="dashboard-grid-number" style="color: #05AF07;">{videoWatched}</h1>
                                 </div>
                               </div>
                               <div class="col-6" style="height: 47%;">
                                 <div class="px-4 pt-4 pb-2 bg-white rounded grid-box d-flex flex-column justify-content-between h-100">
                                     <img src={stats} alt="stats" class="mb-4" width="42">
                                     <h6 class="dashboard-grid-text mb-2">Toplam PVM Yanıtlanma Sayısı</h6>
-                                    <h1 class="dashboard-grid-number" style="color: #FF2222;">0</h1>
+                                    <h1 class="dashboard-grid-number" style="color: #FF2222;">{answerCount}</h1>
                                 </div>
                               </div>
                             </div>
@@ -314,46 +313,19 @@
                         <div class="container d-flex flex-column bg-white grid-box px-0 mx-0" style="width: 33%; height: 43vh;">
                             <div class="d-flex justify-content-between align-items-center p-4" style="border-bottom: 1px solid #E8E8E8;">
                                 <h1 class="text m-0" style="color: #414141; font-size: 16px; font-weight: 700;">Son İşlemler</h1>
-                                <button class="btn btn-sm ms-2 shadow-0 px-2 py-1" style="background-color: #F5F5F9; color: #414141; font-size: 11px; font-weight: 500; border-radius: 7px; color: #809FB8;">Tümü</button>
                             </div>
                             <div class="d-flex flex-column justify-content-between h-100 timeline py-3">
-                                <div class="container-timeline right">
-                                  <div class="content">
-                                    <h2 class="timeline-date">11 Aralık 2023  / Pazartesi</h2>
-                                    <div class="d-flex w-100">
-                                        <p class="timeline-p me-2">Eğitim-Bir-Sen</p>
-                                        <p class="timeline-pd">Yeni Kullanıcı Oluşturdu</p>
+                                {#each actions as action, index}
+                                    <div class="container-timeline right">
+                                        <div class="content">
+                                            <h2 class="timeline-date">{action.date.substring(0, 10).split('-').reverse().join('.')}</h2>
+                                            <div class="d-flex w-100">
+                                                <p class="timeline-p me-2">{action.company},</p>
+                                                <p class="timeline-pd">{action.action}</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                  </div>
-                                </div>
-                                <div class="container-timeline right">
-                                    <div class="content">
-                                        <h2 class="timeline-date">11 Aralık 2023  / Pazartesi</h2>
-                                        <div class="d-flex w-100">
-                                            <p class="timeline-p me-2">Eğitim-Bir-Sen</p>
-                                            <p class="timeline-pd">Yeni Kullanıcı Oluşturdu</p>
-                                        </div>
-                                      </div>
-                                </div>
-                                <div class="container-timeline right">
-                                    <div class="content">
-                                        <h2 class="timeline-date">11 Aralık 2023  / Pazartesi</h2>
-                                        <div class="d-flex w-100">
-                                            <p class="timeline-p me-2">Eğitim-Bir-Sen</p>
-                                            <p class="timeline-pd">Yeni Kullanıcı Oluşturdu</p>
-                                        </div>
-                                      </div>
-                                </div>
-                                <div class="container-timeline right">
-                                    <div class="content">
-                                        <h2 class="timeline-date">11 Aralık 2023  / Pazartesi</h2>
-                                        <div class="d-flex w-100">
-                                            <p class="timeline-p me-2">Eğitim-Bir-Sen</p>
-                                            <p class="timeline-pd">Yeni Kullanıcı Oluşturdu</p>
-                                        </div>
-                                      </div>
-                                </div>
-                              </div>
+                                {/each}
                         </div>
                     </div>
                 </div>

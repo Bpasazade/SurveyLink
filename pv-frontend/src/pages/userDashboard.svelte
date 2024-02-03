@@ -52,8 +52,7 @@
     import { getSentSms } from '../apis/userApis.js';
     // number of sent messages
     async function getSentSmsHandler() {
-        const response = await getSentSms(loggedInUser.company);
-        smsSent = response[0];
+        smsSent = await getSentSms(loggedInUser.company);
         data1 = [(smsSent * 100 / smsSent).toFixed(0), (100 - (smsSent * 100 / smsSent)).toFixed(0)];
     }
 

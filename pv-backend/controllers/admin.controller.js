@@ -137,3 +137,64 @@ exports.uploadTemplate = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+
+// Get Actions
+exports.getActions = async (req, res) => {
+    try {
+        const actions = await db.action.find();
+        return res.status(200).json(actions);
+    } catch (error) {
+        console.error('Error retrieving actions:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+// Get all sent sms
+exports.getAllSentSms = async (req, res) => {
+    try {
+        const campaigns = await db.campaign.find();
+        let sentSms = 0;
+        campaigns.forEach(campaign => {
+            sentSms += campaign.sentSms;
+        })
+        return res.status(200).json(sentSms);
+    } catch (error) {
+        console.error('Error retrieving sent sms:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+// Get all video watched target user answer
+exports.getAllVideoWatched = async (req, res) => {
+    try {
+        const responses = await db.response.find();
+        let videoWatched = 0;
+        responses.forEach(response => {
+            if (response.answer.includes('video')) {
+                videoWatched++;
+            }
+        })
+        return res.status(200).json(videoWatched);
+    } catch (error) {
+        console.error('Error retrieving video watched:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+ 
+
+// Get all answer count
+exports.getAllAnswerCount = async (req, res) => {
+    try {
+        const responses = await db.response.find();
+        let answerCount = 0;
+        responses.forEach(response => {
+            if(response.answer.includes('option')) {
+                answerCount++;
+            }
+        })
+        return res.status(200).json(answerCount);
+    } catch (error) {
+        console.error('Error retrieving answer count:', error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+}

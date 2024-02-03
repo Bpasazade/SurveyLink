@@ -4,6 +4,7 @@ const Company = db.company;
 const Group = db.group;
 const Campaign = db.campaign;
 const Sms = db.sms;
+const Action = db.action;
 const xlsx = require('xlsx');
 const { v4: uuidv4 } = require("uuid");
 const TargetUser = require("../models/target.user.model");
@@ -61,6 +62,14 @@ exports.createGroup = async (req, res) => {
       panelGroupID: smsApiResponse.groupID,
     });
     const savedGroup = await newGroup.save();
+    const company = await Company.findById(companyId);
+    const action = new Action({
+      date: new Date().toISOString().slice(0, 10),
+      day: new Date().toISOString().slice(0, 10),
+      action: 'Grup Oluşturdu',
+      company: company.name,
+    });
+    await action.save();
     return res.status(200).json({ savedGroup, smsApiResponse });
   } catch (error) {
     console.error('Error creating group:', error);
@@ -268,9 +277,17 @@ exports.createCampaign = async (req, res) => {
       description,
       company: companyId,
       groups: groups,
+      sentSms: 0,
       status: status,
     });
     const savedCampaign = await newCampaign.save();
+    const action = new Action({
+      date: new Date().toISOString().slice(0, 10),
+      day: new Date().toISOString().slice(0, 10),
+      action: 'Kampanya Oluşturdu',
+      company: company.name,
+    });
+    await action.save();
     return res.status(200).json(savedCampaign);
   } catch (error) {
     console.error('Error creating campaign:', error);
@@ -345,11 +362,13 @@ exports.updateCampaignStatus = async (req, res) => {
   try {
     const { campaignId } = req.params;
     const { status } = req.body;
+    const { sentUserCount } = req.body;
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) {
       return res.status(404).json({ message: 'Campaign not found' });
     }
     campaign.status = status;
+    campaign.sentSms += sentUserCount;
     const savedCampaign = await campaign.save();
     console.log('savedCampaign', savedCampaign);
     return res.status(200).json(savedCampaign);
@@ -372,7 +391,6 @@ exports.deleteCampaign = async (req, res) => {
   }
 }
 
-const moment = require('moment');
 // Create sms
 exports.createSms = async (req, res) => {
   try {
@@ -390,7 +408,21 @@ exports.createSms = async (req, res) => {
       sent: false,
     });
     const savedSms = await newSms.save();
-    return res.status(200).json(savedSms);
+
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) {
+      return res.status(404).json({ message: 'Campaign not found' });
+    }
+    campaign.groups.push(groupId);
+    const savedCampaign = await campaign.save();
+    const action = new Action({
+      date: new Date().toISOString().slice(0, 10),
+      day: new Date().toISOString().slice(0, 10),
+      action: 'Sms Oluşturdu',
+      company: company.name,
+    });
+    await action.save();
+    return res.status(200).json({ savedSms, savedCampaign });
   } catch (error) {
     console.error('Error creating sms:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
@@ -500,16 +532,9 @@ exports.getSentSms = async (req, res) => {
   try {
     const { companyId } = req.params;
     const campaigns = await Campaign.find({ status: 'sent', company: companyId });
-    // put ids in a list
-    const campaignIds = campaigns.map(campaign => campaign._id);
-    // get all sms with those company ids
-    const sms = await Sms.find({ campaignId: { $in: campaignIds } });
-    // map group ids in sms to a list
-    const groupIds = sms.map(sms => sms.groupId);
-    // get all target users with those group ids
-    const targetUsers = await TargetUser.find({ group: { $in: groupIds } });
-    // return number of sms
-    return res.status(200).json([targetUsers.length, campaigns.length]);
+    // get all campaigns' sentSms and sum them
+    const sentSms = campaigns.reduce((acc, campaign) => acc + campaign.sentSms, 0);
+    return res.status(200).json(sentSms);
   } catch (error) {
     console.error('Error getting sent sms:', error);
     return res.status(500).json({ message: 'Internal Server Error' });
@@ -520,8 +545,13 @@ exports.getCampaignSentSms = async (req, res) => {
   try {
     const { campaignId } = req.params;
     const sms = await Sms.find({ campaignId: campaignId, status: 'sent' });
+    console.log('sms', sms);
     const groupIds = sms.map(sms => sms.groupId);
     const targetUsers = await TargetUser.find({ group: { $in: groupIds } });
+    const campaign = await Campaign.find({ status: 'sent', _id: campaignId });
+    campaign[0].sentSms = targetUsers.length;
+    const savedCampaign = await campaign[0].save();
+    console.log('targetUsers.length', targetUsers.length);
     return res.status(200).json(targetUsers.length);
   } catch (error) {
     console.error('Error getting sent sms:', error);
@@ -780,7 +810,6 @@ exports.createTemplate = async (req, res) => {
 exports.getTemplate = async (req, res) => {
   try {
     const { campaignId } = req.params;
-    console.log('campaignId', campaignId);
     const template = await Template.findOne({ campaign: mongoose.Types.ObjectId(campaignId) });
     if (!template) {
       return res.status(404).json({ message: 'Template not found' });

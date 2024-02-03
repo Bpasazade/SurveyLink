@@ -2,6 +2,7 @@
 <script>
     export let user;
     export let company;
+    export let userType;
 
     import { onMount } from 'svelte';
     import { updateUser } from '../apis/adminApis';
@@ -55,6 +56,8 @@
           console.error(error);
         });
     }
+
+    $: backgroundColor = userType === "admin" ? "#E9ECEF" : "white";
 </script>
 
 <style>
@@ -173,18 +176,18 @@
   
               <!-- Company Name -->
               <div class="input-group mb-3" id="company-name-group">
-                <span class="input-group-addon align-items-center d-flex" style="background-color: #E9ECEF;"  id="emailAddon">
+                <span class="input-group-addon align-items-center d-flex" style="{backgroundColor}" id="emailAddon">
                   <img src="{ briefcase }" alt="User Logo" width="24" />
                 </span>
-                <input disabled type="text" id="edit-company-name" class="form-control ps-0" placeholder="Şirket İsmi" bind:value={editedUser.companyName}>
+                <input type="text" id="edit-company-name" class="form-control ps-0" placeholder="Şirket İsmi" bind:value={editedUser.companyName} disabled={userType !== "admin"}>
               </div>
   
               <!-- Company Address -->
               <div class="input-group mb-3" id="company-address-group">
-                <span class="input-group-addon align-items-center d-flex" style="background-color: #E9ECEF;" id="emailAddon">
+                <span class="input-group-addon align-items-center d-flex" style="{backgroundColor}" id="emailAddon">
                   <img src="{ directUp }" alt="User Logo" width="24" />
                 </span>
-                <input disabled type="text" id="edit-company-address" class="form-control ps-0" placeholder="Şirket Adresi" bind:value={editedUser.companyAddress}>
+                <input type="text" id="edit-company-address" class="form-control ps-0" placeholder="Şirket Adresi" bind:value={editedUser.companyAddress} disabled={userType !== "admin"}>
               </div>
   
               <div class="row">

@@ -19,21 +19,14 @@
     // Search Profile Bar
     import SearchProfileBar from "../lib/SearchProfileBar.svelte";
 
-    export let user_;
-
     import { onMount } from 'svelte';
     import { updateUser } from '../apis/adminApis';
     import userLogo from '../assets/user.svg';
     import directBoxDefault from '../assets/directbox-default.svg';
     import call from '../assets/call.svg';
-    import lock from '../assets/lock.svg';
-    import briefcase from '../assets/briefcase.svg';
-    import directUp from '../assets/direct-up.svg';
-    import television from '../assets/television.svg';
-    import subLeft from '../assets/sub_left.svg';
     import done from '../assets/done.svg';
 
-    let editedUser = {
+    var editedUser = {
       name: "",
       email: "",
       phoneNumber: "",
@@ -41,16 +34,30 @@
       companyName: "",
       companyAddress: "",
       mainUserDegree: "",
-      numberOfScreens: "",
     };
 
-    // $: {
-    //   if (user) {
-    //     editedUser = { ...user };
-    //   }
-    // }
+    // Get User Data
+    import { getUser } from '../apis/userApis';
+    let user_;
 
-    // Call the resetModal function when the modal is opened
+    onMount(async () => {
+        await getUser(loggedInUser.id)
+            .then((data) => {
+                user_ = data;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    });
+
+    let flag = true;
+    $: {
+      if (user_ && flag) {
+        editedUser = { ...user_ };
+        flag = false;
+      }
+    }
+
     onMount(() => {
       resetModal();
     });
@@ -64,12 +71,24 @@
         .then((data) => {
           // Handle success
           console.log(data);
+          window.location.reload();
         })
         .catch((error) => {
           // Handle error
           console.error(error);
         });
     }
+
+    // Get Company
+    import { getAllCompanies } from "../apis/adminApis";
+    let companies = [];
+
+    let selectedCompany = null;
+    async function loadCompanies() {
+        companies = await getAllCompanies();
+    }
+
+    loadCompanies();
 </script>
 
 <style>
@@ -123,14 +142,6 @@
   .form-control {
     font-size: 14px;
   }
-  #cancel-button {
-    height: 45px; 
-    border-color:#BFBFBF33;
-    border-radius: 11px; 
-    font-weight: 600; 
-    font-size: 16px; 
-    width: max-content;
-  }
   #save-button {
     height: 45px; 
     background-color: #04A3DA; 
@@ -147,9 +158,9 @@
         <div class="col-md px-0" id="main-content-div">
             <SearchProfileBar/>
             <div class="row ps-3 pe-4 pt-4 mx-0">
-                <div class="bg-white d-flex flex-column align-items-center rounded mb-4 grid-box p-5" style="width:fit-content; height: max-content;">
+                <div class="bg-white d-flex flex-column align-items-center rounded mb-4 grid-box p-5" style="width:25vw; height: max-content;">
                     <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Avatar" class="rounded-circle mb-4" style="height: 15vh; width: 15vh;">
-                    <div>
+                    <div style="width:22vw;">
                         <!-- Name Lastname -->
                         <div class="input-group mb-3" id="name-group">
                           <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
@@ -173,46 +184,7 @@
                           </span>
                           <input type="text" id="edit-phone" class="form-control ps-0" placeholder="Telefon Numarası" bind:value={editedUser.phoneNumber}>
                         </div>
-            
-                        <div class="row">
-                          <div class="col">
-                            <!-- Password -->
-                            <div class="input-group" id="password-group">
-                              <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
-                                <img src="{ lock }" alt="User Logo" width="24" />
-                              </span>
-                              <input type="password" id="edit-password" class="form-control ps-0" placeholder="Şifre" bind:value={editedUser.password}>
-                            </div>
-                          </div>
-                          <div class="col">
-                            <!-- Verify Password -->
-                            <div class="input-group" id="verify-password-group">
-                              <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
-                                <img src="{ lock }" alt="User Logo" width="24" />
-                              </span>
-                              <input type="password" id="edit-verify-password" class="form-control ps-0" placeholder="Şifre Tekrar" bind:value={editedUser.password}>
-                            </div>
-                          </div>
-                        </div>
-            
-                        <hr class="my-3" style="color: #25324B14; border: solid 1px #25324B14">
-            
-                        <!-- Company Name -->
-                        <div class="input-group mb-3" id="company-name-group">
-                          <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
-                            <img src="{ briefcase }" alt="User Logo" width="24" />
-                          </span>
-                          <input type="text" id="edit-company-name" class="form-control ps-0" placeholder="Şirket İsmi" bind:value={editedUser.companyName}>
-                        </div>
-            
-                        <!-- Company Address -->
-                        <div class="input-group mb-3" id="company-address-group">
-                          <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
-                            <img src="{ directUp }" alt="User Logo" width="24" />
-                          </span>
-                          <input type="text" id="edit-company-address" class="form-control ps-0" placeholder="Şirket Adresi" bind:value={editedUser.companyAddress}>
-                        </div>
-            
+
                         <div class="row">
                           <div class="col">
                             <!-- Main User Degree -->
@@ -221,15 +193,6 @@
                                 <img src="{ userLogo }" alt="User Logo" width="24" />
                               </span>
                               <input type="text" id="edit-degree" class="form-control ps-0" placeholder="Unvan" bind:value={editedUser.mainUserDegree}>
-                            </div>
-                          </div>
-                          <div class="col">
-                            <!-- Number of Screens -->
-                            <div class="input-group mb-3" id="num-screens-group">
-                              <span class="input-group-addon bg-white align-items-center d-flex" id="emailAddon">
-                                <img src="{ television }" alt="User Logo" width="24" />
-                              </span>
-                              <input type="number" id="edit-num-screens" class="form-control ps-0" placeholder="Ekran Sayısı" bind:value={editedUser.numberOfScreens}>
                             </div>
                           </div>
                         </div>

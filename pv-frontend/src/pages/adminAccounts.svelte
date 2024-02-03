@@ -31,7 +31,6 @@
     async function loadUsers() {
         try {
             users = await fetchUsers();
-            console.log(users);
         } catch (error) {
             console.error(error);
         }
@@ -39,6 +38,17 @@
 
     loadUsers();
     let rotated = false;
+
+    // Get Company
+    import { getAllCompanies } from "../apis/adminApis";
+    let companies = [];
+
+    let selectedCompany = null;
+    async function loadCompanies() {
+        companies = await getAllCompanies();
+    }
+
+    loadCompanies();
 </script>
 
 <style>
@@ -77,7 +87,7 @@
 <NewUserModal loggedInUser = {loggedInUser} />
 
 <!-- Edit User Modal -->
-<EditUserModal user = {selectedUser} />
+<EditUserModal user={selectedUser} company={selectedCompany} userType="admin" />
 
 <!-- Edit User Modal -->
 <DeleteUserModal user = {selectedUser} />
@@ -89,7 +99,7 @@
         <div class="col-md px-0" id="main-content-div">
             <SearchProfileBar/>
             <div class="row d-flex flex-column px-4 pt-4 mx-0">
-                <div class="col-md-12 p-4 bg-white rounded mb-4">
+                <div class="col-md-12 p-4 bg-white rounded mb-4 grid-box">
                     <div class="d-flex justify-content-end">
                         <div class="col-md-6 d-flex justify-content-end">
                             <button class="btn bg-light me-2 media-content-button border-0 p-3" data-bs-toggle="modal" data-bs-target="#newUserModal">
@@ -102,29 +112,37 @@
 
                 <hr class="mb-4" style="color: #E6E8EC; height: 1px; border: solid 1px #e2e4e7;">
                 <div class="container mx-0 px-0">
-                    <div class="col-md-12 bg-white rounded mb-4 py-1">
+                    <div class="col-md-12 bg-white rounded mb-4 py-1 grid-box">
                         <table class="table table-hover">
                             <thead>
                               <tr>
                                 <th scope="col">#</th>
+                                <th scope="col">ID</th>
                                 <th scope="col">Ad-Soyad</th>
                                 <th scope="col">E-mail</th>
+                                <th scope="col">Firma</th>
                                 <th scope="col">Telefon</th>
                                 <th scope="col" style="width: 60px;"></th>
                               </tr>
                             </thead>
                             <tbody>
-                                {#if users.length !== 0}
+                                {#if users.length !== 0 && companies.length !== 0}
                                     {#each users as user, index}
                                     {#if user.role !== "admin"}
                                         <tr>
                                             <th scope="row">{index + 1}</th>
+                                            <td>{user._id}</td>
                                             <td>{user.name}</td>
                                             <td>{user.email}</td>
+                                            <td>{companies.find(company => company._id === user.company).name}</td>
                                             <td>{user.phoneNumber}</td>
                                             <td>
                                                 <div class="d-flex justify-content-end">
-                                                    <button class="btn p-0" type="button" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => (selectedUser = user)}>
+                                                    <!-- select selectedCompany  -->
+                                                    <button class="btn p-0" type="button" data-bs-target="#editUserModal" data-bs-toggle="modal" on:click={() => {
+                                                        selectedUser = user;
+                                                        selectedCompany = companies.find(company => company._id === user.company);
+                                                        }}>
                                                         <img src={edit} alt="arrow" width="24">
                                                     </button>
                                                     <div class="vr mx-3" style="width: 2px; color: #DDDDDD;"></div>

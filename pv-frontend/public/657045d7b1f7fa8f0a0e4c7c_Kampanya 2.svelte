@@ -195,7 +195,7 @@
         <!-- Section 4 -->
         <div id="section4" class="video-container section h-100 {videoContainerWidth ? 'video-container-width' : ''}" style="display: none;">
             <video id="video-yes" class="w-100" autoplay muted controls
-            on:play={() => saveAnswerToDb('video-yes-started')} 
+            on:play={() => saveAnswerToDb('video-yes-started')}
             on:ended={() => {
                 showNextSection('section4', 'section6');
                 saveAnswerToDb('video-yes-ended');}}>

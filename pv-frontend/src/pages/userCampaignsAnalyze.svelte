@@ -266,7 +266,7 @@
                 </div>
 
                 {#if selectedTab == "stats"}
-                <div class="container mx-0 px-0 mb-3">
+                <div class="container-fluid mx-0 px-0 mb-3">
                     <div class="g-0 d-flex justify-content-between">
                         <div class="bg-white rounded mb-3 p-4 grid-box" style="width: 65%; height: 42vh;">
                             <div class="d-flex justify-content-between pb-4 pt-2 ps-2">
@@ -293,7 +293,13 @@
                                 <div class="px-4 pt-4 pb-2 bg-white rounded grid-box d-flex flex-column justify-content-between h-100">
                                     <img src={messages} alt="messages" class="mb-4" width="42">
                                     <h6 class="dashboard-grid-text mb-2">Toplam SMS Gönderim Sayısı</h6>
-                                    <h1 class="dashboard-grid-number" style="color: #04A3DA;">0</h1>
+                                    <h1 class="dashboard-grid-number" style="color: #04A3DA;">
+                                        {#if selectedCampaign}
+                                            {selectedCampaign.sentSms}
+                                        {:else}
+                                            0
+                                        {/if}
+                                    </h1>
                                 </div>
                               </div>
                               <div class="col-6" style="height: 47%;">
@@ -315,7 +321,7 @@
                     </div>
                 </div>
                 
-                <div class="container mx-0 px-0 mb-4">
+                <div class="container-fluid mx-0 px-0 mb-4">
                     <div class="g-0 d-flex justify-content-between" style="height: 19vh;">
                         <div id="userDbGrid1" class="col-md d-flex rounde grid-box p-3 rounded">
                             <div class="col-md d-flex flex-column justify-content-between align-items-center h-100">
@@ -371,7 +377,7 @@
 
                 {:else if selectedTab == "users"}
                 <div class=" bg-white rounded mb-4 grid-box px-0" style="height: 60vh; scroll-x: auto;">
-                    <table class="col-md-5 table table-hover" style="max-width: min-content; display: block;">
+                    <table class="col-md-5 table table-hover">
                         <thead style="overflow-x: hidden;">
                           <tr>
                             <th scope="col">ID</th>
@@ -469,11 +475,11 @@
                                                 {/if}
                                             {:else}
                                                 <td>-</td>
-                                                <td>Hayır</td>
-                                                <td>Hayır</td>
+                                                <td>Cevaplanmadı</td>
+                                                <td>Cevaplanmadı</td>
                                                 <td>Açlmadı</td>
                                                 <td style="color: #CD0000">İzlenmedi</td>
-                                                <td>Hayır</td>
+                                                <td>Cevaplanmadı</td>
                                                 <td>Görüntülenmedi</td>
                                                 <td style="color: #CD0000">İzlenmedi</td>
                                             {/if}
