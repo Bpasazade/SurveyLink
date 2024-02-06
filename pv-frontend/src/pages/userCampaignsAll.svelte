@@ -208,7 +208,7 @@
     }
 
     // Campaigns Template
-    const componentFiles = import.meta.glob('/public/*.svelte');
+    const componentFiles = import.meta.glob('../components/*.svelte');
     let components = [];
     
     onMount(async () => {
