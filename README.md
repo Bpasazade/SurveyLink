@@ -21,7 +21,7 @@ SurveyLink is a web application that allows businesses and individual users to e
 
 2. Navigate to the backend directory:
     ```bash
-    cd surveylink/backend
+    cd surveylink/sl-backend
     ```
 
 3. Install required dependencies:
@@ -40,7 +40,7 @@ SurveyLink is a web application that allows businesses and individual users to e
 
 1. Navigate to the frontend directory:
     ```bash
-    cd surveylink/frontend
+    cd surveylink/sl-frontend
     ```
 
 2. Install required dependencies:
