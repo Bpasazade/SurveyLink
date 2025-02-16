@@ -16,7 +16,7 @@ SurveyLink is a web application that allows businesses and individual users to e
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/username/surveylink.git
+    git clone https://github.com/Bpasazade/SurveyLink.git
     ```
 
 2. Navigate to the backend directory:
